@@ -15,9 +15,10 @@ namespace Project.Models
         public string Nominee { get; set; }
         public string NomineeRelation { get; set; }
 
-        public Agent Agent { get; set; }
+        public Agent? Agent { get; set; }
         // policies
         public List<Document> Documents { get; set; }
+        public bool Satus { get; set; }
 
     }
 }

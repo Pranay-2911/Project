@@ -12,5 +12,6 @@ namespace Project.Models
         public Role Role { get; set; }  
         [ForeignKey("Role")]
         public Guid RoleId { get; set; }
+        public bool Satus { get; set; }
     }
 }
