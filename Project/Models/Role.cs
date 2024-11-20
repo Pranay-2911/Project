@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Project.Types;
+using System.ComponentModel.DataAnnotations;
 
 namespace Project.Models
 {
@@ -6,7 +7,8 @@ namespace Project.Models
     {
         [Key]
         public Guid Id { get; set; }
-        public string Name { get; set; }
-        public bool Satus { get; set; }
+        [Required]
+        public Roles RoleName { get; set; }
+        public bool Status { get; set; }
     }
 }

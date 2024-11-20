@@ -1,4 +1,8 @@
 
+using Microsoft.EntityFrameworkCore;
+using Project.Data;
+using System.Text.Json.Serialization;
+
 namespace Project
 {
     public class Program
@@ -8,6 +12,17 @@ namespace Project
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+
+
+            builder.Services.AddDbContext<ProjectContext>(options =>
+            {
+                options.UseSqlServer(builder.Configuration.GetConnectionString("ConnString"));
+            });
+
+            builder.Services.AddControllers().AddJsonOptions(x =>
+            {
+                x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            });
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
