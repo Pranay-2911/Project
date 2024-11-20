@@ -7,40 +7,40 @@ namespace Project.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RoleController : ControllerBase
+    public class UserController : ControllerBase
     {
-        private readonly IRoleService _roleService;
-        public RoleController(IRoleService roleService)
+        private readonly IUserService _userService;
+        public UserController(IUserService userService)
         {
-            _roleService = roleService;
+            _userService = userService;
         }
 
         [HttpGet]
         public IActionResult GetAll()
         {
-            var roles = _roleService.GetRoles();
-            return Ok(roles);
+            var users = _userService.GetRoles();
+            return Ok(users);
         }
 
         [HttpPost]
-        public IActionResult Add(Role role)
+        public IActionResult Add(User user)
         {
-            var id = _roleService.AddRole(role);
+            var id = _userService.AddRole(user);
             return Ok(id);
         }
 
         [HttpGet("{id}")]
         public IActionResult Get(Guid id)
         {
-            var role = _roleService.GetById(id);
-            return Ok(role);
+            var user = _userService.GetById(id);
+            return Ok(user);
         }
         [HttpPut]
-        public IActionResult Update(Role role)
+        public IActionResult Update(User user)
         {
-            if (_roleService.UpdateRole(role))
+            if (_userService.UpdateRole(user))
             {
-                return Ok(role);
+                return Ok(user);
             }
             return NotFound();
         }
@@ -48,7 +48,7 @@ namespace Project.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            if (_roleService.DeleteRole(id))
+            if (_userService.DeleteRole(id))
             {
                 return Ok(id);
             }

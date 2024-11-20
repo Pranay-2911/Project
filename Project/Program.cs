@@ -1,6 +1,9 @@
 
 using Microsoft.EntityFrameworkCore;
 using Project.Data;
+using Project.Mapper;
+using Project.Repositories;
+using Project.Services;
 using System.Text.Json.Serialization;
 
 namespace Project
@@ -23,6 +26,10 @@ namespace Project
             {
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             });
+
+            builder.Services.AddAutoMapper(typeof(MapperProfile));
+            builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
+            builder.Services.AddTransient<IRoleService, RoleService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
