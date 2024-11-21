@@ -26,7 +26,6 @@ namespace Project.Models
 
         public List<Customer> Customers { get; set; }
         public List<Agent> Agents { get; set; }
-        public bool Status { get; set; }
 
     }
 }

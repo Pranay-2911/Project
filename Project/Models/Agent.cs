@@ -19,7 +19,6 @@ namespace Project.Models
         [Required]
         public int MobileNumber { get; set; }
         public double CommisionEarned { get; set; }
-        public bool Status { get; set; }
         public User User { get; set; }
         public List<Customer> Customers { get; set; }
 

@@ -30,6 +30,7 @@ namespace Project
             builder.Services.AddAutoMapper(typeof(MapperProfile));
             builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             builder.Services.AddTransient<IRoleService, RoleService>();
+            builder.Services.AddTransient<IUserService, UserService>();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

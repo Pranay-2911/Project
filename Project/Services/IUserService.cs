@@ -1,13 +1,14 @@
-﻿using Project.Models;
+﻿using Project.DTOs;
+using Project.Models;
 
 namespace Project.Services
 {
     public interface IUserService
     {
-        public List<User> GetRoles();
+        public List<UserDto> GetUsers();
         public User GetById(Guid id);
-        public Guid AddRole(User user);
-        public bool DeleteRole(Guid id);
-        public bool UpdateRole(User user);
+        public Guid AddUser(UserDto userDto);
+        public bool DeleteUser(Guid id);
+        public bool UpdateUser(UserDto userDto);
     }
 }

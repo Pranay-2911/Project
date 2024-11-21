@@ -12,8 +12,8 @@ using Project.Data;
 namespace Project.Migrations
 {
     [DbContext(typeof(ProjectContext))]
-    [Migration("20241120142827_v1AddTab")]
-    partial class v1AddTab
+    [Migration("20241121181340_statusChnage")]
+    partial class statusChnage
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,9 +40,6 @@ namespace Project.Migrations
                         .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -89,9 +86,6 @@ namespace Project.Migrations
                     b.Property<string>("Qualification")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
@@ -150,9 +144,6 @@ namespace Project.Migrations
                     b.Property<string>("NomineeRelation")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("Satus")
-                        .HasColumnType("bit");
 
                     b.Property<string>("State")
                         .IsRequired()
@@ -222,9 +213,6 @@ namespace Project.Migrations
                     b.Property<double>("Salary")
                         .HasColumnType("float");
 
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
@@ -237,15 +225,43 @@ namespace Project.Migrations
                     b.ToTable("Employees");
                 });
 
+            modelBuilder.Entity("Project.Models.Policy", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AdminId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AdminId");
+
+                    b.HasIndex("CustomerId");
+
+                    b.ToTable("Policy");
+                });
+
             modelBuilder.Entity("Project.Models.Role", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("RoleName")
+                        .HasColumnType("int");
 
                     b.Property<bool>("Status")
                         .HasColumnType("bit");
@@ -261,18 +277,15 @@ namespace Project.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("password")
+                    b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<string>("userName")
+                    b.Property<Guid>("RoleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
@@ -357,6 +370,17 @@ namespace Project.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("Project.Models.Policy", b =>
+                {
+                    b.HasOne("Project.Models.Admin", null)
+                        .WithMany("Policies")
+                        .HasForeignKey("AdminId");
+
+                    b.HasOne("Project.Models.Customer", null)
+                        .WithMany("Policies")
+                        .HasForeignKey("CustomerId");
+                });
+
             modelBuilder.Entity("Project.Models.User", b =>
                 {
                     b.HasOne("Project.Models.Role", "Role")
@@ -375,6 +399,8 @@ namespace Project.Migrations
                     b.Navigation("Customers");
 
                     b.Navigation("Employees");
+
+                    b.Navigation("Policies");
                 });
 
             modelBuilder.Entity("Project.Models.Agent", b =>
@@ -385,6 +411,8 @@ namespace Project.Migrations
             modelBuilder.Entity("Project.Models.Customer", b =>
                 {
                     b.Navigation("Documents");
+
+                    b.Navigation("Policies");
                 });
 
             modelBuilder.Entity("Project.Models.Employee", b =>

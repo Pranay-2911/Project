@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Project.DTOs;
 using Project.Models;
 using Project.Services;
 
@@ -18,14 +19,14 @@ namespace Project.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var users = _userService.GetRoles();
-            return Ok(users);
+            var userDtos = _userService.GetUsers();
+            return Ok(userDtos);
         }
 
         [HttpPost]
-        public IActionResult Add(User user)
+        public IActionResult Add(UserDto userDto)
         {
-            var id = _userService.AddRole(user);
+            var id = _userService.AddUser(userDto);
             return Ok(id);
         }
 
@@ -36,11 +37,11 @@ namespace Project.Controllers
             return Ok(user);
         }
         [HttpPut]
-        public IActionResult Update(User user)
+        public IActionResult Update(UserDto userDto)
         {
-            if (_userService.UpdateRole(user))
+            if (_userService.UpdateUser(userDto))
             {
-                return Ok(user);
+                return Ok(userDto);
             }
             return NotFound();
         }
@@ -48,7 +49,7 @@ namespace Project.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            if (_userService.DeleteRole(id))
+            if (_userService.DeleteUser(id))
             {
                 return Ok(id);
             }

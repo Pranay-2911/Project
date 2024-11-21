@@ -25,7 +25,6 @@ namespace Project.Models
         public Agent? Agent { get; set; }
         // policies
         public List<Document> Documents { get; set; }
-        public bool Satus { get; set; }
 
         public List<Policy> Policies { get; set; }
 

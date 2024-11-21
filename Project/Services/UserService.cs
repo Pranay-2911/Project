@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Project.DTOs;
 using Project.Models;
 using Project.Repositories;
 
@@ -7,18 +9,21 @@ namespace Project.Services
     public class UserService : IUserService
     {
         private readonly IRepository<User> _repository;
-        public UserService(IRepository<User> repository)
+        private readonly IMapper _mapper;
+        public UserService(IRepository<User> repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
 
-        public Guid AddRole(User user)
+        public Guid AddUser(UserDto userDto)
         {
+            var user = _mapper.Map<User>(userDto);
             _repository.Add(user);
             return user.Id;
         }
 
-        public bool DeleteRole(Guid id)
+        public bool DeleteUser(Guid id)
         {
             var user = _repository.Get(id);
             if (user != null)
@@ -35,16 +40,19 @@ namespace Project.Services
             return _repository.Get(id);
         }
 
-        public List<User> GetRoles()
+        public List<UserDto> GetUsers()
         {
-            return _repository.GetAll().ToList();
+            var user = _repository.GetAll().ToList();
+            List<UserDto> userDtos = _mapper.Map<List<UserDto>>(user);
+            return userDtos;
         }
 
-        public bool UpdateRole(User user)
+        public bool UpdateUser(UserDto userDto)
         {
-            var existingUser = _repository.GetAll().AsNoTracking().Where(u => u.Id == user.Id);
+            var existingUser = _repository.GetAll().AsNoTracking().Where(u => u.Id == userDto.Id);
             if (existingUser != null)
             {
+                var user = _mapper.Map<User>(userDto);
                 _repository.Update(user);
                 return true;
             }

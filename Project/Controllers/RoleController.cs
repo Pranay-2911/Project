@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Project.DTOs;
 using Project.Models;
 using Project.Services;
 
@@ -18,14 +19,14 @@ namespace Project.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            var roles = _roleService.GetRoles();
-            return Ok(roles);
+            var rolesDto = _roleService.GetRoles();
+            return Ok(rolesDto);
         }
 
         [HttpPost]
-        public IActionResult Add(Role role)
+        public IActionResult Add(RoleDto roleDto)
         {
-            var id = _roleService.AddRole(role);
+            var id = _roleService.AddRole(roleDto);
             return Ok(id);
         }
 
@@ -36,11 +37,11 @@ namespace Project.Controllers
             return Ok(role);
         }
         [HttpPut]
-        public IActionResult Update(Role role)
+        public IActionResult Update(RoleDto roleDto)
         {
-            if (_roleService.UpdateRole(role))
+            if (_roleService.UpdateRole(roleDto))
             {
-                return Ok(role);
+                return Ok(roleDto);
             }
             return NotFound();
         }

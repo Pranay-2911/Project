@@ -13,7 +13,6 @@ namespace Project.Models
         [Required]
         [StringLength(15, ErrorMessage = "Last name should not greater than 15")]
         public string LastName { get; set; }
-        public bool Status { get; set; }
         
         public User User { get; set; }
 

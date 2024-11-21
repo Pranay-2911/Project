@@ -1,4 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using Project.DTOs;
+using Project.Mapper;
 using Project.Models;
 using Project.Repositories;
 
@@ -7,13 +10,15 @@ namespace Project.Services
     public class RoleService : IRoleService
     {
         private readonly IRepository<Role> _repository;
-
-        public RoleService(IRepository<Role> repository)
+        private readonly IMapper _mapper;
+        public RoleService(IRepository<Role> repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
-        public Guid AddRole(Role role)
+        public Guid AddRole(RoleDto roleDto)
         {
+            var role = _mapper.Map<Role>(roleDto);
             _repository.Add(role);
             return role.Id;
         }
@@ -35,16 +40,19 @@ namespace Project.Services
             return _repository.Get(id);
         }
 
-        public List<Role> GetRoles()
+        public List<RoleDto> GetRoles()
         {
-            return _repository.GetAll().ToList();
+            var roles =  _repository.GetAll().ToList();
+            List<RoleDto> roleDtos = _mapper.Map<List<RoleDto>>(roles);
+            return roleDtos;
         }
 
-        public bool UpdateRole(Role role)
+        public bool UpdateRole(RoleDto roleDto)
         {
-             var existingRole = _repository.GetAll().AsNoTracking().Where(r => r.Id == role.Id);
+            var existingRole = _repository.GetAll().AsNoTracking().Where(r => r.Id == roleDto.Id);
             if (existingRole != null)
             {
+                var role = _mapper.Map<Role>(roleDto);
                 _repository.Update(role);
                 return true;
             }
