@@ -1,6 +1,13 @@
-﻿namespace Project.Services
+﻿using Project.DTOs;
+
+namespace Project.Services
 {
-    public class IAdminService
+    public interface IAdminService
     {
+        public Guid Add(AdminDto adminDto);
+        public bool Update(AdminDto adminDto);
+        public List<AdminDto> GetAll();
+        public AdminDto Get(Guid id);
+        public bool Delete(Guid id);
     }
 }
