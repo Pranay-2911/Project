@@ -17,7 +17,7 @@ namespace Project.Models
         [EmailAddress]
         public string Email { get; set; }
         [Required]
-        public int MobileNumber { get; set; }
+        public long MobileNumber { get; set; }
         public double CommisionEarned { get; set; }
         public User User { get; set; }
         public List<Customer> Customers { get; set; }

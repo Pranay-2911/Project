@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Project.Data;
 
@@ -11,9 +12,11 @@ using Project.Data;
 namespace Project.Migrations
 {
     [DbContext(typeof(ProjectContext))]
-    partial class ProjectContextModelSnapshot : ModelSnapshot
+    [Migration("20241122180902_customerUserAdd")]
+    partial class customerUserAdd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -77,8 +80,8 @@ namespace Project.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<long>("MobileNumber")
-                        .HasColumnType("bigint");
+                    b.Property<int>("MobileNumber")
+                        .HasColumnType("int");
 
                     b.Property<string>("Qualification")
                         .IsRequired()
@@ -131,8 +134,8 @@ namespace Project.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
-                    b.Property<long>("MobileNumber")
-                        .HasColumnType("bigint");
+                    b.Property<int>("MobileNumber")
+                        .HasColumnType("int");
 
                     b.Property<string>("Nominee")
                         .IsRequired()
