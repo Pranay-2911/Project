@@ -22,7 +22,7 @@ namespace Project.Mapper
                 .ForMember(dest => dest.TotalDocuments, val => val.MapFrom(src => src.Documents.Count))
                 .ForMember(dest => dest.TotalPolicies, val => val.MapFrom(src => src.Policies.Count));
 
-            CreateMap<CustomerDto, Customer>();
+            CreateMap<CustomerDto, Customer>(); //pushing
         }
     }
 }
