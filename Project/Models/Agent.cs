@@ -5,7 +5,7 @@ namespace Project.Models
     public class Agent
     {
         [Key]
-        public Guid AgentId { get; set; }
+        public Guid Id { get; set; }
         [Required]
         [StringLength(20, MinimumLength = 2, ErrorMessage="First name must be in 2 to 20 characters.")]
         public string FirstName { get; set; }
