@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Project.Models
 {
@@ -20,6 +21,8 @@ namespace Project.Models
         public long MobileNumber { get; set; }
         public double CommisionEarned { get; set; }
         public User User { get; set; }
+        [ForeignKey("User")]
+        public Guid UserId { get; set; }
         public List<Customer> Customers { get; set; }
 
     }

@@ -19,7 +19,6 @@ namespace Project.Services
         public Guid AddCustomer(CustomerDto customerDto)
         {
             var customer = _mapper.Map<Customer>(customerDto);
-            _repository.Add(customer);
             return customer.CustomerId;
         }
 
