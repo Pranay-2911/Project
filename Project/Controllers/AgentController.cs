@@ -52,5 +52,17 @@ namespace Project.Controllers
                 return Ok(agentDto);
             return NotFound("Agent not found");
         }
+
+        [HttpPut("chnagepassword")]
+        public IActionResult ChangePassword(ChnagePasswordDto chnagePasswordDto)
+        {
+            if(_agentService.ChangePassword(chnagePasswordDto))
+            {
+                return Ok(chnagePasswordDto);
+            }
+            return NotFound("Agent not found");
+
+
+        }
     }
 }

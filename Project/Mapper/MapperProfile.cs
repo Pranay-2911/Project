@@ -30,6 +30,10 @@ namespace Project.Mapper
                 .ForMember(dest => dest.TotalAgents, val => val.MapFrom(src => src.Agents.Count))
                 .ForMember(dest => dest.TotalPolicies, val => val.MapFrom(src => src.Policies.Count));
             CreateMap<AdminDto, Admin>();
+
+
+            CreateMap<Agent, AgentDto>().ForMember(dest => dest.TotalCustomers, val => val.MapFrom(src => src.Customers.Count));
+            CreateMap<AgentDto, Agent>();
         }
     }
 }

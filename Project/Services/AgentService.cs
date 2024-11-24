@@ -23,6 +23,18 @@ namespace Project.Services
             return agent.Id;
         }
 
+        public bool ChangePassword(ChnagePasswordDto passwordDto)
+        {
+            var agent = _agentRepository.GetAll().AsNoTracking().Include(a => a.User).Where(a => a.Id == passwordDto.Guid).FirstOrDefault();
+            if (agent != null)
+            {
+                agent.User.Password = passwordDto.Password;
+                _agentRepository.Update(agent);
+                return true;
+            }
+            return false;
+        }
+
         public bool Delete(Guid id)
         {
             var agent = _agentRepository.Get(id);
@@ -45,11 +57,11 @@ namespace Project.Services
             throw new Exception("No such agent exist");
         }
 
-        public List<AgentDto> GetAll()
+        public List<Agent> GetAll()
         {
-            var agents = _agentRepository.GetAll();
-            var agentDtos = _mapper.Map<List<AgentDto>>(agents);
-            return agentDtos;
+            var agents = _agentRepository.GetAll().Include(a => a.User).ToList();
+            //var agentDtos = _mapper.Map<List<AgentDto>>(agents);
+            return agents;
         }
 
         public bool Update(AgentDto agentDto)
