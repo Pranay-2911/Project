@@ -9,15 +9,27 @@ namespace Project.Services
     public class EmployeeService : IEmployeeService
     {
         private readonly IRepository<Employee> _repository;
+        private readonly IRepository<Role> _repositoryRole;
+        private readonly IRepository<User> _userRepository;
         private readonly IMapper _mapper;
-        public EmployeeService(IRepository<Employee> employeeRepository, IMapper mapper)
+        public EmployeeService(IRepository<Employee> employeeRepository, IMapper mapper, IRepository<Role> repositoryRole, IRepository<User> userRepository)
         {
             _repository = employeeRepository;
             _mapper = mapper;
+            _repositoryRole = repositoryRole;
+            _userRepository = userRepository;
         }
-        public Guid AddEmployee(EmployeeDto employeeDto)
+        public Guid AddEmployee(EmployeeRegisterDto employeeRegisterDto)
         {
-            var employee = _mapper.Map<Employee>(employeeDto);
+            Role role = new Role() { RoleName = Types.Roles.EMPLOYEE, Status = true};
+            _repositoryRole.Add(role);
+
+            User user = new User() { UserName = employeeRegisterDto.Username, Password = employeeRegisterDto.Password, RoleId = role.Id };
+            _userRepository.Add(user);
+
+            employeeRegisterDto.UserId = user.Id;
+
+            var employee = _mapper.Map<Employee>(employeeRegisterDto);
             _repository.Add(employee);
             return employee.Id;
         }

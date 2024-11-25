@@ -23,9 +23,9 @@ namespace Project.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(CustomerDto customerDto)
+        public IActionResult Add(CustomerRegisterDto customerRegisterDto)
         {
-            var id = _customerService.AddCustomer(customerDto);
+            var id = _customerService.AddCustomer(customerRegisterDto);
             return Ok(id);
         }
 

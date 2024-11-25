@@ -31,9 +31,9 @@ namespace Project.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(AgentDto agentDto)
+        public IActionResult Add(AgentRegisterDto agentRegisterDto)
         {
-            var agentId = _agentService.Add(agentDto);
+            var agentId = _agentService.Add(agentRegisterDto);
             return Ok(agentId);
         }
 

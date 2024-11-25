@@ -3,22 +3,37 @@ using Microsoft.EntityFrameworkCore;
 using Project.DTOs;
 using Project.Models;
 using Project.Repositories;
+using Project.Types;
 
 namespace Project.Services
 {
     public class CustomerService : ICustomerService
     {
         private readonly IRepository<Customer> _repository;
+        private readonly IRepository<Role> _roleRepository;
+        private readonly IRepository<User> _userRepository;
         private readonly IMapper _mapper;
-        public CustomerService(IRepository<Customer> cutomerRepository, IMapper mapper)
+        public CustomerService(IRepository<Customer> cutomerRepository, IMapper mapper, IRepository<Role> roleRepository, IRepository<User> userRepository)
         {
             _mapper = mapper;
             _repository = cutomerRepository;
+            _roleRepository = roleRepository;
+            _userRepository = userRepository;   
         }
 
-        public Guid AddCustomer(CustomerDto customerDto)
+        public Guid AddCustomer(CustomerRegisterDto customerRegisterDto)
         {
-            var customer = _mapper.Map<Customer>(customerDto);
+
+            Role role = new Role() { RoleName = Roles.CUSTOMER, Status = true};
+            _roleRepository.Add(role);
+         
+            User user = new User() { UserName = customerRegisterDto.UserName, Password = customerRegisterDto.Password, RoleId = role.Id};
+            _userRepository.Add(user);
+            
+            customerRegisterDto.UserId = user.Id;
+
+            var customer = _mapper.Map<Customer>(customerRegisterDto);
+            _repository.Add(customer);
             return customer.CustomerId;
         }
         public bool ChangePassword(ChnagePasswordDto passwordDto)

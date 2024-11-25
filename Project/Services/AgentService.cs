@@ -3,22 +3,35 @@ using Microsoft.EntityFrameworkCore;
 using Project.DTOs;
 using Project.Models;
 using Project.Repositories;
+using Project.Types;
 
 namespace Project.Services
 {
     public class AgentService : IAgentService
     {
         private readonly IRepository<Agent> _agentRepository;
+        private readonly IRepository<Role> _roleRepository;
+        private readonly IRepository<User> _userRepository;
         private readonly IMapper _mapper;
 
-        public AgentService(IRepository<Agent> repository, IMapper mapper)
+        public AgentService(IRepository<Agent> repository, IMapper mapper, IRepository<Role> roleRepository, IRepository<User> userRepository)
         {
             _agentRepository = repository;
             _mapper = mapper;
+            _roleRepository = roleRepository;
+            _userRepository = userRepository;
         }
-        public Guid Add(AgentDto agentDto)
+        public Guid Add(AgentRegisterDto agentRegisterDto)
         {
-            var agent = _mapper.Map<Agent>(agentDto);
+            Role role = new Role() { RoleName = Roles.CUSTOMER, Status = true };
+            _roleRepository.Add(role);
+
+            User user = new User() { UserName = agentRegisterDto.Username, Password = agentRegisterDto.Password, RoleId = role.Id };
+            _userRepository.Add(user);
+
+            agentRegisterDto.UserId = user.Id;
+
+            var agent = _mapper.Map<Agent>(agentRegisterDto);
             _agentRepository.Add(agent);
             return agent.Id;
         }

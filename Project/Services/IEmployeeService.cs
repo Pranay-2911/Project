@@ -7,7 +7,7 @@ namespace Project.Services
     {
         public List<EmployeeDto> GetEmployees();
         public Employee GetById(Guid id);
-        public Guid AddEmployee(EmployeeDto employeeDto);
+        public Guid AddEmployee(EmployeeRegisterDto employeeRegisterDto);
         public bool DeleteEmployee(Guid id);
         public bool UpdateEmployee(EmployeeDto employeeDto);
     }
