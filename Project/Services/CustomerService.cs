@@ -21,6 +21,17 @@ namespace Project.Services
             var customer = _mapper.Map<Customer>(customerDto);
             return customer.CustomerId;
         }
+        public bool ChangePassword(ChnagePasswordDto passwordDto)
+        {
+            var agent = _repository.GetAll().AsNoTracking().Include(a => a.User).Where(a => a.User.UserName == passwordDto.UserName && a.User.Password == passwordDto.Password).FirstOrDefault();
+            if (agent != null)
+            {
+                agent.User.Password = passwordDto.NewPassword;
+                _repository.Update(agent);
+                return true;
+            }
+            return false;
+        }
 
         public bool DeleteCustomer(Guid id)
         {

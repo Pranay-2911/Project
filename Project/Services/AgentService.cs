@@ -25,10 +25,10 @@ namespace Project.Services
 
         public bool ChangePassword(ChnagePasswordDto passwordDto)
         {
-            var agent = _agentRepository.GetAll().AsNoTracking().Include(a => a.User).Where(a => a.Id == passwordDto.Guid).FirstOrDefault();
+            var agent = _agentRepository.GetAll().AsNoTracking().Include(a => a.User).Where(a => a.User.UserName == passwordDto.UserName && a.User.Password == passwordDto.Password).FirstOrDefault();
             if (agent != null)
             {
-                agent.User.Password = passwordDto.Password;
+                agent.User.Password = passwordDto.NewPassword;
                 _agentRepository.Update(agent);
                 return true;
             }

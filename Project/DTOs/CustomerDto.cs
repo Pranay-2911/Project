@@ -27,7 +27,5 @@ namespace Project.DTOs
         public Agent? Agent { get; set; }
         public int TotalDocuments { get; set; }
         public int TotalPolicies { get; set; }
-        public string UserName { get; set; }
-        public string Password { get; set; }
     }
 }

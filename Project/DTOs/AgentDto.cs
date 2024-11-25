@@ -21,5 +21,7 @@ namespace Project.DTOs
         public double CommisionEarned { get; set; }
         public Guid UserId { get; set; }
         public int TotalCustomers { get; set; }
+        public double TotalCommissionEarned { get; set; }
+        public double TotalWithdrawalAmount { get; set; }
     }
 }
