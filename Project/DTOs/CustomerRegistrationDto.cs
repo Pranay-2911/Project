@@ -1,11 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Project.Models
+namespace Project.DTOs
 {
-    public class Customer
+    public class CustomerRegistrationDto
     {
-        [Key]
         public Guid CustomerId { get; set; }
         [Required]
         [StringLength(15, ErrorMessage = "First name should not greater than 15")]
@@ -14,7 +12,7 @@ namespace Project.Models
         [StringLength(15, ErrorMessage = "First name should not greater than 15")]
         public string LastName { get; set; }
         [Required]
-        [EmailAddress (ErrorMessage ="Email Should be at correct format")]
+        [EmailAddress]
         public string Email { get; set; }
         [Required]
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Mobile number must be exactly 10 digits.")]
@@ -23,17 +21,13 @@ namespace Project.Models
         public string City { get; set; }
         public string Nominee { get; set; }
         public string NomineeRelation { get; set; }
-        public User User { get; set; }
-        [ForeignKey("User")]
+
         public Guid UserId { get; set; }
-
-        public Agent? Agent { get; set; }
-        [ForeignKey("Agent")]
         public Guid? AgentId { get; set; }
-        public List<Document> Documents { get; set; }
+        public int TotalDocuments { get; set; }
+        public int TotalPolicies { get; set; }
 
-        public List<Policy> Policies { get; set; }
-
-       
+        public string UserName { get; set; }
+        public string Password { get; set; }
     }
 }

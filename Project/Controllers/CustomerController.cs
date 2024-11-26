@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Project.DTOs;
+using Project.Models;
 using Project.Services;
 
 namespace Project.Controllers
@@ -28,7 +29,11 @@ namespace Project.Controllers
             var id = _customerService.AddCustomer(customerRegisterDto);
             return Ok(id);
         }
-
+        [HttpPost("PolicyAccount")]
+        public IActionResult AddPolicyAccount(PolicyAccountDto policyAccountDto)
+        {
+            var id = 
+        }
         [HttpGet("{id}")]
         public IActionResult Get(Guid id)
         {
