@@ -9,7 +9,7 @@ namespace Project.Mapper
         public MapperProfile()
         {
             CreateMap<Role, RoleDto>();//.ForMember(dest => dest.RoleName, val => val.MapFrom(src => src.RoleName));
-            CreateMap<RoleDto, Role>();
+            CreateMap<RoleDto, Role>(); 
             CreateMap<User, UserDto>();
             CreateMap<UserDto, User>();
             CreateMap<Employee, EmployeeDto>()
