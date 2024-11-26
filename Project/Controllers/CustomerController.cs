@@ -32,7 +32,8 @@ namespace Project.Controllers
         [HttpPost("PolicyAccount")]
         public IActionResult AddPolicyAccount(PolicyAccountDto policyAccountDto)
         {
-            var id = 
+            var id = _customerService.AddPolicyAccount(policyAccountDto);
+            return Ok(id);
         }
         [HttpGet("{id}")]
         public IActionResult Get(Guid id)

@@ -31,7 +31,7 @@ namespace Project.Models
         [ForeignKey("Agent")]
         public Guid? AgentId { get; set; }
         public List<Document> Documents { get; set; }
-
+        public PolicyAccount? PolicyAccount { get; set; }
         public List<Policy> Policies { get; set; }
 
        

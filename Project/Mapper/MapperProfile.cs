@@ -43,6 +43,7 @@ namespace Project.Mapper
             CreateMap<AgentRegisterDto, Agent>();
 
             CreateMap<PolicyAccountDto, PolicyAccount>();
+            CreateMap<PolicyAccount, PolicyAccountDto>();
         }
     }
 }

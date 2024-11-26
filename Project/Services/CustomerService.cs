@@ -12,13 +12,15 @@ namespace Project.Services
         private readonly IRepository<Customer> _repository;
         private readonly IRepository<Role> _roleRepository;
         private readonly IRepository<User> _userRepository;
+        private readonly IRepository<PolicyAccount> _policyAccountRepository;
         private readonly IMapper _mapper;
-        public CustomerService(IRepository<Customer> cutomerRepository, IMapper mapper, IRepository<Role> roleRepository, IRepository<User> userRepository)
+        public CustomerService(IRepository<Customer> cutomerRepository, IMapper mapper, IRepository<Role> roleRepository, IRepository<User> userRepository, IRepository<PolicyAccount> policyAccountRepository)
         {
             _mapper = mapper;
             _repository = cutomerRepository;
             _roleRepository = roleRepository;
-            _userRepository = userRepository;   
+            _userRepository = userRepository;  
+            _policyAccountRepository = policyAccountRepository;
         }
 
         public Guid AddCustomer(CustomerRegisterDto customerRegisterDto)
@@ -35,6 +37,15 @@ namespace Project.Services
             var customer = _mapper.Map<Customer>(customerRegisterDto);
             _repository.Add(customer);
             return customer.CustomerId;
+        }
+        public Guid AddPolicyAccount(PolicyAccountDto policyAccountDto)
+        {
+            var policyAccont = _mapper.Map<PolicyAccount>(policyAccountDto);
+            _policyAccountRepository.Add(policyAccont);
+            var customer = _repository.Get(policyAccont.CustomerId);
+            customer.PolicyAccount = policyAccont;
+            _repository.Update(customer);
+            return policyAccont.Id;
         }
         public bool ChangePassword(ChnagePasswordDto passwordDto)
         {
@@ -66,7 +77,7 @@ namespace Project.Services
 
         public List<CustomerDto> GetCustomers()
         {
-            var customer = _repository.GetAll().ToList();
+            var customer = _repository.GetAll().AsNoTracking().Include(p => p.PolicyAccount).ToList();
             List<CustomerDto> customerDtos = _mapper.Map<List<CustomerDto>>(customer);
             return customerDtos;
         }

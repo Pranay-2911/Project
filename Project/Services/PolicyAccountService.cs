@@ -19,7 +19,7 @@ namespace Project.Services
         {
             var policyAccount = _mapper.Map<PolicyAccount>(policyAccountDto);
             _repository.Add(policyAccount);
-            return policyAccountDto.Id;
+            return policyAccount.Id;
         }
 
         public void Delete(Guid id)
