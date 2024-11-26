@@ -24,7 +24,7 @@ namespace Project.DTOs
         public string NomineeRelation { get; set; }
 
         public Guid UserId { get; set; }
-        public Agent? Agent { get; set; }
+        public Guid? AgentId { get; set; }
         public int TotalDocuments { get; set; }
         public int TotalPolicies { get; set; }
     }
