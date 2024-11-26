@@ -10,7 +10,7 @@ namespace Project.Mapper
         {
             CreateMap<Role, RoleDto>();//.ForMember(dest => dest.RoleName, val => val.MapFrom(src => src.RoleName));
             CreateMap<RoleDto, Role>(); 
-            CreateMap<User, UserDto>();
+            CreateMap<User, UserDto>();  
             CreateMap<UserDto, User>();
             CreateMap<Employee, EmployeeDto>()
                      .ForMember(dest => dest.TotalCustomers, val => val.MapFrom(src => src.Customers.Count))
