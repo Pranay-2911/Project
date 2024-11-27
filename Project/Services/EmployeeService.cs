@@ -21,10 +21,10 @@ namespace Project.Services
         }
         public Guid AddEmployee(EmployeeRegisterDto employeeRegisterDto)
         {
-            Role role = new Role() { RoleName = Types.Roles.EMPLOYEE, Status = true};
+            Role role = new Role() { RoleName = Types.Roles.EMPLOYEE};
             _repositoryRole.Add(role);
 
-            User user = new User() { UserName = employeeRegisterDto.Username, Password = employeeRegisterDto.Password, RoleId = role.Id };
+            User user = new User() { UserName = employeeRegisterDto.Username, Password = employeeRegisterDto.Password, RoleId = role.Id, Status = true };
             _userRepository.Add(user);
 
             employeeRegisterDto.UserId = user.Id;

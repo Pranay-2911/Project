@@ -23,10 +23,10 @@ namespace Project.Services
         }
         public Guid Add(AgentRegisterDto agentRegisterDto)
         {
-            Role role = new Role() { RoleName = Roles.CUSTOMER, Status = true };
+            Role role = new Role() { RoleName = Roles.CUSTOMER };
             _roleRepository.Add(role);
 
-            User user = new User() { UserName = agentRegisterDto.Username, Password = agentRegisterDto.Password, RoleId = role.Id };
+            User user = new User() { UserName = agentRegisterDto.Username, Password = agentRegisterDto.Password, RoleId = role.Id, Status = true };
             _userRepository.Add(user);
 
             agentRegisterDto.UserId = user.Id;

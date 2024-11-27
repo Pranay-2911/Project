@@ -12,8 +12,8 @@ using Project.Data;
 namespace Project.Migrations
 {
     [DbContext(typeof(ProjectContext))]
-    [Migration("20241125065122_addedCommission")]
-    partial class addedCommission
+    [Migration("20241127101244_addTab")]
+    partial class addTab
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,21 @@ namespace Project.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("CustomerPolicy", b =>
+                {
+                    b.Property<Guid>("CustomersCustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PoliciesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("CustomersCustomerId", "PoliciesId");
+
+                    b.HasIndex("PoliciesId");
+
+                    b.ToTable("CustomerPolicy");
+                });
 
             modelBuilder.Entity("Project.Models.Admin", b =>
                 {
@@ -245,9 +260,6 @@ namespace Project.Migrations
                     b.Property<Guid?>("AdminId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -260,9 +272,35 @@ namespace Project.Migrations
 
                     b.HasIndex("AdminId");
 
-                    b.HasIndex("CustomerId");
+                    b.ToTable("Policies");
+                });
 
-                    b.ToTable("Policy");
+            modelBuilder.Entity("Project.Models.PolicyAccount", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("AccountNumber")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("BankName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("IFSC")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId")
+                        .IsUnique();
+
+                    b.ToTable("PolicyAccounts");
                 });
 
             modelBuilder.Entity("Project.Models.Role", b =>
@@ -273,9 +311,6 @@ namespace Project.Migrations
 
                     b.Property<int>("RoleName")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -296,6 +331,9 @@ namespace Project.Migrations
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -306,6 +344,21 @@ namespace Project.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("CustomerPolicy", b =>
+                {
+                    b.HasOne("Project.Models.Customer", null)
+                        .WithMany()
+                        .HasForeignKey("CustomersCustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Project.Models.Policy", null)
+                        .WithMany()
+                        .HasForeignKey("PoliciesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Project.Models.Admin", b =>
@@ -394,16 +447,23 @@ namespace Project.Migrations
                     b.HasOne("Project.Models.Admin", null)
                         .WithMany("Policies")
                         .HasForeignKey("AdminId");
+                });
 
-                    b.HasOne("Project.Models.Customer", null)
-                        .WithMany("Policies")
-                        .HasForeignKey("CustomerId");
+            modelBuilder.Entity("Project.Models.PolicyAccount", b =>
+                {
+                    b.HasOne("Project.Models.Customer", "Customer")
+                        .WithOne("PolicyAccount")
+                        .HasForeignKey("Project.Models.PolicyAccount", "CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Project.Models.User", b =>
                 {
                     b.HasOne("Project.Models.Role", "Role")
-                        .WithMany()
+                        .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -431,7 +491,7 @@ namespace Project.Migrations
                 {
                     b.Navigation("Documents");
 
-                    b.Navigation("Policies");
+                    b.Navigation("PolicyAccount");
                 });
 
             modelBuilder.Entity("Project.Models.Employee", b =>
@@ -439,6 +499,11 @@ namespace Project.Migrations
                     b.Navigation("Agents");
 
                     b.Navigation("Customers");
+                });
+
+            modelBuilder.Entity("Project.Models.Role", b =>
+                {
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

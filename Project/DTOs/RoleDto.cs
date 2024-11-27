@@ -7,6 +7,6 @@ namespace Project.DTOs
     {
         public Guid Id { get; set; }
         public string RoleName { get; set; }
-        public bool Status { get; set; }
+        public int TotalUser { get; set; }
     }
 }

@@ -8,7 +8,7 @@ namespace Project.Mapper
     {
         public MapperProfile()
         {
-            CreateMap<Role, RoleDto>();//.ForMember(dest => dest.RoleName, val => val.MapFrom(src => src.RoleName));
+            CreateMap<Role, RoleDto>().ForMember(dest => dest.TotalUser, val => val.MapFrom(src => src.Users.Count));
             CreateMap<RoleDto, Role>(); 
             CreateMap<User, UserDto>();  
             CreateMap<UserDto, User>();

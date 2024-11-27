@@ -9,6 +9,6 @@ namespace Project.Models
         public Guid Id { get; set; }
         [Required]
         public Roles RoleName { get; set; }
-        public bool Status { get; set; }
+        public List<User> Users { get; set; }
     }
 }

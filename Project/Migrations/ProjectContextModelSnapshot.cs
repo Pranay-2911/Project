@@ -22,6 +22,21 @@ namespace Project.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("CustomerPolicy", b =>
+                {
+                    b.Property<Guid>("CustomersCustomerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("PoliciesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("CustomersCustomerId", "PoliciesId");
+
+                    b.HasIndex("PoliciesId");
+
+                    b.ToTable("CustomerPolicy");
+                });
+
             modelBuilder.Entity("Project.Models.Admin", b =>
                 {
                     b.Property<Guid>("Id")
@@ -242,9 +257,6 @@ namespace Project.Migrations
                     b.Property<Guid?>("AdminId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -257,9 +269,7 @@ namespace Project.Migrations
 
                     b.HasIndex("AdminId");
 
-                    b.HasIndex("CustomerId");
-
-                    b.ToTable("Policy");
+                    b.ToTable("Policies");
                 });
 
             modelBuilder.Entity("Project.Models.PolicyAccount", b =>
@@ -287,7 +297,7 @@ namespace Project.Migrations
                     b.HasIndex("CustomerId")
                         .IsUnique();
 
-                    b.ToTable("PolicyAccount");
+                    b.ToTable("PolicyAccounts");
                 });
 
             modelBuilder.Entity("Project.Models.Role", b =>
@@ -298,9 +308,6 @@ namespace Project.Migrations
 
                     b.Property<int>("RoleName")
                         .HasColumnType("int");
-
-                    b.Property<bool>("Status")
-                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -321,6 +328,9 @@ namespace Project.Migrations
                     b.Property<Guid>("RoleId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -331,6 +341,21 @@ namespace Project.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("CustomerPolicy", b =>
+                {
+                    b.HasOne("Project.Models.Customer", null)
+                        .WithMany()
+                        .HasForeignKey("CustomersCustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Project.Models.Policy", null)
+                        .WithMany()
+                        .HasForeignKey("PoliciesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Project.Models.Admin", b =>
@@ -419,10 +444,6 @@ namespace Project.Migrations
                     b.HasOne("Project.Models.Admin", null)
                         .WithMany("Policies")
                         .HasForeignKey("AdminId");
-
-                    b.HasOne("Project.Models.Customer", null)
-                        .WithMany("Policies")
-                        .HasForeignKey("CustomerId");
                 });
 
             modelBuilder.Entity("Project.Models.PolicyAccount", b =>
@@ -439,7 +460,7 @@ namespace Project.Migrations
             modelBuilder.Entity("Project.Models.User", b =>
                 {
                     b.HasOne("Project.Models.Role", "Role")
-                        .WithMany()
+                        .WithMany("Users")
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -467,8 +488,6 @@ namespace Project.Migrations
                 {
                     b.Navigation("Documents");
 
-                    b.Navigation("Policies");
-
                     b.Navigation("PolicyAccount");
                 });
 
@@ -477,6 +496,11 @@ namespace Project.Migrations
                     b.Navigation("Agents");
 
                     b.Navigation("Customers");
+                });
+
+            modelBuilder.Entity("Project.Models.Role", b =>
+                {
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

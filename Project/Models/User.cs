@@ -13,8 +13,12 @@ namespace Project.Models
         [Required]
         [StringLength(20, MinimumLength=7, ErrorMessage = "password must be in 7 to 20 characters")]    
         public string Password { get; set; }
+
+        public bool Status { get; set; }
         public Role Role { get; set; }  
         [ForeignKey("Role")]
         public Guid RoleId { get; set; }
+
+
     }
 }
