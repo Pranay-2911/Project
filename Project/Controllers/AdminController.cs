@@ -31,9 +31,9 @@ namespace Project.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(AdminDto adminDto)
+        public IActionResult Add(AdminRegisterDto admingisterDto)
         {
-            var adminId = _adminservice.Add(adminDto);
+            var adminId = _adminservice.Add(admingisterDto);
             return Ok(adminId);
         }
 

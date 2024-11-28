@@ -44,6 +44,14 @@ namespace Project.Mapper
 
             CreateMap<PolicyAccountDto, PolicyAccount>();
             CreateMap<PolicyAccount, PolicyAccountDto>();
+
+            CreateMap<AdminRegisterDto, User>().ForMember(dest => dest.PasswordHash, val => val.MapFrom(src => BCrypt.Net.BCrypt.HashPassword(src.Password)));
+            CreateMap<AgentRegisterDto, User>().ForMember(dest => dest.PasswordHash, val => val.MapFrom(src => BCrypt.Net.BCrypt.HashPassword(src.Password)));
+            CreateMap<EmployeeRegisterDto, User>().ForMember(dest => dest.PasswordHash, val => val.MapFrom(src => BCrypt.Net.BCrypt.HashPassword(src.Password)));
+            CreateMap<CustomerRegisterDto, User>().ForMember(dest => dest.PasswordHash, val => val.MapFrom(src => BCrypt.Net.BCrypt.HashPassword(src.Password)));
+
+            CreateMap<AdminRegisterDto, Admin>().ForMember(dest => dest.UserId, val => val.MapFrom(src => src.UserId));
+            CreateMap<Admin, AdminRegisterDto>();
         }
     }
 }

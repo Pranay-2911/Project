@@ -9,16 +9,32 @@ namespace Project.Services
     public class AdminService : IAdminService
     {
         private readonly IRepository<Admin> _repository;
-        private readonly IMapper _mapper; 
+        private readonly IMapper _mapper;
+        private readonly IRepository<User> _userRepository;
+        private readonly IRepository<Role> _roleRepository;
+        private Guid _roleId = new Guid("daabeb97-b5d8-476a-931d-08dd0ecdec34");
 
-        public AdminService(IRepository<Admin> repository, IMapper mapper)
+        public AdminService(IRepository<Admin> repository, IMapper mapper, IRepository<User> userRepository, IRepository<Role> roleRepository)
         {
             _repository = repository;
             _mapper = mapper;
+            _userRepository = userRepository;
+            _roleRepository = roleRepository;
         }
-        public Guid Add(AdminDto adminDto)
+        public Guid Add(AdminRegisterDto adminRgisterDto)
         {
-            var admin = _mapper.Map<Admin>(adminDto);
+            User user = _mapper.Map<User>(adminRgisterDto);
+            user.RoleId = _roleId;
+            user.Status = true;
+            _userRepository.Add(user);
+
+            var role = _roleRepository.Get(_roleId);
+            role.Users.Add(user);
+            _roleRepository.Update(role);
+
+            adminRgisterDto.UserId = user.Id;
+            
+            var admin = _mapper.Map<Admin>(adminRgisterDto);
             _repository.Add(admin);
             return admin.Id;
         }

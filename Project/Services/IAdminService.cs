@@ -4,7 +4,7 @@ namespace Project.Services
 {
     public interface IAdminService
     {
-        public Guid Add(AdminDto adminDto);
+        public Guid Add(AdminRegisterDto adminRgisterDto);
         public bool Update(AdminDto adminDto);
         public List<AdminDto> GetAll();
         public AdminDto Get(Guid id);

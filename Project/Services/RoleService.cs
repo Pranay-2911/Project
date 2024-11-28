@@ -42,7 +42,7 @@ namespace Project.Services
 
         public List<RoleDto> GetRoles()
         {
-            var roles =  _repository.GetAll().ToList();
+            var roles =  _repository.GetAll().Include(p => p.Users).ToList();
             List<RoleDto> roleDtos = _mapper.Map<List<RoleDto>>(roles);
             return roleDtos;
         }

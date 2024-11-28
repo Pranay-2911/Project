@@ -9,6 +9,7 @@ namespace Project.Services
 {
     public class CustomerService : ICustomerService
     {
+        private Guid _roleId = new Guid("ef3c2cd4-d117-41c0-931f-08dd0ecdec34");
         private readonly IRepository<Customer> _repository;
         private readonly IRepository<Role> _roleRepository;
         private readonly IRepository<User> _userRepository;
@@ -29,7 +30,7 @@ namespace Project.Services
             Role role = new Role() { RoleName = Roles.CUSTOMER};
             _roleRepository.Add(role);
          
-            User user = new User() { UserName = customerRegisterDto.UserName, Password = customerRegisterDto.Password, RoleId = role.Id, Status = true};
+            User user = new User() { UserName = customerRegisterDto.UserName, PasswordHash = customerRegisterDto.Password, RoleId = role.Id, Status = true};
             _userRepository.Add(user);
             
             customerRegisterDto.UserId = user.Id;
@@ -49,10 +50,10 @@ namespace Project.Services
         }
         public bool ChangePassword(ChnagePasswordDto passwordDto)
         {
-            var agent = _repository.GetAll().AsNoTracking().Include(a => a.User).Where(a => a.User.UserName == passwordDto.UserName && a.User.Password == passwordDto.Password).FirstOrDefault();
+            var agent = _repository.GetAll().AsNoTracking().Include(a => a.User).Where(a => a.User.UserName == passwordDto.UserName && a.User.PasswordHash == passwordDto.Password).FirstOrDefault();
             if (agent != null)
             {
-                agent.User.Password = passwordDto.NewPassword;
+                agent.User.PasswordHash = passwordDto.NewPassword;
                 _repository.Update(agent);
                 return true;
             }

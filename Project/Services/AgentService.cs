@@ -13,6 +13,7 @@ namespace Project.Services
         private readonly IRepository<Role> _roleRepository;
         private readonly IRepository<User> _userRepository;
         private readonly IMapper _mapper;
+        private Guid _roleId = new Guid("bd9ae755-dced-4820-931e-08dd0ecdec34");
 
         public AgentService(IRepository<Agent> repository, IMapper mapper, IRepository<Role> roleRepository, IRepository<User> userRepository)
         {
@@ -23,11 +24,14 @@ namespace Project.Services
         }
         public Guid Add(AgentRegisterDto agentRegisterDto)
         {
-            Role role = new Role() { RoleName = Roles.CUSTOMER };
-            _roleRepository.Add(role);
-
-            User user = new User() { UserName = agentRegisterDto.Username, Password = agentRegisterDto.Password, RoleId = role.Id, Status = true };
+            User user = _mapper.Map<User>(agentRegisterDto);
+            user.RoleId = _roleId;
+            user.Status = true;
             _userRepository.Add(user);
+
+            var role = _roleRepository.Get(_roleId);
+            role.Users.Add(user);
+            _roleRepository.Update(role);
 
             agentRegisterDto.UserId = user.Id;
 
@@ -38,10 +42,10 @@ namespace Project.Services
 
         public bool ChangePassword(ChnagePasswordDto passwordDto)
         {
-            var agent = _agentRepository.GetAll().AsNoTracking().Include(a => a.User).Where(a => a.User.UserName == passwordDto.UserName && a.User.Password == passwordDto.Password).FirstOrDefault();
+            var agent = _agentRepository.GetAll().AsNoTracking().Include(a => a.User).Where(a => a.User.UserName == passwordDto.UserName && a.User.PasswordHash == passwordDto.Password).FirstOrDefault();
             if (agent != null)
             {
-                agent.User.Password = passwordDto.NewPassword;
+                agent.User.PasswordHash = passwordDto.NewPassword;
                 _agentRepository.Update(agent);
                 return true;
             }
