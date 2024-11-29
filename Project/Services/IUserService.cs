@@ -10,5 +10,6 @@ namespace Project.Services
         public Guid AddUser(UserDto userDto);
         public bool DeleteUser(Guid id);
         public bool UpdateUser(UserDto userDto);
+        public User FindUserByName(string userName);
     }
 }

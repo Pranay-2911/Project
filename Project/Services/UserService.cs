@@ -59,5 +59,10 @@ namespace Project.Services
             return false;
 
         }
+
+        public User FindUserByName(string userName)
+        {
+            return _repository.GetAll().Include(u => u.Role).Where(u => u.UserName == userName).FirstOrDefault();
+        }
     }
 }

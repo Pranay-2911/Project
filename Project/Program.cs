@@ -1,9 +1,12 @@
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Project.Data;
 using Project.Mapper;
 using Project.Repositories;
 using Project.Services;
+using System.Text;
 using System.Text.Json.Serialization;
 
 namespace Project
@@ -35,12 +38,43 @@ namespace Project
             builder.Services.AddTransient<ICustomerService, CustomerService>();
             builder.Services.AddTransient<IAgentService, AgentService>();  
             builder.Services.AddTransient<IAdminService, AdminService>();
+            builder.Services.AddTransient<ILoginService, LoginService>();
+
+
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngularApp", policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200")
+                           .AllowAnyHeader()
+                           .AllowAnyMethod()
+                           .WithExposedHeaders("*");
+                });
+            });
+
+
+
+            //add auth scheme--validating token
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8
+                        .GetBytes(builder.Configuration.GetSection("AppSettings:Key").Value)),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
 
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
 
             var app = builder.Build();
 
@@ -52,7 +86,7 @@ namespace Project
             }
 
             app.UseHttpsRedirection();
-
+            app.UseCors("AllowAngularApp");
             app.UseAuthorization();
 
 
