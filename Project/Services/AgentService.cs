@@ -42,12 +42,16 @@ namespace Project.Services
 
         public bool ChangePassword(ChnagePasswordDto passwordDto)
         {
-            var agent = _agentRepository.GetAll().AsNoTracking().Include(a => a.User).Where(a => a.User.UserName == passwordDto.UserName && a.User.PasswordHash == passwordDto.Password).FirstOrDefault();
+            var agent = _agentRepository.GetAll().AsNoTracking().Include(a => a.User).Where(a => a.User.UserName == passwordDto.UserName).FirstOrDefault();
             if (agent != null)
             {
-                agent.User.PasswordHash = passwordDto.NewPassword;
-                _agentRepository.Update(agent);
-                return true;
+                if (BCrypt.Net.BCrypt.Verify(passwordDto.Password, agent.User.PasswordHash))
+                {
+                    agent.User.PasswordHash = BCrypt.Net.BCrypt.HashPassword(passwordDto.NewPassword);
+                    _agentRepository.Update(agent);
+                    return true;
+                }
+                   
             }
             return false;
         }

@@ -16,11 +16,10 @@ namespace Project.Controllers
     public class LoginController : ControllerBase
     {
         private readonly ILoginService _loginService;
-        private readonly IConfiguration _configuration;
-        public LoginController(ILoginService loginService, IConfiguration configuration)
+       
+        public LoginController(ILoginService loginService)
         {
             _loginService = loginService;
-            _configuration = configuration;
         }
 
         [HttpPost]
@@ -32,11 +31,10 @@ namespace Project.Controllers
                 if (BCrypt.Net.BCrypt.Verify(loginDto.Password, existingUser.PasswordHash))
                 {
                     var role = existingUser.Role.RoleName.ToString();
-                    var user = _loginService.FindUser(role, existingUser.Id);
-
-
-                    //var token = CreateToken(user);
-                    //Response.Headers.Add("Jwt", token);
+                    string token = "";
+                    var user = _loginService.FindUser(role, existingUser.Id, ref token);
+    
+                    Response.Headers.Add("Jwt", token);
                     return Ok(new { roleName = role });
                 }
             }
@@ -44,27 +42,7 @@ namespace Project.Controllers
         }
 
 
-        //private string CreateToken(Object user)
-        //{
-
-        //    var roleName = user.Role.RoleName.ToString();
-        //    List<Claim> claim = new List<Claim>()
-        //    {
-        //        new Claim(ClaimTypes.Name,user.UserName),
-        //        new Claim(ClaimTypes.Role, roleName)
-        //    };
-
-        //    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Key").Value));
-        //    var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
-        //    //token construction
-        //    var token = new JwtSecurityToken(
-        //        claims: claim,
-        //        expires: DateTime.Now.AddDays(1),
-        //        signingCredentials: cred
-        //        );
-        //    //generate the token
-        //    var jwt = new JwtSecurityTokenHandler().WriteToken(token);
-        //    return jwt;
-        }
+       
+    }
     
 }

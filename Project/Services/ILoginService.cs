@@ -7,7 +7,7 @@ namespace Project.Services
         public User FindByUserName(string userName);
 
 
-        public object FindUser(string role, Guid id);
+        public object FindUser(string role, Guid id, ref string token);
 
 
     }
