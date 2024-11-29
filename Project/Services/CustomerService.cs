@@ -27,12 +27,15 @@ namespace Project.Services
         public Guid AddCustomer(CustomerRegisterDto customerRegisterDto)
         {
 
-            Role role = new Role() { RoleName = Roles.CUSTOMER};
-            _roleRepository.Add(role);
-         
-            User user = new User() { UserName = customerRegisterDto.UserName, PasswordHash = customerRegisterDto.Password, RoleId = role.Id, Status = true};
+            User user = _mapper.Map<User>(customerRegisterDto);
+            user.RoleId = _roleId;
+            user.Status = true;
             _userRepository.Add(user);
-            
+
+            var role = _roleRepository.Get(_roleId);
+            role.Users.Add(user);
+            _roleRepository.Update(role);
+
             customerRegisterDto.UserId = user.Id;
 
             var customer = _mapper.Map<Customer>(customerRegisterDto);
