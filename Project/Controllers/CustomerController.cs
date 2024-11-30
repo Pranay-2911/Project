@@ -29,18 +29,21 @@ namespace Project.Controllers
             var id = _customerService.AddCustomer(customerRegisterDto);
             return Ok(id);
         }
+
         [HttpPost("PolicyAccount")]
         public IActionResult AddPolicyAccount(PolicyAccountDto policyAccountDto)
         {
             var id = _customerService.AddPolicyAccount(policyAccountDto);
             return Ok(id);
         }
+
         [HttpGet("{id}")]
         public IActionResult Get(Guid id)
         {
             var customer = _customerService.GetById(id);
             return Ok(customer);
         }
+
         [HttpPut]
         public IActionResult Update(CustomerDto customerDto)
         {
@@ -62,11 +65,11 @@ namespace Project.Controllers
         }
 
         [HttpPut("chnagepassword")]
-        public IActionResult ChangePassword(ChnagePasswordDto chnagePasswordDto)
+        public IActionResult ChangePassword(ChangePasswordDto changePasswordDto)
         {
-            if (_customerService.ChangePassword(chnagePasswordDto))
+            if (_customerService.ChangePassword(changePasswordDto))
             {
-                return Ok(chnagePasswordDto);
+                return Ok(changePasswordDto);
             }
             return NotFound("Agent not found");
 

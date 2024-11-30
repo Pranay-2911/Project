@@ -10,6 +10,6 @@ namespace Project.Services
         public List<Agent> GetAll();
         public AgentDto Get(Guid id);
         public bool Delete(Guid id);
-        public bool ChangePassword(ChnagePasswordDto passwordDto);
+        public bool ChangePassword(ChangePasswordDto passwordDto);
     }
 }

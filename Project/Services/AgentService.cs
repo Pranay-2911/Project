@@ -40,7 +40,7 @@ namespace Project.Services
             return agent.Id;
         }
 
-        public bool ChangePassword(ChnagePasswordDto passwordDto)
+        public bool ChangePassword(ChangePasswordDto passwordDto)
         {
             var agent = _agentRepository.GetAll().AsNoTracking().Include(a => a.User).Where(a => a.User.UserName == passwordDto.UserName).FirstOrDefault();
             if (agent != null)

@@ -52,6 +52,9 @@ namespace Project.Mapper
 
             CreateMap<AdminRegisterDto, Admin>().ForMember(dest => dest.UserId, val => val.MapFrom(src => src.UserId));
             CreateMap<Admin, AdminRegisterDto>();
+
+            CreateMap<Policy, PolicyDto>();
+            CreateMap<PolicyDto, Policy>();
         }
     }
 }

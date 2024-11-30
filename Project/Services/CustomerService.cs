@@ -42,6 +42,7 @@ namespace Project.Services
             _repository.Add(customer);
             return customer.CustomerId;
         }
+
         public Guid AddPolicyAccount(PolicyAccountDto policyAccountDto)
         {
             var policyAccont = _mapper.Map<PolicyAccount>(policyAccountDto);
@@ -51,7 +52,8 @@ namespace Project.Services
             _repository.Update(customer);
             return policyAccont.Id;
         }
-        public bool ChangePassword(ChnagePasswordDto passwordDto)
+
+        public bool ChangePassword(ChangePasswordDto passwordDto)
         {
             var customer = _repository.GetAll().AsNoTracking().Include(a => a.User).Where(a => a.User.UserName == passwordDto.UserName).FirstOrDefault();
             if (customer != null)

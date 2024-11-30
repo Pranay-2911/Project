@@ -10,10 +10,12 @@ namespace Project.Controllers
     public class AgentController : ControllerBase
     {
         private readonly IAgentService _agentService;
+        private readonly ICustomerService _customerService;
 
-        public AgentController(IAgentService agentService)
+        public AgentController(IAgentService agentService, ICustomerService customerService)
         {
             _agentService = agentService;
+            _customerService = customerService;
         }
 
         [HttpGet]
@@ -54,15 +56,22 @@ namespace Project.Controllers
         }
 
         [HttpPut("chnagepassword")]
-        public IActionResult ChangePassword(ChnagePasswordDto chnagePasswordDto)
+        public IActionResult ChangePassword(ChangePasswordDto changePasswordDto)
         {
-            if(_agentService.ChangePassword(chnagePasswordDto))
+            if(_agentService.ChangePassword(changePasswordDto))
             {
-                return Ok(chnagePasswordDto);
+                return Ok(changePasswordDto);
             }
             return NotFound("Agent not found");
 
 
+        }
+
+        [HttpPost("customer")]
+        public IActionResult AddCustomer(CustomerRegisterDto customerRegisterDto)
+        {
+            var customerId = _customerService.AddCustomer(customerRegisterDto);
+            return Ok(customerId);
         }
     }
 }

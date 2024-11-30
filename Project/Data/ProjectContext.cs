@@ -14,6 +14,9 @@ namespace Project.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Policy> Policies { get; set; }
         public DbSet<PolicyAccount> PolicyAccounts { get; set; }
+        public DbSet<State> States { get; set; }
+        public DbSet<City> Cities { get; set; }
+        public DbSet<Query> Queries { get; set; }
 
 
        

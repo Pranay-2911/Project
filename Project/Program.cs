@@ -39,6 +39,10 @@ namespace Project
             builder.Services.AddTransient<IAgentService, AgentService>();  
             builder.Services.AddTransient<IAdminService, AdminService>();
             builder.Services.AddTransient<ILoginService, LoginService>();
+            builder.Services.AddTransient<IPolicyService, PolicyService>();
+            builder.Services.AddTransient<IStateService, StateService>();
+            builder.Services.AddTransient<IPaymentService, PaymentService>();
+            builder.Services.AddTransient<IPremiumService, PremiumService>();
 
 
 

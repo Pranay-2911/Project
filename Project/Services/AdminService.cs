@@ -12,14 +12,16 @@ namespace Project.Services
         private readonly IMapper _mapper;
         private readonly IRepository<User> _userRepository;
         private readonly IRepository<Role> _roleRepository;
+        private readonly IRepository<State> _stateRepository;
         private Guid _roleId = new Guid("daabeb97-b5d8-476a-931d-08dd0ecdec34");
 
-        public AdminService(IRepository<Admin> repository, IMapper mapper, IRepository<User> userRepository, IRepository<Role> roleRepository)
+        public AdminService(IRepository<Admin> repository, IMapper mapper, IRepository<User> userRepository, IRepository<Role> roleRepository, IRepository<State> stateRepository)
         {
             _repository = repository;
             _mapper = mapper;
             _userRepository = userRepository;
             _roleRepository = roleRepository;
+            _stateRepository = stateRepository;
         }
         public Guid Add(AdminRegisterDto adminRgisterDto)
         {

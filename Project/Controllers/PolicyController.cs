@@ -15,12 +15,12 @@ namespace Project.Controllers
             _policyService = policyService;
         }
 
-        [HttpPost]
-        public IActionResult Add(Policy policy)
-        {
-            var newId = _policyService.Add(policy);
-            return Ok(newId);
-        }
+        //[HttpPost]
+        //public IActionResult Add(Policy policy)
+        //{
+        //    var newId = _policyService.Add(policy);
+        //    return Ok(newId);
+        //}
 
         [HttpDelete]
         public IActionResult Delete(Guid id)
