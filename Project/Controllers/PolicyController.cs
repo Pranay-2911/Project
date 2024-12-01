@@ -11,7 +11,7 @@ namespace Project.Controllers
     public class PolicyController : ControllerBase
     {
         private readonly IPolicyService _policyService;
-        public PolicyController(IPolicyService policyService)
+        public PolicyController(IPolicyService policyService) 
         {
             _policyService = policyService;
         }
