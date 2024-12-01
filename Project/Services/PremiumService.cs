@@ -15,19 +15,6 @@ namespace Project.Services
             _premiumRepository = premiumRepository;
         }
 
-        public List<PremiumDto> GetPremiumsByPolicy(Guid policyId)
-        {
-            return _premiumRepository.GetAll()
-                .Where(p => p.PolicyId == policyId)
-                .Select(p => new PremiumDto
-                {
-                    Id = p.Id,
-                    DueDate = p.DueDate,
-                    Amount = p.Amount,
-                    Status = p.Status
-                }).ToList();
-        }
-
         public PaymentDto PayPremium(Guid premiumId, PaymentDto paymentDto)
         {
             var premium = _premiumRepository.Get(premiumId);

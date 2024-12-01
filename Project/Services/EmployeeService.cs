@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Project.DTOs;
+using Project.Exceptions;
 using Project.Models;
 using Project.Repositories;
 
@@ -46,12 +47,17 @@ namespace Project.Services
                 _repository.Delete(employee);
                 return true;
             }
-            return false;
+            throw new EmployeeNotFoundException("Employee Does Not Exist");
         }
 
         public Employee GetById(Guid id)
         {
-            return _repository.Get(id);
+            var emmloyee = _repository.Get(id);
+            if(emmloyee != null)
+            {
+                return emmloyee;
+            }
+            throw new EmployeeNotFoundException("Employee Does Not Exist");
         }
 
         public List<EmployeeDto> GetEmployees()
@@ -70,7 +76,7 @@ namespace Project.Services
                 _repository.Update(employee);
                 return true;
             }
-            return false;
+            throw new EmployeeNotFoundException("Employee Does Not Exist");
         }
     }
 }

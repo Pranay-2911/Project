@@ -16,6 +16,13 @@ namespace Project.Controllers
             _policyService = policyService;
         }
 
+        [HttpGet]
+        public IActionResult Get()
+        {
+            var policyDto = _policyService.GetAll();
+            return Ok(policyDto);
+        }
+
         [HttpPost]
         public IActionResult Add(PolicyDto policy)
         {

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Project.DTOs;
+using Project.Exceptions;
 using Project.Models;
 using Project.Repositories;
 using Project.Types;
@@ -77,12 +78,17 @@ namespace Project.Services
                 _repository.Delete(customer);
                 return true;
             }
-            return false;
+            throw new CustomerNotFoundException("Customer Does Not Exist");
         }
 
         public Customer GetById(Guid id)
         {
-            return _repository.Get(id);
+            var customer =  _repository.Get(id);
+            if(customer != null)
+            {
+                return customer;
+            }
+            throw new CustomerNotFoundException("Customer Does Not Exist");
         }
 
         public List<CustomerDto> GetCustomers()
@@ -101,7 +107,7 @@ namespace Project.Services
                 _repository.Update(customer);
                 return true;
             }
-            return false;
+            throw new CustomerNotFoundException("Customer Does Not Exist");
         }
     }
 }

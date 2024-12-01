@@ -27,6 +27,12 @@ namespace Project.Exceptions
                 response.ExceptionMessage = exception.Message;
                 response.Title = "Wrong Input";
             }
+            else if (exception is CustomerNotFoundException)
+            {
+                response.StatusCode = StatusCodes.Status404NotFound;
+                response.ExceptionMessage = exception.Message;
+                response.Title = "Wrong Input";
+            }
             else if (exception is ValidationException validationException)
             {
                 response.StatusCode = StatusCodes.Status400BadRequest;
