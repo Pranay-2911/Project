@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Project.DTOs;
+using Project.Exceptions;
 using Project.Models;
 using Project.Repositories;
 
@@ -49,7 +50,7 @@ namespace Project.Services
                 _repository.Delete(admin);
                 return true;
             }
-            return false;
+            throw new AdminNotFoundException("Admin Does Not Exist");
         }
 
         public AdminDto Get(Guid id)
@@ -60,7 +61,7 @@ namespace Project.Services
                 var adminDto = _mapper.Map<AdminDto>(admin);
                 return adminDto;
             }
-            throw new Exception("No such admin exist");
+            throw new AdminNotFoundException("Admin Does Not Exist");
         }
 
         public List<AdminDto> GetAll()
@@ -79,7 +80,7 @@ namespace Project.Services
                 _repository.Update(admin);
                 return true;
             }
-            return false;
+            throw new AdminNotFoundException("Admin Does Not Exist");
         }
     }
 }

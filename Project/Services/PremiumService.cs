@@ -33,7 +33,7 @@ namespace Project.Services
             var premium = _premiumRepository.Get(premiumId);
 
             if (premium == null || premium.Status == "Paid")
-                return new PaymentDto { Status = "failed", Amount = paymentDto.Amount };
+                return new PaymentDto { Status = false, Amount = paymentDto.Amount };
 
             // Save payment details
             var payment = new Payment
@@ -51,7 +51,7 @@ namespace Project.Services
             premium.PaymentDate = DateTime.UtcNow;
             _premiumRepository.Update(premium);
 
-            return new PaymentDto { Amount = paymentDto.Amount, Status = "Success" };
+            return new PaymentDto { Amount = paymentDto.Amount, Status = true };
         }
 
         public List<PremiumDto> GetPremiumStatuses(Guid policyId)

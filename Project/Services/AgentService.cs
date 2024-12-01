@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Project.DTOs;
+using Project.Exceptions;
 using Project.Models;
 using Project.Repositories;
 using Project.Types;
@@ -64,7 +65,7 @@ namespace Project.Services
                 _agentRepository.Delete(agent);
                 return true;
             }
-            return false;
+            throw new AgentNotFoundException("Agent Does Not Exist");
         }
 
         public AgentDto Get(Guid id)
@@ -75,7 +76,7 @@ namespace Project.Services
                 var agentDto = _mapper.Map<AgentDto>(agent);
                 return agentDto;
             }
-            throw new Exception("No such agent exist");
+            throw new AgentNotFoundException("Agent Does Not Exist");
         }
 
         public List<Agent> GetAll()
@@ -94,7 +95,7 @@ namespace Project.Services
                 _agentRepository.Update(agent);
                 return true;
             }
-            return false;
+            throw new AgentNotFoundException("Agent Does Not Exist");
         }
     }
 }

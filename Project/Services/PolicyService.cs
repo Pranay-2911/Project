@@ -8,11 +8,15 @@ namespace Project.Services
     public class PolicyService : IPolicyService
     {
         private readonly IRepository<Policy> _policyRepository;
+        private readonly IRepository<Customer> _customerRepository;
+        private readonly IRepository<Premium> _premiumRepository;
         private readonly IMapper _mapper;
 
-        public PolicyService(IRepository<Policy> repository, IMapper mapper)
+        public PolicyService(IRepository<Policy> repository, IMapper mapper, IRepository<Customer> customerRepository, IRepository<Premium> premiumRepository)
         {
             _policyRepository = repository;
+            _customerRepository = customerRepository;
+            _premiumRepository = premiumRepository;
             _mapper = mapper;
         }
         public Guid Add(PolicyDto policydto)
@@ -62,5 +66,45 @@ namespace Project.Services
             }
             return false;
         }
+
+        public bool PurchasePolicy(Guid customerId, Guid policyId, double totalAmount, int durationInMonths)
+        {
+            // 1. Link customer to the policy (add an entry in the policy-customer table if required)
+            var policy = _policyRepository.Get(policyId);
+            var customer = _customerRepository.Get(customerId);
+            customer.Policies.Add(policy);
+
+
+            // 2. Generate the premium schedule
+            var premiums = GeneratePremiumSchedule(customerId, policyId, totalAmount, durationInMonths);
+
+            // 3. Insert premiums into the database
+            foreach (var premium in premiums)
+            {
+                _premiumRepository.Add(premium);
+            }
+            return true;
+        }
+
+        private List<Premium> GeneratePremiumSchedule(Guid customerId, Guid policyId, double totalAmount, int durationInMonths)
+        {
+            var premiums = new List<Premium>();
+            var monthlyAmount = totalAmount / durationInMonths; // Split total amount equally
+
+            for (int i = 0; i < durationInMonths; i++)
+            {
+                premiums.Add(new Premium
+                {
+                    CustomerId = customerId,
+                    PolicyId = policyId,
+                    Amount = monthlyAmount,
+                    DueDate = DateTime.Now.AddMonths(i + 1), // Due date is next month onwards
+                    Status = "Unpaid"
+                });
+            }
+
+            return premiums;
+        }
+
     }
 }

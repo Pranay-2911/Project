@@ -30,8 +30,8 @@ namespace Project.Controllers
         public IActionResult PayPremium(Guid premiumId, [FromBody] PaymentDto paymentDto)
         {
             var result = _premiumService.PayPremium(premiumId, paymentDto);
-            if (!result.Success)
-                return BadRequest(result.Message);
+            if (!result.Status)
+                return BadRequest(result.Status);
 
             return Ok(result);
         }

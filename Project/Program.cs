@@ -1,8 +1,10 @@
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Project.Data;
+using Project.Exceptions;
 using Project.Mapper;
 using Project.Repositories;
 using Project.Services;
@@ -30,6 +32,11 @@ namespace Project
                 x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
             });
 
+            builder.Services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
+
             builder.Services.AddAutoMapper(typeof(MapperProfile));
             builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
             builder.Services.AddTransient<IRoleService, RoleService>();
@@ -41,7 +48,6 @@ namespace Project
             builder.Services.AddTransient<ILoginService, LoginService>();
             builder.Services.AddTransient<IPolicyService, PolicyService>();
             builder.Services.AddTransient<IStateService, StateService>();
-            builder.Services.AddTransient<IPaymentService, PaymentService>();
             builder.Services.AddTransient<IPremiumService, PremiumService>();
 
 
@@ -78,6 +84,7 @@ namespace Project
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddExceptionHandler<AppExceptionHandler>();
 
 
             var app = builder.Build();
@@ -88,6 +95,8 @@ namespace Project
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseExceptionHandler(_ => { });
 
             app.UseHttpsRedirection();
             app.UseCors("AllowAngularApp");

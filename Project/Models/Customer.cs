@@ -32,7 +32,7 @@ namespace Project.Models
         public Guid? AgentId { get; set; }
         public List<Document> Documents { get; set; }
         public PolicyAccount? PolicyAccount { get; set; }
-        public List<Policy> Policies { get; set; }
+        public List<Policy> Policies { get; set; } = new List<Policy>();
 
        
     }

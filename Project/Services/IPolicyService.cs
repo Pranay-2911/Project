@@ -9,5 +9,6 @@ namespace Project.Services
         public List<PolicyDto> GetAll();
         public bool Update(PolicyDto policy);
         public bool Delete(Guid id);
+        public bool PurchasePolicy(Guid customerId, Guid policyId, double totalAmount, int durationInMonths);
     }
 }

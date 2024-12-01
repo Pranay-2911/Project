@@ -11,9 +11,12 @@ namespace Project.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ICustomerService _customerService;
-        public CustomerController(ICustomerService customerService)
+        private readonly IPolicyService _policyService;
+
+        public CustomerController(ICustomerService customerService, IPolicyService policyService)
         {
             _customerService = customerService;
+            _policyService = policyService;
         }
 
         [HttpGet]
@@ -72,8 +75,27 @@ namespace Project.Controllers
                 return Ok(changePasswordDto);
             }
             return NotFound("Agent not found");
-
-
         }
+
+        [HttpPost("customer/{customerId}/purchase-policy")]
+        public IActionResult PurchasePolicy(Guid customerId, PurchasePolicyRequestDto requestdto)
+        {
+            // 1. Validate inputs
+            if (requestdto.PolicyId == Guid.Empty || requestdto.TotalAmount <= 0 || requestdto.DurationInMonths <= 0)
+            {
+                return BadRequest(new {message = "Invalid purchase request." });
+            }
+
+            // 2. Link customer to policy and generate premiums
+            var result = _policyService.PurchasePolicy(customerId, requestdto.PolicyId, requestdto.TotalAmount, requestdto.DurationInMonths);
+
+            // 3. Return success or failure response
+            if (result)
+            {
+                return Ok(new {message = "Policy purchased successfully!" });
+            }
+            return BadRequest(new {message = "Failed to purchase policy." });
+        }
+
     }
 }

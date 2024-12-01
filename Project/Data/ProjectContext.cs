@@ -17,6 +17,9 @@ namespace Project.Data
         public DbSet<State> States { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<Query> Queries { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+        public DbSet<Premium> Premiums { get; set; }
+
 
 
        
