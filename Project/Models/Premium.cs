@@ -20,5 +20,7 @@ namespace Project.Models
         public Customer Customer { get; set; }
         [ForeignKey("Customer")]
         public Guid CustomerId { get; set; }
+
+        public Guid? AgentId { get; set; }  
     }
 }

@@ -14,7 +14,6 @@ namespace Project.Services
         private readonly IRepository<Role> _roleRepository;
         private readonly IRepository<User> _userRepository;
         private readonly IMapper _mapper;
-        private Guid _roleId = new Guid("bd9ae755-dced-4820-931e-08dd0ecdec34");
 
         public AgentService(IRepository<Agent> repository, IMapper mapper, IRepository<Role> roleRepository, IRepository<User> userRepository)
         {
@@ -25,12 +24,13 @@ namespace Project.Services
         }
         public Guid Add(AgentRegisterDto agentRegisterDto)
         {
+            var roleName = _roleRepository.GetAll().Where(r => r.RoleName == Roles.AGENT).FirstOrDefault();
             User user = _mapper.Map<User>(agentRegisterDto);
-            user.RoleId = _roleId;
+            user.RoleId = roleName.Id;
             user.Status = true;
             _userRepository.Add(user);
 
-            var role = _roleRepository.Get(_roleId);
+            var role = _roleRepository.Get(roleName.Id);
             role.Users.Add(user);
             _roleRepository.Update(role);
 

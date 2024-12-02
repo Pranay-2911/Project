@@ -10,7 +10,6 @@ namespace Project.Services
 {
     public class CustomerService : ICustomerService
     {
-        private Guid _roleId = new Guid("ef3c2cd4-d117-41c0-931f-08dd0ecdec34");
         private readonly IRepository<Customer> _repository;
         private readonly IRepository<Role> _roleRepository;
         private readonly IRepository<User> _userRepository;
@@ -28,12 +27,13 @@ namespace Project.Services
         public Guid AddCustomer(CustomerRegisterDto customerRegisterDto)
         {
 
+            var roleName = _roleRepository.GetAll().Where(r => r.RoleName == Roles.CUSTOMER).FirstOrDefault();
             User user = _mapper.Map<User>(customerRegisterDto);
-            user.RoleId = _roleId;
+            user.RoleId = roleName.Id;
             user.Status = true;
             _userRepository.Add(user);
 
-            var role = _roleRepository.Get(_roleId);
+            var role = _roleRepository.Get(roleName.Id);
             role.Users.Add(user);
             _roleRepository.Update(role);
 
@@ -44,15 +44,7 @@ namespace Project.Services
             return customer.CustomerId;
         }
 
-        public Guid AddPolicyAccount(PolicyAccountDto policyAccountDto)
-        {
-            var policyAccont = _mapper.Map<PolicyAccount>(policyAccountDto);
-            _policyAccountRepository.Add(policyAccont);
-            var customer = _repository.Get(policyAccont.CustomerId);
-            customer.PolicyAccount = policyAccont;
-            _repository.Update(customer);
-            return policyAccont.Id;
-        }
+        
 
         public bool ChangePassword(ChangePasswordDto passwordDto)
         {
@@ -93,7 +85,7 @@ namespace Project.Services
 
         public List<CustomerDto> GetCustomers()
         {
-            var customer = _repository.GetAll().AsNoTracking().Include(p => p.PolicyAccount).ToList();
+            var customer = _repository.GetAll().AsNoTracking().ToList();
             List<CustomerDto> customerDtos = _mapper.Map<List<CustomerDto>>(customer);
             return customerDtos;
         }

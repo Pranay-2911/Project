@@ -19,9 +19,5 @@ namespace Project.Models
         [ForeignKey("User")]
         public Guid UserId { get; set; }
 
-        public List<Employee> Employees { get; set; }
-        public List<Customer> Customers { get; set; }
-        public List<Agent> Agents { get; set; }
-        public List<Policy> Policies { get; set; }
     }
 }

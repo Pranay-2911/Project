@@ -14,24 +14,26 @@ namespace Project.Services
         private readonly IRepository<User> _userRepository;
         private readonly IRepository<Role> _roleRepository;
         private readonly IRepository<State> _stateRepository;
-        private Guid _roleId = new Guid("daabeb97-b5d8-476a-931d-08dd0ecdec34");
+        private readonly IRepository<City> _cityRepository;
 
-        public AdminService(IRepository<Admin> repository, IMapper mapper, IRepository<User> userRepository, IRepository<Role> roleRepository, IRepository<State> stateRepository)
+        public AdminService(IRepository<Admin> repository, IMapper mapper, IRepository<User> userRepository, IRepository<Role> roleRepository, IRepository<State> stateRepository, IRepository<City> cityRepository)
         {
             _repository = repository;
             _mapper = mapper;
             _userRepository = userRepository;
             _roleRepository = roleRepository;
             _stateRepository = stateRepository;
+            _cityRepository = cityRepository;
         }
         public Guid Add(AdminRegisterDto adminRgisterDto)
         {
+            var roleName = _roleRepository.GetAll().Where(r => r.RoleName == Types.Roles.ADMIN).FirstOrDefault();
             User user = _mapper.Map<User>(adminRgisterDto);
-            user.RoleId = _roleId;
+            user.RoleId = roleName.Id;
             user.Status = true;
             _userRepository.Add(user);
 
-            var role = _roleRepository.Get(_roleId);
+            var role = _roleRepository.Get(roleName.Id);
             role.Users.Add(user);
             _roleRepository.Update(role);
 
@@ -82,5 +84,7 @@ namespace Project.Services
             }
             throw new AdminNotFoundException("Admin Does Not Exist");
         }
+        
+
     }
 }

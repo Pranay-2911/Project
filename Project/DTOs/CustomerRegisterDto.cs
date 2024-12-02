@@ -18,8 +18,7 @@ namespace Project.DTOs
         public long MobileNumber { get; set; }
         public string State { get; set; }
         public string City { get; set; }
-        public string Nominee { get; set; }
-        public string NomineeRelation { get; set; }
+
         [Required]
         [StringLength(20, MinimumLength = 5, ErrorMessage = "username must be in 5 to 20 characters")]
         public string UserName { get; set; }

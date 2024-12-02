@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Project.DTOs;
 using Project.Services;
@@ -12,15 +13,17 @@ namespace Project.Controllers
         private readonly IAdminService _adminService;
         private readonly IPolicyService _policyService;
         private readonly IStateService _stateService;
+        private readonly IPolicyAccountService _policyAccountService;
 
-        public AdminController(IAdminService adminService, IPolicyService policyService, IStateService stateService)
+        public AdminController(IAdminService adminService, IPolicyService policyService, IStateService stateService, IPolicyAccountService policyAccountService)
         {
             _adminService = adminService;
             _policyService = policyService;
             _stateService = stateService;
+            _policyAccountService = policyAccountService;
         }
 
-        [HttpGet]
+        [HttpGet, Authorize(Roles = "ADMIN")]
         public IActionResult GetAll()
         {
             var admins = _adminService.GetAll();
@@ -30,7 +33,7 @@ namespace Project.Controllers
         [HttpGet("Policy")]
         public IActionResult GetAllPolicies()
         {
-            var policies = _policyService.GetAll();
+            var policies = _policyService.GetAllSchema();
             return Ok(policies);
         }
 
@@ -55,11 +58,17 @@ namespace Project.Controllers
             return Ok(adminId);
         }
 
-        [HttpPost("Policy")]
-        public IActionResult AddPolicy(PolicyDto policyDto)
+        [HttpPost("Schema")]
+        public IActionResult AddSchema(PolicyDto policy)
         {
-            var policyId = _policyService.Add(policyDto);
-            return Ok(policyId);
+            var newId = _policyService.AddSchema(policy);
+            return Ok(newId);
+        }
+        [HttpPost("Plan")]
+        public IActionResult AddPlan(PlanDto planDto)
+        {
+            var newId = _policyService.AddPlan(planDto);
+            return Ok(newId);
         }
 
         [HttpDelete("{id}")]
@@ -111,6 +120,18 @@ namespace Project.Controllers
         {
             var states = _stateService.GetAllState();
             return Ok(states);
+        }
+        [HttpGet("City")]
+        public IActionResult GetCity()
+        {
+            var city = _stateService.GetCities();
+            return Ok(city);
+        }
+        [HttpGet("PolicyAccount")]
+        public IActionResult GetPolicyAccount()
+        {
+            var accounts = _policyAccountService.GetAll();
+            return Ok(accounts);
         }
 
     }

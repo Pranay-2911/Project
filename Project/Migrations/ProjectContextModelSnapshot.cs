@@ -22,21 +22,6 @@ namespace Project.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("CustomerPolicy", b =>
-                {
-                    b.Property<Guid>("CustomersCustomerId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("PoliciesId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("CustomersCustomerId", "PoliciesId");
-
-                    b.HasIndex("PoliciesId");
-
-                    b.ToTable("CustomerPolicy");
-                });
-
             modelBuilder.Entity("Project.Models.Admin", b =>
                 {
                     b.Property<Guid>("Id")
@@ -69,12 +54,6 @@ namespace Project.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AdminId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<double>("CommisionEarned")
-                        .HasColumnType("float");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -102,15 +81,10 @@ namespace Project.Migrations
                     b.Property<double>("TotalCommissionEarned")
                         .HasColumnType("float");
 
-                    b.Property<double>("TotalWithdrawalAmount")
-                        .HasColumnType("float");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AdminId");
 
                     b.HasIndex("EmployeeId");
 
@@ -142,13 +116,38 @@ namespace Project.Migrations
                     b.ToTable("Cities");
                 });
 
+            modelBuilder.Entity("Project.Models.Commission", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AgentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("CommissionAmount")
+                        .HasColumnType("float");
+
+                    b.Property<int>("CommissionType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("EarnedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("PolicyId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AgentId");
+
+                    b.ToTable("Commissions");
+                });
+
             modelBuilder.Entity("Project.Models.Customer", b =>
                 {
                     b.Property<Guid>("CustomerId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("AdminId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("AgentId")
@@ -178,14 +177,6 @@ namespace Project.Migrations
                     b.Property<long>("MobileNumber")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("Nominee")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("NomineeRelation")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("State")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -194,8 +185,6 @@ namespace Project.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("CustomerId");
-
-                    b.HasIndex("AdminId");
 
                     b.HasIndex("AgentId");
 
@@ -236,9 +225,6 @@ namespace Project.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AdminId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -264,11 +250,26 @@ namespace Project.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AdminId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("Project.Models.GlobalVariables", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<float>("CommisionWithdrawDeduction")
+                        .HasColumnType("real");
+
+                    b.Property<float>("PolicyCancelationPenalty")
+                        .HasColumnType("real");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GlobalVariables");
                 });
 
             modelBuilder.Entity("Project.Models.Payment", b =>
@@ -297,13 +298,25 @@ namespace Project.Migrations
                     b.ToTable("Payments");
                 });
 
-            modelBuilder.Entity("Project.Models.Policy", b =>
+            modelBuilder.Entity("Project.Models.Plan", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("AdminId")
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Plans");
+                });
+
+            modelBuilder.Entity("Project.Models.Policy", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Description")
@@ -335,6 +348,9 @@ namespace Project.Migrations
                     b.Property<int>("MinPolicyTerm")
                         .HasColumnType("int");
 
+                    b.Property<Guid>("PlanId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<bool>("PolicyStatus")
                         .HasColumnType("bit");
 
@@ -351,7 +367,7 @@ namespace Project.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AdminId");
+                    b.HasIndex("PlanId");
 
                     b.ToTable("Policies");
                 });
@@ -362,24 +378,30 @@ namespace Project.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<long>("AccountNumber")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("BankName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid?>("AgentId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("IFSC")
+                    b.Property<string>("Nominee")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("NomineeRelation")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("PolicyID")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("PurchasedDate")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId")
-                        .IsUnique();
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("PolicyID");
 
                     b.ToTable("PolicyAccounts");
                 });
@@ -388,6 +410,9 @@ namespace Project.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("AgentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<double>("Amount")
@@ -498,21 +523,6 @@ namespace Project.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("CustomerPolicy", b =>
-                {
-                    b.HasOne("Project.Models.Customer", null)
-                        .WithMany()
-                        .HasForeignKey("CustomersCustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Project.Models.Policy", null)
-                        .WithMany()
-                        .HasForeignKey("PoliciesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Project.Models.Admin", b =>
                 {
                     b.HasOne("Project.Models.User", "User")
@@ -526,10 +536,6 @@ namespace Project.Migrations
 
             modelBuilder.Entity("Project.Models.Agent", b =>
                 {
-                    b.HasOne("Project.Models.Admin", null)
-                        .WithMany("Agents")
-                        .HasForeignKey("AdminId");
-
                     b.HasOne("Project.Models.Employee", null)
                         .WithMany("Agents")
                         .HasForeignKey("EmployeeId");
@@ -550,12 +556,19 @@ namespace Project.Migrations
                         .HasForeignKey("StateId");
                 });
 
+            modelBuilder.Entity("Project.Models.Commission", b =>
+                {
+                    b.HasOne("Project.Models.Agent", "Agent")
+                        .WithMany()
+                        .HasForeignKey("AgentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Agent");
+                });
+
             modelBuilder.Entity("Project.Models.Customer", b =>
                 {
-                    b.HasOne("Project.Models.Admin", null)
-                        .WithMany("Customers")
-                        .HasForeignKey("AdminId");
-
                     b.HasOne("Project.Models.Agent", "Agent")
                         .WithMany("Customers")
                         .HasForeignKey("AgentId");
@@ -588,10 +601,6 @@ namespace Project.Migrations
 
             modelBuilder.Entity("Project.Models.Employee", b =>
                 {
-                    b.HasOne("Project.Models.Admin", null)
-                        .WithMany("Employees")
-                        .HasForeignKey("AdminId");
-
                     b.HasOne("Project.Models.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -614,20 +623,28 @@ namespace Project.Migrations
 
             modelBuilder.Entity("Project.Models.Policy", b =>
                 {
-                    b.HasOne("Project.Models.Admin", null)
-                        .WithMany("Policies")
-                        .HasForeignKey("AdminId");
+                    b.HasOne("Project.Models.Plan", "Plan")
+                        .WithMany("Schemes")
+                        .HasForeignKey("PlanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Plan");
                 });
 
             modelBuilder.Entity("Project.Models.PolicyAccount", b =>
                 {
-                    b.HasOne("Project.Models.Customer", "Customer")
-                        .WithOne("PolicyAccount")
-                        .HasForeignKey("Project.Models.PolicyAccount", "CustomerId")
+                    b.HasOne("Project.Models.Customer", null)
+                        .WithMany("Accounts")
+                        .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Customer");
+                    b.HasOne("Project.Models.Policy", null)
+                        .WithMany("Accounts")
+                        .HasForeignKey("PolicyID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Project.Models.Premium", b =>
@@ -660,17 +677,6 @@ namespace Project.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("Project.Models.Admin", b =>
-                {
-                    b.Navigation("Agents");
-
-                    b.Navigation("Customers");
-
-                    b.Navigation("Employees");
-
-                    b.Navigation("Policies");
-                });
-
             modelBuilder.Entity("Project.Models.Agent", b =>
                 {
                     b.Navigation("Customers");
@@ -678,9 +684,9 @@ namespace Project.Migrations
 
             modelBuilder.Entity("Project.Models.Customer", b =>
                 {
-                    b.Navigation("Documents");
+                    b.Navigation("Accounts");
 
-                    b.Navigation("PolicyAccount");
+                    b.Navigation("Documents");
                 });
 
             modelBuilder.Entity("Project.Models.Employee", b =>
@@ -688,6 +694,16 @@ namespace Project.Migrations
                     b.Navigation("Agents");
 
                     b.Navigation("Customers");
+                });
+
+            modelBuilder.Entity("Project.Models.Plan", b =>
+                {
+                    b.Navigation("Schemes");
+                });
+
+            modelBuilder.Entity("Project.Models.Policy", b =>
+                {
+                    b.Navigation("Accounts");
                 });
 
             modelBuilder.Entity("Project.Models.Role", b =>

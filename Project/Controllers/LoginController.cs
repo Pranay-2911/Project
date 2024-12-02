@@ -35,7 +35,7 @@ namespace Project.Controllers
                     var user = _loginService.FindUser(role, existingUser.Id, ref token);
     
                     Response.Headers.Add("Jwt", token);
-                    return Ok(new { roleName = role });
+                    return Ok(new {userName = loginDto.UserName, roleName = role });
                 }
             }
             return BadRequest("Username or Password Doesnt match");

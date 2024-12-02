@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Project.Types;
 
 namespace Project.Models
@@ -35,6 +36,10 @@ namespace Project.Models
         public int InstallmentCommisionRatio { get; set; }
         public DocumentType DocumentType { get; set; }  
         
-        public List<Customer> Customers { get; set; }
+        public List<PolicyAccount> Accounts { get; set; }
+        public Plan Plan { get; set; }
+        [ForeignKey("Plan")]
+        public Guid PlanId { get; set; }
+
     }
 }

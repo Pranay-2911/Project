@@ -19,13 +19,11 @@ namespace Project.Models
         public string Email { get; set; }
         [Required]
         public long MobileNumber { get; set; }
-        public double CommisionEarned { get; set; }
         public User User { get; set; }
         [ForeignKey("User")]
         public Guid UserId { get; set; }
         public List<Customer> Customers { get; set; }
         public double TotalCommissionEarned { get; set; }
-        public double TotalWithdrawalAmount { get; set; }
 
     }
 }

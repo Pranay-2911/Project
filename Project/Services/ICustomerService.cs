@@ -11,6 +11,5 @@ namespace Project.Services
         public bool DeleteCustomer(Guid id);
         public bool UpdateCustomer(CustomerDto customerDto);
         public bool ChangePassword(ChangePasswordDto passwordDto);
-        public Guid AddPolicyAccount(PolicyAccountDto policyAccountDto);
     }
 }

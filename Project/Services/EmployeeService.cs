@@ -13,7 +13,7 @@ namespace Project.Services
         private readonly IRepository<Role> _repositoryRole;
         private readonly IRepository<User> _userRepository;
         private readonly IMapper _mapper;
-        private Guid _roleId = new Guid("6046947d-04e2-4ab5-9320-08dd0ecdec34");
+
         public EmployeeService(IRepository<Employee> employeeRepository, IMapper mapper, IRepository<Role> repositoryRole, IRepository<User> userRepository)
         {
             _repository = employeeRepository;
@@ -23,12 +23,13 @@ namespace Project.Services
         }
         public Guid AddEmployee(EmployeeRegisterDto employeeRegisterDto)
         {
+            var roleName = _repositoryRole.GetAll().Where(r => r.RoleName == Types.Roles.EMPLOYEE).FirstOrDefault();
             User user = _mapper.Map<User>(employeeRegisterDto);
-            user.RoleId = _roleId;
+            user.RoleId = roleName.Id;
             user.Status = true;
             _userRepository.Add(user);
 
-            var role = _repositoryRole.Get(_roleId);
+            var role = _repositoryRole.Get(roleName.Id);
             role.Users.Add(user);
             _repositoryRole.Update(role);
 

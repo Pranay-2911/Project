@@ -19,6 +19,9 @@ namespace Project.Data
         public DbSet<Query> Queries { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Premium> Premiums { get; set; }
+        public DbSet<Commission> Commissions { get; set; }
+        public DbSet<GlobalVariables> GlobalVariables { get; set; }
+        public DbSet<Plan> Plans { get; set; }
 
 
 

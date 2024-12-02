@@ -10,5 +10,6 @@ namespace Project.Services
         public List<AdminDto> GetAll();
         public AdminDto Get(Guid id);
         public bool Delete(Guid id);
+       
     }
 }

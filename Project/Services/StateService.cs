@@ -37,5 +37,11 @@ namespace Project.Services
             _stateRepository.Update(state);
             return city;
         }
+
+        public List<City> GetCities()
+        {
+            var CityList = _cityRepository.GetAll().ToList();
+            return CityList;
+        }
     }
 }

@@ -4,11 +4,14 @@ namespace Project.Services
 {
     public interface IPolicyService
     {
-        public Guid Add(PolicyDto policy);
+        public Guid AddSchema(PolicyDto policydto);
         public PolicyDto Get(Guid id);
-        public List<PolicyDto> GetAll();
+        public List<PolicyDto> GetAllSchema();
+        public List<Plan> GetAllPlan();
         public bool Update(PolicyDto policy);
         public bool Delete(Guid id);
-        public bool PurchasePolicy(Guid customerId, Guid policyId, double totalAmount, int durationInMonths);
+        public bool PurchasePolicy(Guid customerId, PurchasePolicyRequestDto requestdto);
+        public List<PolicyDto> GetPolicyByCustomer(Guid Id);
+        public Guid AddPlan(PlanDto plandto);
     }
 }

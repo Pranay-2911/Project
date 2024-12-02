@@ -21,8 +21,8 @@ namespace Project.Models
         public long MobileNumber { get; set; }
         public string State { get; set; }
         public string City { get; set; }
-        public string Nominee { get; set; }
-        public string NomineeRelation { get; set; }
+        //public string Nominee { get; set; }
+        //public string NomineeRelation { get; set; }
         public User User { get; set; }
         [ForeignKey("User")]
         public Guid UserId { get; set; }
@@ -31,9 +31,8 @@ namespace Project.Models
         [ForeignKey("Agent")]
         public Guid? AgentId { get; set; }
         public List<Document> Documents { get; set; }
-        public PolicyAccount? PolicyAccount { get; set; }
-        public List<Policy> Policies { get; set; } = new List<Policy>();
+        public List<PolicyAccount> Accounts { get; set; }
 
-       
+
     }
 }

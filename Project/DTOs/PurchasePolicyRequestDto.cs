@@ -9,5 +9,6 @@ namespace Project.DTOs
         public int DurationInMonths { get; set; }
         public string Nominee { get; set; }
         public NomineeRelation NomineeRelation { get; set; }
+        public Guid? AgentId { get; set; }
     }
 }

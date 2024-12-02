@@ -8,25 +8,37 @@ namespace Project.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PolicyController : ControllerBase
+    public class PlanController : ControllerBase
     {
         private readonly IPolicyService _policyService;
-        public PolicyController(IPolicyService policyService) 
+        public PlanController(IPolicyService policyService) 
         {
             _policyService = policyService;
         }
 
-        [HttpGet]
-        public IActionResult Get()
+        [HttpGet("Schema")]
+        public IActionResult GetAllSchema()
         {
-            var policyDto = _policyService.GetAll();
+            var policyDto = _policyService.GetAllSchema();
+            return Ok(policyDto);
+        }
+        [HttpGet]
+        public IActionResult GetAllPlan()
+        {
+            var policyDto = _policyService.GetAllPlan();
             return Ok(policyDto);
         }
 
-        [HttpPost]
-        public IActionResult Add(PolicyDto policy)
+        [HttpPost("Schema")]
+        public IActionResult AddSchema(PolicyDto policy)
         {
-            var newId = _policyService.Add(policy);
+            var newId = _policyService.AddSchema(policy);
+            return Ok(newId);
+        }
+        [HttpPost]
+        public IActionResult AddPlan(PlanDto planDto)
+        {
+            var newId = _policyService.AddPlan(planDto);
             return Ok(newId);
         }
 

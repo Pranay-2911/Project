@@ -12,11 +12,13 @@ namespace Project.Controllers
     {
         private readonly ICustomerService _customerService;
         private readonly IPolicyService _policyService;
+        private readonly IPolicyAccountService _policyAccountService;
 
-        public CustomerController(ICustomerService customerService, IPolicyService policyService)
+        public CustomerController(ICustomerService customerService, IPolicyService policyService, IPolicyAccountService policyAccountService)
         {
             _customerService = customerService;
             _policyService = policyService;
+            _policyAccountService = policyAccountService;
         }
 
         [HttpGet]
@@ -33,12 +35,6 @@ namespace Project.Controllers
             return Ok(id);
         }
 
-        [HttpPost("PolicyAccount")]
-        public IActionResult AddPolicyAccount(PolicyAccountDto policyAccountDto)
-        {
-            var id = _customerService.AddPolicyAccount(policyAccountDto);
-            return Ok(id);
-        }
 
         [HttpGet("{id}")]
         public IActionResult Get(Guid id)
@@ -87,7 +83,7 @@ namespace Project.Controllers
             }
 
             // 2. Link customer to policy and generate premiums
-            var result = _policyService.PurchasePolicy(customerId, requestdto.PolicyId, requestdto.TotalAmount, requestdto.DurationInMonths);
+            var result = _policyService.PurchasePolicy(customerId, requestdto);
 
             // 3. Return success or failure response
             if (result)
@@ -97,5 +93,24 @@ namespace Project.Controllers
             return BadRequest(new {message = "Failed to purchase policy." });
         }
 
+       
+
+
+        [HttpGet("Policy")]
+        public IActionResult GetPolicyByCustomer(Guid id)
+        {
+            var policyDto = _policyService.GetPolicyByCustomer(id);
+            return Ok(policyDto);
+        }
+
+        [HttpDelete("{customerId}/{policyId}")]
+        public IActionResult DeletePolicy(Guid customerId, Guid policyId)
+        {
+            if (_policyAccountService.Delete(customerId, policyId))
+            {
+                return Ok("Done");
+            }
+            return BadRequest();
+        }
     }
 }

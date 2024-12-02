@@ -69,7 +69,7 @@ namespace Project.Services
 
             List<Claim> claim = new List<Claim>()
             {
-                new Claim(ClaimTypes.Name,user.FirstName),
+                new Claim(ClaimTypes.Name,user.User.UserName),
                 new Claim(ClaimTypes.Role, role)
             };
 

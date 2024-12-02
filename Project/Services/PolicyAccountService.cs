@@ -8,12 +8,14 @@ namespace Project.Services
     public class PolicyAccountService : IPolicyAccountService
     {
         private readonly IRepository<PolicyAccount> _repository;
+        private readonly IRepository<Premium> _premiumRepository;
         private readonly IMapper _mapper;
 
-        public PolicyAccountService(IRepository<PolicyAccount> repository, IMapper mapper)
+        public PolicyAccountService(IRepository<PolicyAccount> repository, IMapper mapper, IRepository<Premium> premiumRepository)
         {
             _repository = repository;
-            _mapper = mapper;   
+            _mapper = mapper;  
+            _premiumRepository = premiumRepository;
         }
         public Guid Add(PolicyAccountDto policyAccountDto)
         {
@@ -22,9 +24,23 @@ namespace Project.Services
             return policyAccount.Id;
         }
 
-        public void Delete(Guid id)
+        public bool Delete(Guid customerId, Guid policyId)
         {
-            throw new NotImplementedException();
+            var account = _repository.GetAll().Where(a => a.CustomerId == customerId).Where(a => a.PolicyID == policyId).FirstOrDefault();
+            _repository.Delete(account);
+            var premiumList = _premiumRepository.GetAll().Where(p => p.CustomerId == customerId).Where(p => p.PolicyId == policyId).ToList();
+            foreach (var premium in premiumList)
+            {
+                _premiumRepository.Delete(premium);
+            }
+            return true;
+
+        }
+
+        public List<PolicyAccount> GetAll()
+        {
+            var accountList = _repository.GetAll().ToList();
+            return accountList;
         }
 
         public void Update(PolicyAccountDto policyAccountDto)

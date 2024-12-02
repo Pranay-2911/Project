@@ -22,18 +22,14 @@ namespace Project.Mapper
 
             CreateMap<Customer, CustomerDto>()
                 .ForMember(dest => dest.TotalDocuments, val => val.MapFrom(src => src.Documents.Count))
-                .ForMember(dest => dest.TotalPolicies, val => val.MapFrom(src => src.Policies.Count));
+                .ForMember(dest => dest.TotalPolicies, val => val.MapFrom(src => src.Accounts.Count));
 
             CreateMap<Customer, CustomerRegisterDto>().ForMember(dest => dest.UserId, val => val.MapFrom(src => src.UserId));
             CreateMap<CustomerRegisterDto, Customer>();
 
             CreateMap<CustomerDto, Customer>();
 
-            CreateMap<Admin, AdminDto>()
-                .ForMember(dest => dest.TotalEmployees, val => val.MapFrom(src => src.Employees.Count))
-                .ForMember(dest => dest.TotalCustomers, val => val.MapFrom(src => src.Customers.Count))
-                .ForMember(dest => dest.TotalAgents, val => val.MapFrom(src => src.Agents.Count))
-                .ForMember(dest => dest.TotalPolicies, val => val.MapFrom(src => src.Policies.Count));
+            CreateMap<Admin, AdminDto>();
             CreateMap<AdminDto, Admin>();
 
 
@@ -55,6 +51,9 @@ namespace Project.Mapper
 
             CreateMap<Policy, PolicyDto>();
             CreateMap<PolicyDto, Policy>();
+
+            CreateMap<Plan, PlanDto>();
+            CreateMap<PlanDto, Plan>(); 
         }
     }
 }
