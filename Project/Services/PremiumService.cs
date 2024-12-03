@@ -11,13 +11,15 @@ namespace Project.Services
         private readonly IRepository<Premium> _premiumRepository;
         private readonly IRepository<Commission> _commissionRepository;
         private readonly IRepository<Policy> _policyRepository;
+        private readonly IRepository<Agent> _agentRepository;
 
-        public PremiumService(IRepository<Payment> paymentRepository, IRepository<Premium> premiumRepository, IRepository<Commission> commissionRepository, IRepository<Policy> policyRepository)
+        public PremiumService(IRepository<Payment> paymentRepository, IRepository<Premium> premiumRepository, IRepository<Commission> commissionRepository, IRepository<Policy> policyRepository, IRepository<Agent> agentRepository)
         {
             _paymentRepository = paymentRepository;
             _premiumRepository = premiumRepository;
             _commissionRepository = commissionRepository;
             _policyRepository = policyRepository;
+            _agentRepository = agentRepository;
         }
 
         public PaymentDto PayPremium(Guid premiumId, PaymentDto paymentDto)
@@ -46,6 +48,7 @@ namespace Project.Services
             var policy = _policyRepository.Get(premium.PolicyId);
             if (premium.AgentId != null)
             {
+                var agent = _agentRepository.Get((Guid)premium.AgentId);
                 var premiumCommission = policy.InstallmentCommisionRatio * premium.Amount / 100.0;
                 var agentCommission = new Commission
                 {
@@ -55,6 +58,8 @@ namespace Project.Services
                     EarnedDate = DateTime.UtcNow,
                     CommissionType = CommissionType.PREMIUM
                 };
+                agent.CurrentCommisionBalance += agentCommission.CommissionAmount;
+                agent.TotalCommissionEarned += agentCommission.CommissionAmount;
 
                 _commissionRepository.Add(agentCommission);
             }

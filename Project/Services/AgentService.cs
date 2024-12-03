@@ -34,9 +34,10 @@ namespace Project.Services
             role.Users.Add(user);
             _roleRepository.Update(role);
 
-            agentRegisterDto.UserId = user.Id;
-
             var agent = _mapper.Map<Agent>(agentRegisterDto);
+            agent.UserId = user.Id;
+
+           
             _agentRepository.Add(agent);
             return agent.Id;
         }
@@ -71,6 +72,7 @@ namespace Project.Services
         public AgentDto Get(Guid id)
         {
             var agent = _agentRepository.Get(id);
+     
             if (agent != null)
             {
                 var agentDto = _mapper.Map<AgentDto>(agent);
@@ -79,11 +81,11 @@ namespace Project.Services
             throw new AgentNotFoundException("Agent Does Not Exist");
         }
 
-        public List<Agent> GetAll()
+        public List<AgentDto> GetAll()
         {
             var agents = _agentRepository.GetAll().Include(a => a.User).ToList();
-            //var agentDtos = _mapper.Map<List<AgentDto>>(agents);
-            return agents;
+            var agentDtos = _mapper.Map<List<AgentDto>>(agents);
+            return agentDtos;
         }
 
         public bool Update(AgentDto agentDto)

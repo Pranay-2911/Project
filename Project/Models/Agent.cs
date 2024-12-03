@@ -23,6 +23,7 @@ namespace Project.Models
         [ForeignKey("User")]
         public Guid UserId { get; set; }
         public List<Customer> Customers { get; set; }
+        public double CurrentCommisionBalance { get; set; }
         public double TotalCommissionEarned { get; set; }
 
     }

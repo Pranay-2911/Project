@@ -16,11 +16,6 @@ namespace Project.DTOs
         public string Email { get; set; }
         [Required]
         public long MobileNumber { get; set; }
-        public double CommisionEarned { get; set; }
-        public Guid? UserId { get; set; }
-        public int TotalCustomers { get; set; }
-        public double TotalCommissionEarned { get; set; }
-        public double TotalWithdrawalAmount { get; set; }
         [Required]
         [StringLength(20, MinimumLength = 5, ErrorMessage = "username must be in 5 to 20 characters")]
         public string Username { get; set; }
