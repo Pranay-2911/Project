@@ -15,6 +15,7 @@ namespace Project.DTOs
 
 
         [Required]
+        [Phone]
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Mobile number must be exactly 10 digits.")]
         public long MobileNumber { get; set; }
 
@@ -22,11 +23,11 @@ namespace Project.DTOs
         [Required]
         [EmailAddress]
         public string Email { get; set; }
+        [Required]
+        [Range(10000, 100000, ErrorMessage ="Salary must be between 10000 to 100000")]
         public double Salary { get; set; }
-        public Guid? UserId { get; set; }
-        public int TotalCustomers { get; set; }
-        public int TotalAgents { get; set; }
 
+        [Required]
         [StringLength(20, MinimumLength = 5, ErrorMessage = "username must be in 5 to 20 characters")]
         public string Username { get; set; }
         [Required]

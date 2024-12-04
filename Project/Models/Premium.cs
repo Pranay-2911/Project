@@ -8,7 +8,9 @@ namespace Project.Models
     {
         [Key]
         public Guid Id { get; set; }
+        [Required]
         public double Amount { get; set; }
+        [Required]
         public DateTime DueDate { get; set; }
         public string Status { get; set; }
         public DateTime? PaymentDate { get; set; }

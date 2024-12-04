@@ -33,19 +33,21 @@ namespace Project.Services
             role.Users.Add(user);
             _repositoryRole.Update(role);
 
-            employeeRegisterDto.UserId = user.Id;
-
             var employee = _mapper.Map<Employee>(employeeRegisterDto);
+            employee.UserId = user.Id;
+
             _repository.Add(employee);
             return employee.Id;
         }
 
         public bool DeleteEmployee(Guid id)
         {
-            var employee = _repository.Get(id);
+            var employee = _repository.GetAll().Include(e => e.User).Where(e => e.Id == id).FirstOrDefault();
             if (employee != null)
             {
-                _repository.Delete(employee);
+                var user = _userRepository.Get(employee.UserId);
+                user.Status = false;
+                _userRepository.Update(user);
                 return true;
             }
             throw new EmployeeNotFoundException("Employee Does Not Exist");
@@ -63,7 +65,7 @@ namespace Project.Services
 
         public List<EmployeeDto> GetEmployees()
         {
-            var employee = _repository.GetAll().ToList();
+            var employee = _repository.GetAll().Include(a => a.User).Where(a => a.User.Status == true).ToList();
             List<EmployeeDto> employeeDtos = _mapper.Map<List<EmployeeDto>>(employee);
             return employeeDtos;
         }

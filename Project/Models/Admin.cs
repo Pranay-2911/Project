@@ -6,6 +6,7 @@ namespace Project.Models
     public class Admin
     {
         [Key]
+        [Required]
         public Guid Id { get; set; }
         [Required]
         [StringLength(15, ErrorMessage ="First name should not greater than 15")]

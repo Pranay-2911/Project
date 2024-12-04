@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Project.DTOs;
 using Project.Services;
@@ -18,10 +19,18 @@ namespace Project.Controllers
             _customerService = customerService;
         }
 
+
+
         [HttpGet]
         public IActionResult GetAll()
         {
             var agents = _agentService.GetAll();
+            return Ok(agents);
+        }
+        [HttpGet("UnVerified")]
+        public IActionResult GetAllUnVerified()
+        {
+            var agents = _agentService.GetAllUnVerified();
             return Ok(agents);
         }
 
@@ -45,6 +54,13 @@ namespace Project.Controllers
             if (_agentService.Delete(id))
                 return Ok(id);
             return NotFound("Agent Not Found");
+        }
+        [HttpPut("Verify")]
+        public IActionResult Verfify([FromQuery] Guid id)
+        {
+            if (_agentService.VerifyAgent(id))
+                return Ok(new { message = "Verified Succesfully"});
+            return NotFound("Agent not found");
         }
 
         [HttpPut]

@@ -13,5 +13,6 @@ namespace Project.Services
         public bool PurchasePolicy(Guid customerId, PurchasePolicyRequestDto requestdto);
         public List<PolicyDto> GetPolicyByCustomer(Guid Id);
         public Guid AddPlan(PlanDto plandto);
+        public List<ViewCommissionDto> GetCommission();
     }
 }

@@ -11,7 +11,7 @@ namespace Project.DTOs
         [StringLength(100, MinimumLength = 5, ErrorMessage = "Title must be within the 5 to 100 characters")]
         public string Title { get; set; }
         [Required]
-        [StringLength(500, MinimumLength = 5, ErrorMessage = "Description must be within the 5 to 100 characters")]
+        [MaxLength(10000, ErrorMessage = "Description must be less than 10000 characters")]
         public string Description { get; set; }
         [Required]
         public double MinAmount { get; set; }
@@ -33,6 +33,7 @@ namespace Project.DTOs
         public double RegistrationCommisionAmount { get; set; }
         [Required]
         public int InstallmentCommisionRatio { get; set; }
+        [Required]
         public DocumentType DocumentType { get; set; }
         public Guid PlanId { get; set; }
     }

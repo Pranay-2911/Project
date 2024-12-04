@@ -12,9 +12,10 @@ namespace Project.DTOs
         [Required]
         public string Qualification { get; set; }
         [Required]
-        [EmailAddress]
+        [EmailAddress (ErrorMessage = "Email must be in correct format")]
         public string Email { get; set; }
         [Required]
+        [Phone (ErrorMessage = "Phone Number must be in correct format")]
         public long MobileNumber { get; set; }
         [Required]
         [StringLength(20, MinimumLength = 5, ErrorMessage = "username must be in 5 to 20 characters")]

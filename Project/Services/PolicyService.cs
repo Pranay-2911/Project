@@ -11,13 +11,14 @@ namespace Project.Services
     {
         private readonly IRepository<Policy> _policyRepository;
         private readonly IRepository<Customer> _customerRepository;
+        private readonly IRepository<Agent> _agentRepository;
         private readonly IRepository<Premium> _premiumRepository;
         private readonly IRepository<PolicyAccount> _policyAccountRepository;
         private readonly IRepository<Commission> _commisionRepository;
         private readonly IRepository<Plan> _planRepository;
         private readonly IMapper _mapper;
 
-        public PolicyService(IRepository<Policy> repository, IMapper mapper, IRepository<Customer> customerRepository, IRepository<Premium> premiumRepository, IRepository<PolicyAccount> policyaccountRepository, IRepository<Commission> commisionRepository, IRepository<Plan> planRepository)
+        public PolicyService(IRepository<Policy> repository, IMapper mapper, IRepository<Customer> customerRepository, IRepository<Premium> premiumRepository, IRepository<PolicyAccount> policyaccountRepository, IRepository<Commission> commisionRepository, IRepository<Plan> planRepository, IRepository<Agent> agentRepository)
         {
             _policyRepository = repository;
             _customerRepository = customerRepository;
@@ -25,6 +26,7 @@ namespace Project.Services
             _policyAccountRepository = policyaccountRepository;
             _commisionRepository = commisionRepository;
             _planRepository = planRepository;
+            _agentRepository = agentRepository;
             _mapper = mapper;
         }
         public Guid AddSchema(PolicyDto policydto)
@@ -166,6 +168,33 @@ namespace Project.Services
             var policyDto = _mapper.Map<List<PolicyDto>>(policies);
             return policyDto;
 
+        }
+
+        public List<ViewCommissionDto> GetCommission() 
+        {
+            var commissions = _commisionRepository.GetAll().ToList();
+            List<ViewCommissionDto> viewCommissionDtos = new List<ViewCommissionDto>();
+            foreach(var commission in commissions)
+            {
+                var agent = _agentRepository.GetAll().Where(a => a.Id == commission.AgentId).FirstOrDefault();
+                var policy = _policyRepository.GetAll().Where(p => p.Id == commission.PolicyId).FirstOrDefault();
+                var policyAccount = _policyAccountRepository.GetAll().Where(p => p.PolicyID == policy.Id).Where(p => p.AgentId == agent.Id).FirstOrDefault();
+                var customer = _customerRepository.GetAll().Where(c => c.CustomerId == policyAccount.CustomerId).FirstOrDefault();
+
+                var viewCommission = new ViewCommissionDto()
+                {
+                    AgentName = $"{agent.FirstName} {agent.LastName}",
+                    SchemaName = policy.Title,
+                    CustomerName = $"{customer.FirstName} {customer.LastName}",
+                    CommissionAmount = commission.CommissionAmount,
+                    CommssionDate = commission.EarnedDate,
+                    CommissionType = commission.CommissionType
+
+                };
+                viewCommissionDtos.Add(viewCommission);
+            }
+
+            return viewCommissionDtos;
         }
 
     }

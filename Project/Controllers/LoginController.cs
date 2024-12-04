@@ -8,6 +8,8 @@ using Project.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
+
 
 namespace Project.Controllers
 {
@@ -16,16 +18,18 @@ namespace Project.Controllers
     public class LoginController : ControllerBase
     {
         private readonly ILoginService _loginService;
-       
+
+
         public LoginController(ILoginService loginService)
         {
             _loginService = loginService;
         }
 
         [HttpPost]
-        public IActionResult Login(LoginDto loginDto)
+        public async Task<IActionResult> Login(LoginDto loginDto)
         {
-            var existingUser = _loginService.FindByUserName(loginDto.UserName);
+            
+            var existingUser = _loginService.FindByUserName(loginDto.Username);
             if (existingUser != null)
             {
                 if (BCrypt.Net.BCrypt.Verify(loginDto.Password, existingUser.PasswordHash))
@@ -35,14 +39,15 @@ namespace Project.Controllers
                     var user = _loginService.FindUser(role, existingUser.Id, ref token);
     
                     Response.Headers.Add("Jwt", token);
-                    return Ok(new {userName = loginDto.UserName, roleName = role });
+                    return Ok(new {userName = loginDto.Username, roleName = role });
                 }
             }
             return BadRequest("Username or Password Doesnt match");
         }
 
+        
 
-       
+
     }
-    
+
 }

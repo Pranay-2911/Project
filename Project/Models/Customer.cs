@@ -18,11 +18,16 @@ namespace Project.Models
         public string Email { get; set; }
         [Required]
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Mobile number must be exactly 10 digits.")]
+        [Phone(ErrorMessage ="Mobile Number must be in correct format")]
         public long MobileNumber { get; set; }
+        [Required]
         public string State { get; set; }
+        [Required]
         public string City { get; set; }
         //public string Nominee { get; set; }
         //public string NomineeRelation { get; set; }
+        public bool IsKYC { get; set; }
+        public DateOnly DateOfBirth {  get; set; }
         public User User { get; set; }
         [ForeignKey("User")]
         public Guid UserId { get; set; }

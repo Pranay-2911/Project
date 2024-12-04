@@ -16,6 +16,13 @@ namespace Project.Controllers
             _policyService = policyService;
         }
 
+        [HttpGet("Policy/{id}")]
+        public IActionResult GetPolicy(Guid id)
+        {
+            var policy = _policyService.Get(id);
+            return Ok(policy);
+        }
+
         [HttpGet("Schema")]
         public IActionResult GetAllSchema()
         {
@@ -50,6 +57,14 @@ namespace Project.Controllers
                 return Ok(id);
             }
             return BadRequest();
+        }
+
+        [HttpPut("Policy")]
+        public IActionResult UpdatePolicy(PolicyDto policyDto)
+        {
+            if (_policyService.Update(policyDto))
+                return Ok(policyDto);
+            return NotFound("Policy Not Found");
         }
     }
 }

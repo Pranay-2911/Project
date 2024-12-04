@@ -50,6 +50,7 @@ namespace Project
             builder.Services.AddTransient<IStateService, StateService>();
             builder.Services.AddTransient<IPremiumService, PremiumService>();
             builder.Services.AddTransient<IPolicyAccountService,  PolicyAccountService>();
+            builder.Services.AddTransient<IEnumService, EnumService>();
 
 
 
@@ -101,6 +102,7 @@ namespace Project
 
             app.UseHttpsRedirection();
             app.UseCors("AllowAngularApp");
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

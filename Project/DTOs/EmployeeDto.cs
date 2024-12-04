@@ -6,6 +6,7 @@ namespace Project.DTOs
 {
     public class EmployeeDto
     {
+        [Key]
         public Guid Id { get; set; }
 
 
@@ -27,6 +28,7 @@ namespace Project.DTOs
         [Required]
         [EmailAddress]
         public string Email { get; set; }
+        [Required]
         public double Salary { get; set; }
         public Guid UserId { get; set; }
         public int TotalCustomers { get; set; }

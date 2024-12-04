@@ -11,5 +11,7 @@ namespace Project.Services
         public AgentDto Get(Guid id);
         public bool Delete(Guid id);
         public bool ChangePassword(ChangePasswordDto passwordDto);
+        public List<AgentDto> GetAllUnVerified();
+        public bool VerifyAgent(Guid id);
     }
 }

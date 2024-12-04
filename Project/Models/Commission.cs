@@ -1,13 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Project.Types;
 namespace Project.Models
 {
     public class Commission
     {
+        [Key]
+        [Required]
         public Guid Id {  get; set; }
-
+        [Required]
         public Guid PolicyId { get; set; }
-
         public Agent Agent { get; set; }
         [ForeignKey("Agent")]
         public Guid AgentId { get; set; }

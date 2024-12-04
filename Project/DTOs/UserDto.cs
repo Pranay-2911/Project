@@ -6,6 +6,8 @@ namespace Project.DTOs
 {
     public class UserDto
     {
+        [Key]
+        [Required]
         public Guid Id { get; set; }
         [Required]
         [StringLength(20, MinimumLength = 5, ErrorMessage = "username must be in 5 to 20 characters")]

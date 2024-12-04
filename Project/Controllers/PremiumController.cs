@@ -30,7 +30,7 @@ namespace Project.Controllers
 
         // Get all premiums and their statuses for a policy (for admin)
         [HttpGet("policy/{policyId}/premiums/status")]
-        //[Authorize(Roles = "Admin")] // Restrict this endpoint to admins
+        //[Authorize(Roles = "Admin")]
         public IActionResult GetPremiumStatuses(Guid policyId)
         {
             var premiumStatuses = _premiumService.GetPremiumStatuses(policyId);

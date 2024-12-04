@@ -16,10 +16,12 @@ namespace Project.Models
         public string LastName { get; set; }
         [Required]
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Mobile number must be exactly 10 digits.")]
+        [Phone(ErrorMessage ="Mobile Number must be in correct format")]
         public long MobileNumber { get; set; }
         [Required]
-        [EmailAddress]
+        [EmailAddress(ErrorMessage ="Email must be in correct format")]
         public string Email { get; set; }
+        [Required]
         public double Salary { get; set; }
         public User User { get; set; }
         [ForeignKey("User")]

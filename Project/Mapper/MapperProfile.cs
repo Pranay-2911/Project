@@ -17,7 +17,7 @@ namespace Project.Mapper
                      .ForMember(dest => dest.TotalAgents, val => val.MapFrom(src => src.Agents.Count));
 
             CreateMap<EmployeeDto, Employee>();
-            CreateMap<Employee, EmployeeRegisterDto>().ForMember(dest => dest.UserId, val => val.MapFrom(src => src.UserId));
+            CreateMap<Employee, EmployeeRegisterDto>();
             CreateMap<EmployeeRegisterDto, Employee>();
 
             CreateMap<Customer, CustomerDto>()

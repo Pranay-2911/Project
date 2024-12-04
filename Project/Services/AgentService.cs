@@ -60,10 +60,12 @@ namespace Project.Services
 
         public bool Delete(Guid id)
         {
-            var agent = _agentRepository.Get(id);
+            var agent = _agentRepository.GetAll().Include(a => a.User).Where(a => a.Id == id).FirstOrDefault();
             if (agent != null)
             {
-                _agentRepository.Delete(agent);
+                var user = _userRepository.Get(agent.UserId);
+                user.Status = false;
+                _userRepository.Update(user);
                 return true;
             }
             throw new AgentNotFoundException("Agent Does Not Exist");
@@ -83,9 +85,26 @@ namespace Project.Services
 
         public List<AgentDto> GetAll()
         {
-            var agents = _agentRepository.GetAll().Include(a => a.User).ToList();
+            var agents = _agentRepository.GetAll().Include(a => a.User).Where(a => a.User.Status == true).ToList();
             var agentDtos = _mapper.Map<List<AgentDto>>(agents);
             return agentDtos;
+        }
+        public List<AgentDto> GetAllUnVerified()
+        {
+            var agents = _agentRepository.GetAll().Include(a => a.User).Where(a => a.User.Status == true).Where(a => a.IsVerified == false).ToList();
+            var agentDtos = _mapper.Map<List<AgentDto>>(agents);
+            return agentDtos;
+        }
+        public bool VerifyAgent(Guid id)
+        {
+            var agent = _agentRepository.Get(id);
+            if (agent != null)
+            {
+                agent.IsVerified = true;
+                _agentRepository.Update(agent);
+                return true;
+            }
+            return false;
         }
 
         public bool Update(AgentDto agentDto)
