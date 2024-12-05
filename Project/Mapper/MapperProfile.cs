@@ -21,10 +21,9 @@ namespace Project.Mapper
             CreateMap<EmployeeRegisterDto, Employee>();
 
             CreateMap<Customer, CustomerDto>()
-                .ForMember(dest => dest.TotalDocuments, val => val.MapFrom(src => src.Documents.Count))
                 .ForMember(dest => dest.TotalPolicies, val => val.MapFrom(src => src.Accounts.Count));
 
-            CreateMap<Customer, CustomerRegisterDto>().ForMember(dest => dest.UserId, val => val.MapFrom(src => src.UserId));
+            CreateMap<Customer, CustomerRegisterDto>();
             CreateMap<CustomerRegisterDto, Customer>();
 
             CreateMap<CustomerDto, Customer>();
@@ -38,8 +37,8 @@ namespace Project.Mapper
             CreateMap<Agent, AgentRegisterDto>();
             CreateMap<AgentRegisterDto, Agent>();
 
-            CreateMap<PolicyAccountDto, PolicyAccount>();
-            CreateMap<PolicyAccount, PolicyAccountDto>();
+            //CreateMap<PolicyAccountDto, PolicyAccount>();
+            //CreateMap<PolicyAccount, PolicyAccountDto>();
 
             CreateMap<AdminRegisterDto, User>().ForMember(dest => dest.PasswordHash, val => val.MapFrom(src => BCrypt.Net.BCrypt.HashPassword(src.Password)));
             CreateMap<AgentRegisterDto, User>().ForMember(dest => dest.PasswordHash, val => val.MapFrom(src => BCrypt.Net.BCrypt.HashPassword(src.Password)));
@@ -54,6 +53,12 @@ namespace Project.Mapper
 
             CreateMap<Plan, PlanDto>();
             CreateMap<PlanDto, Plan>(); 
+
+            CreateMap<Document, DocumentDto>();
+            CreateMap<DocumentDto, Document>();
+
+            CreateMap<Premium, PremiumDto>();
+            CreateMap<PremiumDto, Premium>();
         }
     }
 }

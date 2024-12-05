@@ -1,4 +1,5 @@
-﻿using Project.DTOs;
+﻿using AutoMapper;
+using Project.DTOs;
 using Project.Models;
 using Project.Repositories;
 using Project.Types;
@@ -12,14 +13,18 @@ namespace Project.Services
         private readonly IRepository<Commission> _commissionRepository;
         private readonly IRepository<Policy> _policyRepository;
         private readonly IRepository<Agent> _agentRepository;
+        private readonly IRepository<PolicyAccount> _policyAccountRepository;
+        private readonly IMapper _mapper;
 
-        public PremiumService(IRepository<Payment> paymentRepository, IRepository<Premium> premiumRepository, IRepository<Commission> commissionRepository, IRepository<Policy> policyRepository, IRepository<Agent> agentRepository)
+        public PremiumService(IRepository<Payment> paymentRepository, IRepository<Premium> premiumRepository, IRepository<Commission> commissionRepository, IRepository<Policy> policyRepository, IRepository<Agent> agentRepository, IRepository<PolicyAccount> policyAccountRepository, IMapper mapper)
         {
             _paymentRepository = paymentRepository;
             _premiumRepository = premiumRepository;
             _commissionRepository = commissionRepository;
             _policyRepository = policyRepository;
             _agentRepository = agentRepository;
+            _policyAccountRepository = policyAccountRepository;
+            _mapper = mapper;   
         }
 
         public PaymentDto PayPremium(Guid premiumId, PaymentDto paymentDto)
@@ -78,6 +83,15 @@ namespace Project.Services
                     Status = p.Status,
                     PaymentDate = p.PaymentDate
                 }).ToList();
+        }
+
+        public List<PremiumDto> GetPremiumByPolicyAccount(Guid id)
+        {
+            var account =_policyAccountRepository.Get(id); 
+            var premiums = _premiumRepository.GetAll().Where(a => a.CustomerId == account.CustomerId).Where(a => a.PolicyId == account.PolicyID).ToList();
+            
+            var premiumDto = _mapper.Map<List<PremiumDto>>(premiums);
+            return premiumDto;
         }
     }
 }

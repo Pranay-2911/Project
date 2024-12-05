@@ -100,7 +100,9 @@ namespace Project.Services
                 Nominee = requestdto.Nominee, 
                 NomineeRelation = requestdto.NomineeRelation, 
                 AgentId = requestdto.AgentId, 
-                PurchasedDate = DateTime.UtcNow
+                PurchasedDate = DateTime.UtcNow,
+                PolicyAmount = requestdto.TotalAmount,
+                PolicyDuration = requestdto.DurationInMonths
             };
             _policyAccountRepository.Add(account);
 
@@ -175,6 +177,33 @@ namespace Project.Services
             var commissions = _commisionRepository.GetAll().ToList();
             List<ViewCommissionDto> viewCommissionDtos = new List<ViewCommissionDto>();
             foreach(var commission in commissions)
+            {
+                var agent = _agentRepository.GetAll().Where(a => a.Id == commission.AgentId).FirstOrDefault();
+                var policy = _policyRepository.GetAll().Where(p => p.Id == commission.PolicyId).FirstOrDefault();
+                var policyAccount = _policyAccountRepository.GetAll().Where(p => p.PolicyID == policy.Id).Where(p => p.AgentId == agent.Id).FirstOrDefault();
+                var customer = _customerRepository.GetAll().Where(c => c.CustomerId == policyAccount.CustomerId).FirstOrDefault();
+
+                var viewCommission = new ViewCommissionDto()
+                {
+                    AgentName = $"{agent.FirstName} {agent.LastName}",
+                    SchemaName = policy.Title,
+                    CustomerName = $"{customer.FirstName} {customer.LastName}",
+                    CommissionAmount = commission.CommissionAmount,
+                    CommssionDate = commission.EarnedDate,
+                    CommissionType = commission.CommissionType
+
+                };
+                viewCommissionDtos.Add(viewCommission);
+            }
+
+            return viewCommissionDtos;
+        }
+
+        public List<ViewCommissionDto> GetCommissionByCustomer(Guid id)
+        {
+            var commissions = _commisionRepository.GetAll().ToList();
+            List<ViewCommissionDto> viewCommissionDtos = new List<ViewCommissionDto>();
+            foreach (var commission in commissions)
             {
                 var agent = _agentRepository.GetAll().Where(a => a.Id == commission.AgentId).FirstOrDefault();
                 var policy = _policyRepository.GetAll().Where(p => p.Id == commission.PolicyId).FirstOrDefault();

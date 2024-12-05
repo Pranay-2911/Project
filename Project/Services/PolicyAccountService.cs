@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using Project.DTOs;
 using Project.Models;
 using Project.Repositories;
@@ -8,14 +9,20 @@ namespace Project.Services
     public class PolicyAccountService : IPolicyAccountService
     {
         private readonly IRepository<PolicyAccount> _repository;
+        private readonly IRepository<Customer> _customerRepository;
+        private readonly IRepository<Policy> _policyRepository;
+        private readonly IRepository<Agent> _agentRepository;
         private readonly IRepository<Premium> _premiumRepository;
         private readonly IMapper _mapper;
 
-        public PolicyAccountService(IRepository<PolicyAccount> repository, IMapper mapper, IRepository<Premium> premiumRepository)
+        public PolicyAccountService(IRepository<PolicyAccount> repository, IMapper mapper, IRepository<Premium> premiumRepository, IRepository<Customer> customerRepository, IRepository<Policy> policyRepository, IRepository<Agent> agentRepository)
         {
             _repository = repository;
             _mapper = mapper;  
             _premiumRepository = premiumRepository;
+            _customerRepository = customerRepository;
+            _policyRepository = policyRepository;
+            _agentRepository = agentRepository;
         }
         public Guid Add(PolicyAccountDto policyAccountDto)
         {
@@ -37,10 +44,74 @@ namespace Project.Services
 
         }
 
-        public List<PolicyAccount> GetAll()
+        public List<PolicyAccountDto> GetAll()
         {
             var accountList = _repository.GetAll().ToList();
-            return accountList;
+            List<PolicyAccountDto> policyAccountDtos = new List<PolicyAccountDto>();
+            foreach (var account in accountList)
+            {
+
+                var custommer = _customerRepository.Get(account.CustomerId);
+                var policy = _policyRepository.Get(account.PolicyID);
+                
+                var accountDto = new PolicyAccountDto()
+                {
+                    Id = account.Id,
+                    CustomerName = $"{custommer.FirstName} {custommer.LastName}",
+                    PolicyName = policy.Title,
+                    NomineeRelation = account.NomineeRelation,
+                    Nominee = account.Nominee,
+                    PolicyAmount = account.PolicyAmount,
+                    PolicyDuration = account.PolicyDuration,
+                    PurchasedDate = account.PurchasedDate,
+                    AgentName = "NA"
+
+                };
+                if(account.AgentId != null)
+                {
+                    var agent = _agentRepository.Get((Guid)account.AgentId);
+                    accountDto.AgentName = $"{agent.FirstName} {agent.LastName}";
+                }
+                policyAccountDtos.Add(accountDto);
+                
+               
+            }
+            return policyAccountDtos;
+        }
+
+        public List<PolicyAccountDto> GetAccountByCustomer(Guid id)
+        {
+            var accountList = _repository.GetAll().Where(e => e.CustomerId == id).ToList();
+            List<PolicyAccountDto> policyAccountDtos = new List<PolicyAccountDto>();
+            foreach (var account in accountList)
+            {
+
+                var custommer = _customerRepository.Get(account.CustomerId);
+                var policy = _policyRepository.Get(account.PolicyID);
+
+                var accountDto = new PolicyAccountDto()
+                {
+                    Id = account.Id,
+                    CustomerName = $"{custommer.FirstName} {custommer.LastName}",
+                    PolicyName = policy.Title,
+                    NomineeRelation = account.NomineeRelation,
+                    Nominee = account.Nominee,
+                    PolicyAmount = account.PolicyAmount,
+                    PolicyDuration = account.PolicyDuration,
+                    PurchasedDate = account.PurchasedDate,
+                    AgentName = "NA"
+
+                };
+                if (account.AgentId != null)
+                {
+                    var agent = _agentRepository.Get((Guid)account.AgentId);
+                    accountDto.AgentName = $"{agent.FirstName} {agent.LastName}";
+                }
+                policyAccountDtos.Add(accountDto);
+
+
+            }
+            return policyAccountDtos;
         }
 
         public void Update(PolicyAccountDto policyAccountDto)

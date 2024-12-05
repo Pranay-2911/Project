@@ -1,4 +1,6 @@
-﻿using Project.Models;
+﻿using AutoMapper;
+using Project.DTOs;
+using Project.Models;
 using Project.Repositories;
 
 namespace Project.Services
@@ -6,13 +8,16 @@ namespace Project.Services
     public class DocumentService : IDocumentService
     {
         private readonly IRepository<Document> _repository;
+        private readonly IMapper _mapper;
 
-        public DocumentService(IRepository<Document> repository)
+        public DocumentService(IRepository<Document> repository, IMapper mapper)
         {
             _repository = repository;
+            _mapper = mapper;
         }
-        public Guid Add(Document document)
+        public Guid Add(DocumentDto documentDto)
         {
+            var document = _mapper.Map<Document>(documentDto);
             _repository.Add(document);
             return document.Id;
         }

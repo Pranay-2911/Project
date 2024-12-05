@@ -102,6 +102,12 @@ namespace Project.Controllers
             var policyDto = _policyService.GetPolicyByCustomer(id);
             return Ok(policyDto);
         }
+        [HttpGet("PolicyAccount")]
+        public IActionResult GetPolicyAccountByCustomer(Guid id)
+        {
+            var policyAccount = _policyAccountService.GetAccountByCustomer(id);
+            return Ok(policyAccount);
+        }
 
         [HttpDelete("{customerId}/{policyId}")]
         public IActionResult DeletePolicy(Guid customerId, Guid policyId)

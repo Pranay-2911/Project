@@ -18,7 +18,7 @@ namespace Project.Controllers
         }
 
         // Pay a specific premium
-        [HttpPost("premium/{premiumId}/pay")]
+        [HttpPost("{premiumId}")]
         public IActionResult PayPremium(Guid premiumId, [FromBody] PaymentDto paymentDto)
         {
             var result = _premiumService.PayPremium(premiumId, paymentDto);
@@ -35,6 +35,14 @@ namespace Project.Controllers
         {
             var premiumStatuses = _premiumService.GetPremiumStatuses(policyId);
             return Ok(premiumStatuses);
+        }
+
+        [HttpGet("Account/{id}")]
+        //[Authorize(Roles = "Admin")]
+        public IActionResult GetPremiumByAccount(Guid id)
+        {
+            var premiums = _premiumService.GetPremiumByPolicyAccount(id);
+            return Ok(premiums);
         }
     }
 }

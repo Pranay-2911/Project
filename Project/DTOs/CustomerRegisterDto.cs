@@ -21,6 +21,7 @@ namespace Project.DTOs
         public string State { get; set; }
         [Required]
         public string City { get; set; }
+        public DateOnly DateOfBirth { get; set; }
 
         [Required]
         [StringLength(20, MinimumLength = 5, ErrorMessage = "username must be in 5 to 20 characters")]
@@ -29,6 +30,5 @@ namespace Project.DTOs
         [StringLength(20, MinimumLength = 7, ErrorMessage = "password must be in 7 to 20 characters")]
         public string Password { get; set; }
 
-        public Guid? UserId { get; set; }
     }
 }

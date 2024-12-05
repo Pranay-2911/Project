@@ -36,10 +36,12 @@ namespace Project.Services
             var role = _roleRepository.Get(roleName.Id);
             role.Users.Add(user);
             _roleRepository.Update(role);
-
-            customerRegisterDto.UserId = user.Id;
-
             var customer = _mapper.Map<Customer>(customerRegisterDto);
+
+            customer.UserId = user.Id;
+            customer.IsKYC = false;
+
+            
             _repository.Add(customer);
             return customer.CustomerId;
         }
@@ -85,7 +87,7 @@ namespace Project.Services
 
         public List<CustomerDto> GetCustomers()
         {
-            var customer = _repository.GetAll().AsNoTracking().ToList();
+            var customer = _repository.GetAll().AsNoTracking().Include(c => c.Accounts).ToList();
             List<CustomerDto> customerDtos = _mapper.Map<List<CustomerDto>>(customer);
             return customerDtos;
         }

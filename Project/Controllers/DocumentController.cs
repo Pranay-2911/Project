@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Project.DTOs;
 using Project.Models;
 using Project.Services;
 
@@ -17,7 +18,7 @@ namespace Project.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(Document document)
+        public IActionResult Add(DocumentDto document)
         {
             var newId = _documentService.Add(document);
             return Ok(newId);

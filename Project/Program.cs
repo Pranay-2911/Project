@@ -51,6 +51,7 @@ namespace Project
             builder.Services.AddTransient<IPremiumService, PremiumService>();
             builder.Services.AddTransient<IPolicyAccountService,  PolicyAccountService>();
             builder.Services.AddTransient<IEnumService, EnumService>();
+            builder.Services.AddTransient<IDocumentService,  DocumentService>();
 
 
 

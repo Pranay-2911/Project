@@ -35,8 +35,9 @@ namespace Project.Controllers
                 if (BCrypt.Net.BCrypt.Verify(loginDto.Password, existingUser.PasswordHash))
                 {
                     var role = existingUser.Role.RoleName.ToString();
+                    Guid id = new Guid();
                     string token = "";
-                    var user = _loginService.FindUser(role, existingUser.Id, ref token);
+                    var user = _loginService.FindUser(role, existingUser.Id, ref token, ref id);
     
                     Response.Headers.Add("Jwt", token);
                     return Ok(new {userName = loginDto.Username, roleName = role });

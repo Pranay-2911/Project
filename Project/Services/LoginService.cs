@@ -34,32 +34,36 @@ namespace Project.Services
             return _userRepo.GetAll().Include(u => u.Role).Where(u => u.UserName == userName).FirstOrDefault();       
         }
 
-        public object FindUser(string role, Guid id, ref string token)
+        public object FindUser(string role, Guid userId, ref string token, ref Guid id)
         {
             if (role == "ADMIN")
             {
                
-                var admin = _adminRepo.GetAll().Where(u => u.UserId == id).FirstOrDefault();
+                var admin = _adminRepo.GetAll().Where(u => u.UserId == userId).FirstOrDefault();
                 token = CreateTokenAdmin(role, admin);
+                id = admin.Id;
                 return admin;
             }
             else if (role == "AGENT")
             {
-                var agent = _agentRepo.GetAll().Where(u => u.UserId == id).FirstOrDefault();
+                var agent = _agentRepo.GetAll().Where(u => u.UserId == userId).FirstOrDefault();
                 token= CreateTokenAgent(role, agent);
+                id = agent.Id;
                 return agent;
             }
             else if (role == "CUSTOMER")
             {
-                var customer =  _customerRepo.GetAll().Where(u => u.UserId == id).FirstOrDefault();
+                var customer =  _customerRepo.GetAll().Where(u => u.UserId == userId).FirstOrDefault();
                 token = CreateTokenCustomer(role, customer);
+                id = customer.CustomerId;
                 return token;
             }
             else if (role == "EMPLOYEE")
             {
-                var agent =  _employeeRepo.GetAll().Where(u => u.UserId == id).FirstOrDefault();
-                token = CreateTokenEmployee(role, agent);
-                return agent;
+                var employee =  _employeeRepo.GetAll().Where(u => u.UserId == userId).FirstOrDefault();
+                token = CreateTokenEmployee(role, employee);
+                id = employee.Id;  
+                return employee;
             }
             return null;
         }
@@ -91,7 +95,8 @@ namespace Project.Services
             List<Claim> claim = new List<Claim>()
             {
                 new Claim(ClaimTypes.Name,user.FirstName),
-                new Claim(ClaimTypes.Role, role)
+                new Claim(ClaimTypes.Role, role),
+                new Claim("Id", user.Id.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Key").Value));
@@ -112,7 +117,8 @@ namespace Project.Services
             List<Claim> claim = new List<Claim>()
             {
                 new Claim(ClaimTypes.Name,user.FirstName),
-                new Claim(ClaimTypes.Role, role)
+                new Claim(ClaimTypes.Role, role),
+                new Claim("Id", user.Id.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Key").Value));
@@ -133,7 +139,8 @@ namespace Project.Services
             List<Claim> claim = new List<Claim>()
             {
                 new Claim(ClaimTypes.Name,user.FirstName),
-                new Claim(ClaimTypes.Role, role)
+                new Claim(ClaimTypes.Role, role),
+                new Claim("Id", user.CustomerId.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration.GetSection("AppSettings:Key").Value));

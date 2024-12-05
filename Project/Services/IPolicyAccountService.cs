@@ -8,6 +8,8 @@ namespace Project.Services
         public Guid Add(PolicyAccountDto policyAccountDto);
         public bool Delete(Guid customerId, Guid policyId);
         public void Update(PolicyAccountDto policyAccountDto);
-        public List<PolicyAccount> GetAll();
+
+        public List<PolicyAccountDto> GetAll();
+        public List<PolicyAccountDto> GetAccountByCustomer(Guid id);
     }
 }

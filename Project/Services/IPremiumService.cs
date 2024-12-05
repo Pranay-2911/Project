@@ -6,5 +6,6 @@ namespace Project.Services
     { 
         public PaymentDto PayPremium(Guid premiumId, PaymentDto paymentDto);
         public List<PremiumDto> GetPremiumStatuses(Guid policyId);
+        public List<PremiumDto> GetPremiumByPolicyAccount(Guid id);
     }
 }

@@ -17,6 +17,9 @@ namespace Project.Models
         [Required]
         public DateTime PurchasedDate { get; set; }
         [Required]
+        public double PolicyAmount {  get; set; }
+        public int PolicyDuration { get; set; }
+        [Required]
         public string Nominee { get; set; }
         [Required]
         public NomineeRelation NomineeRelation { get; set; }

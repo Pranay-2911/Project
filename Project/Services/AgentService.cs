@@ -85,7 +85,7 @@ namespace Project.Services
 
         public List<AgentDto> GetAll()
         {
-            var agents = _agentRepository.GetAll().Include(a => a.User).Where(a => a.User.Status == true).ToList();
+            var agents = _agentRepository.GetAll().Include(a => a.User).Where(a => a.User.Status == true).Where(a => a.IsVerified == true).ToList();
             var agentDtos = _mapper.Map<List<AgentDto>>(agents);
             return agentDtos;
         }
