@@ -35,8 +35,12 @@ namespace Project.Models
         [Required]
         public int InstallmentCommisionRatio { get; set; }
         [Required]
-        public DocumentType DocumentType { get; set; }  
-        
+        public DocumentType DocumentType { get; set; }
+        [Required]
+        public string? ImageLink { get; set; }
+          
+        public string Documents { get; set; }
+
         public List<PolicyAccount> Accounts { get; set; }
         public Plan Plan { get; set; }
         [ForeignKey("Plan")]

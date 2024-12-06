@@ -12,8 +12,8 @@ using Project.Data;
 namespace Project.Migrations
 {
     [DbContext(typeof(ProjectContext))]
-    [Migration("20241202132221_addanc")]
-    partial class addanc
+    [Migration("20241206161003_addTab")]
+    partial class addTab
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -57,6 +57,9 @@ namespace Project.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<double>("CurrentCommisionBalance")
+                        .HasColumnType("float");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -68,6 +71,9 @@ namespace Project.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
+
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -104,7 +110,8 @@ namespace Project.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
                     b.Property<bool>("Satus")
                         .HasColumnType("bit");
@@ -160,6 +167,9 @@ namespace Project.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateOnly>("DateOfBirth")
+                        .HasColumnType("date");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -171,6 +181,9 @@ namespace Project.Migrations
                         .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
+
+                    b.Property<bool>("IsKYC")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -204,9 +217,6 @@ namespace Project.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("CustomerId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -215,9 +225,10 @@ namespace Project.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.Property<Guid>("PolicyAccountId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.HasIndex("CustomerId");
+                    b.HasKey("Id");
 
                     b.ToTable("Documents");
                 });
@@ -324,11 +335,15 @@ namespace Project.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
+                        .HasMaxLength(10000)
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DocumentType")
                         .HasColumnType("int");
+
+                    b.Property<string>("ImageLink")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("InstallmentCommisionRatio")
                         .HasColumnType("int");
@@ -387,11 +402,20 @@ namespace Project.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Nominee")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("NomineeRelation")
+                        .HasColumnType("int");
+
+                    b.Property<double>("PolicyAmount")
+                        .HasColumnType("float");
+
+                    b.Property<int>("PolicyDuration")
                         .HasColumnType("int");
 
                     b.Property<Guid>("PolicyID")
@@ -452,18 +476,25 @@ namespace Project.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("CustomerId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Message")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(800)
+                        .HasColumnType("nvarchar(800)");
 
                     b.Property<string>("Reply")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
 
                     b.ToTable("Queries");
                 });
@@ -573,7 +604,7 @@ namespace Project.Migrations
             modelBuilder.Entity("Project.Models.Customer", b =>
                 {
                     b.HasOne("Project.Models.Agent", "Agent")
-                        .WithMany("Customers")
+                        .WithMany()
                         .HasForeignKey("AgentId");
 
                     b.HasOne("Project.Models.Employee", null)
@@ -589,17 +620,6 @@ namespace Project.Migrations
                     b.Navigation("Agent");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Project.Models.Document", b =>
-                {
-                    b.HasOne("Project.Models.Customer", "Customer")
-                        .WithMany("Documents")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("Project.Models.Employee", b =>
@@ -669,6 +689,17 @@ namespace Project.Migrations
                     b.Navigation("Policy");
                 });
 
+            modelBuilder.Entity("Project.Models.Query", b =>
+                {
+                    b.HasOne("Project.Models.Customer", "Customer")
+                        .WithMany("Queries")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+                });
+
             modelBuilder.Entity("Project.Models.User", b =>
                 {
                     b.HasOne("Project.Models.Role", "Role")
@@ -680,16 +711,11 @@ namespace Project.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("Project.Models.Agent", b =>
-                {
-                    b.Navigation("Customers");
-                });
-
             modelBuilder.Entity("Project.Models.Customer", b =>
                 {
                     b.Navigation("Accounts");
 
-                    b.Navigation("Documents");
+                    b.Navigation("Queries");
                 });
 
             modelBuilder.Entity("Project.Models.Employee", b =>

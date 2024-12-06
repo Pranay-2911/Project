@@ -5,7 +5,7 @@
 namespace Project.Migrations
 {
     /// <inheritdoc />
-    public partial class agentss : Migration
+    public partial class addTab4 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

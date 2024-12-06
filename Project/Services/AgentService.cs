@@ -36,6 +36,7 @@ namespace Project.Services
 
             var agent = _mapper.Map<Agent>(agentRegisterDto);
             agent.UserId = user.Id;
+            agent.IsVerified = false;
 
            
             _agentRepository.Add(agent);

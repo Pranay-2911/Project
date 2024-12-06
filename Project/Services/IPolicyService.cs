@@ -14,5 +14,6 @@ namespace Project.Services
         public List<PolicyDto> GetPolicyByCustomer(Guid Id);
         public Guid AddPlan(PlanDto plandto);
         public List<ViewCommissionDto> GetCommission();
+        public List<ViewCommissionDto> GetCommissionByAgent(Guid id);
     }
 }

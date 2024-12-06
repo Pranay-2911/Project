@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Project.DTOs;
 using Project.Models;
@@ -13,12 +14,14 @@ namespace Project.Controllers
         private readonly ICustomerService _customerService;
         private readonly IPolicyService _policyService;
         private readonly IPolicyAccountService _policyAccountService;
+        private readonly IMapper _mapper;
 
-        public CustomerController(ICustomerService customerService, IPolicyService policyService, IPolicyAccountService policyAccountService)
+        public CustomerController(ICustomerService customerService, IPolicyService policyService, IPolicyAccountService policyAccountService, IMapper mapper)
         {
             _customerService = customerService;
             _policyService = policyService;
             _policyAccountService = policyAccountService;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -73,8 +76,8 @@ namespace Project.Controllers
             return NotFound("Agent not found");
         }
 
-        [HttpPost("customer/{customerId}/purchase-policy")]
-        public IActionResult PurchasePolicy(Guid customerId, PurchasePolicyRequestDto requestdto)
+        [HttpPost("purchase-policy/{customerId}/Agent")]
+        public IActionResult PurchasePolicyAgent(Guid customerId, PurchasePolicyRequestDto requestdto)
         {
             // 1. Validate inputs
             if (requestdto.PolicyId == Guid.Empty || requestdto.TotalAmount <= 0 || requestdto.DurationInMonths <= 0)
@@ -93,7 +96,28 @@ namespace Project.Controllers
             return BadRequest(new {message = "Failed to purchase policy." });
         }
 
-       
+        [HttpPost("purchase-policy")]
+        public IActionResult PurchasePolicy(PurchasePolicyDto purchasedto)
+        {
+            var requestdto = _mapper.Map<PurchasePolicyRequestDto>(purchasedto);
+            // 1. Validate inputs
+            if (requestdto.PolicyId == Guid.Empty || requestdto.TotalAmount <= 0 || requestdto.DurationInMonths <= 0)
+            {
+                return BadRequest(new { message = "Invalid purchase request." });
+            }
+            
+            // 2. Link customer to policy and generate premiums
+            var result = _policyService.PurchasePolicy(purchasedto.CustomerId, requestdto);
+
+            // 3. Return success or failure response
+            if (result)
+            {
+                return Ok(new { message = "Policy purchased successfully!" });
+            }
+            return BadRequest(new { message = "Failed to purchase policy." });
+        }
+
+
 
 
         [HttpGet("Policy")]
@@ -102,6 +126,7 @@ namespace Project.Controllers
             var policyDto = _policyService.GetPolicyByCustomer(id);
             return Ok(policyDto);
         }
+
         [HttpGet("PolicyAccount")]
         public IActionResult GetPolicyAccountByCustomer(Guid id)
         {

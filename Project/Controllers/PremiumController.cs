@@ -19,9 +19,9 @@ namespace Project.Controllers
 
         // Pay a specific premium
         [HttpPost("{premiumId}")]
-        public IActionResult PayPremium(Guid premiumId, [FromBody] PaymentDto paymentDto)
+        public IActionResult PayPremium(Guid premiumId)
         {
-            var result = _premiumService.PayPremium(premiumId, paymentDto);
+            var result = _premiumService.PayPremium(premiumId);
             if (!result.Status)
                 return BadRequest(result.Status);
 
@@ -44,5 +44,22 @@ namespace Project.Controllers
             var premiums = _premiumService.GetPremiumByPolicyAccount(id);
             return Ok(premiums);
         }
+
+        [HttpPut("AddImage/{id}")]
+        //[Authorize(Roles = "Admin")]
+        public IActionResult GetPremiumByAccount(string image, Guid id)
+        {
+            
+            if(_premiumService.AddImage(image, id))
+            {
+
+                return Ok("done");
+
+            }
+            return BadRequest();
+        }
+
+
+
     }
 }

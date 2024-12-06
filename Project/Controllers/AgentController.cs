@@ -12,11 +12,14 @@ namespace Project.Controllers
     {
         private readonly IAgentService _agentService;
         private readonly ICustomerService _customerService;
+        private readonly IPolicyService _policyService;
 
-        public AgentController(IAgentService agentService, ICustomerService customerService)
+        public AgentController(IAgentService agentService, ICustomerService customerService, IPolicyService policyService)
         {
             _agentService = agentService;
             _customerService = customerService;
+            _policyService = policyService;
+
         }
 
 
@@ -88,6 +91,14 @@ namespace Project.Controllers
         {
             var customerId = _customerService.AddCustomer(customerRegisterDto);
             return Ok(customerId);
+        }
+
+
+        [HttpGet("Commission/{id}")]
+        public IActionResult GetCommission(Guid id)
+        {
+            var viewCommissionDto = _policyService.GetCommissionByAgent(id);
+            return Ok(viewCommissionDto);
         }
     }
 }

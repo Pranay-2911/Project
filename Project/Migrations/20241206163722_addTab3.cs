@@ -5,25 +5,25 @@
 namespace Project.Migrations
 {
     /// <inheritdoc />
-    public partial class agentchnage : Migration
+    public partial class addTab3 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<double>(
-                name: "CurrentCommisionBalance",
-                table: "Agents",
-                type: "float",
+            migrationBuilder.AddColumn<string>(
+                name: "Documents",
+                table: "Policies",
+                type: "nvarchar(max)",
                 nullable: false,
-                defaultValue: 0.0);
+                defaultValue: "[]");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "CurrentCommisionBalance",
-                table: "Agents");
+                name: "Documents",
+                table: "Policies");
         }
     }
 }

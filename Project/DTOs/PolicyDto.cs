@@ -34,7 +34,8 @@ namespace Project.DTOs
         [Required]
         public int InstallmentCommisionRatio { get; set; }
         [Required]
-        public DocumentType DocumentType { get; set; }
+        public List<string> Documents { get; set; }
         public Guid PlanId { get; set; }
+        public string ImageLink { get; set; }
     }
 }

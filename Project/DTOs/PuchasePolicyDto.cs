@@ -1,9 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Project.Types;
+﻿using Project.Types;
+using System.ComponentModel.DataAnnotations;
 
 namespace Project.DTOs
 {
-    public class PurchasePolicyRequestDto
+    public class PurchasePolicyDto
     {
         [Required]
         public Guid PolicyId { get; set; }
@@ -14,7 +14,7 @@ namespace Project.DTOs
         [Required]
         public string Nominee { get; set; }
         [Required]
-        public NomineeRelation NomineeRelation { get; set; }
-        public Guid? AgentId { get; set; }
+        public string NomineeRelation { get; set; }
+        public Guid CustomerId { get; set; }
     }
 }

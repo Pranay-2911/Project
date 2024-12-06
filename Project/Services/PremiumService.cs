@@ -27,19 +27,19 @@ namespace Project.Services
             _mapper = mapper;   
         }
 
-        public PaymentDto PayPremium(Guid premiumId, PaymentDto paymentDto)
+        public PaymentDto PayPremium(Guid premiumId)
         {
             var premium = _premiumRepository.Get(premiumId);
 
             if (premium == null || premium.Status == "Paid")
-                return new PaymentDto { Status = false, Amount = paymentDto.Amount };
+                return new PaymentDto { Status = false, Amount = premium.Amount };
 
             // Save payment details
             var payment = new Payment
             {
                 Id = Guid.NewGuid(),
                 PremiumId = premiumId,
-                AmountPaid = paymentDto.Amount,
+                AmountPaid = premium.Amount,
                 PaymentDate = DateTime.UtcNow,
                 PaymentStatus = "Success"
             };
@@ -68,7 +68,7 @@ namespace Project.Services
 
                 _commissionRepository.Add(agentCommission);
             }
-            return new PaymentDto { Amount = paymentDto.Amount, Status = true };
+            return new PaymentDto { Amount = premium.Amount, Status = true };
         }
 
         public List<PremiumDto> GetPremiumStatuses(Guid policyId)
@@ -92,6 +92,14 @@ namespace Project.Services
             
             var premiumDto = _mapper.Map<List<PremiumDto>>(premiums);
             return premiumDto;
+        }
+
+        public bool AddImage(string image, Guid id)
+        {
+            var policy = _policyRepository.Get(id);
+            policy.ImageLink = image;
+            _policyRepository.Update(policy);
+            return true;
         }
     }
 }

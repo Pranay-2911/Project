@@ -27,8 +27,5 @@ namespace Project.Models
         [ForeignKey("User")]
         public Guid UserId { get; set; }
 
-        public List<Customer> Customers { get; set; }
-        public List<Agent> Agents { get; set; }
-
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.VisualBasic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Project.Models
@@ -35,8 +36,9 @@ namespace Project.Models
         public Agent? Agent { get; set; }
         [ForeignKey("Agent")]
         public Guid? AgentId { get; set; }
-        public List<Document> Documents { get; set; }
+        //public List<Document> Documents { get; set; }
         public List<PolicyAccount> Accounts { get; set; }
+        public List<Query> Queries { get; set; }
 
 
     }

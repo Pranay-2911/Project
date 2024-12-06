@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace Project.Models
 {
     public class Query
@@ -13,5 +14,8 @@ namespace Project.Models
         [MaxLength(800, ErrorMessage ="Message must be in 800 characters")]
         public string Message {get; set;}
         public string? Reply { get; set;}
+        public Customer Customer { get; set;}
+        [ForeignKey("Customer")]
+        public Guid CustomerId { get; set;}
     }
 }

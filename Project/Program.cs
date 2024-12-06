@@ -52,6 +52,7 @@ namespace Project
             builder.Services.AddTransient<IPolicyAccountService,  PolicyAccountService>();
             builder.Services.AddTransient<IEnumService, EnumService>();
             builder.Services.AddTransient<IDocumentService,  DocumentService>();
+            builder.Services.AddTransient<IQueryService, QueryService>();
 
 
 
