@@ -14,13 +14,15 @@ namespace Project.Controllers
         private readonly IPolicyService _policyService;
         private readonly IStateService _stateService;
         private readonly IPolicyAccountService _policyAccountService;
+        private readonly ICommissionRequestService _commissionRequestService;
 
-        public AdminController(IAdminService adminService, IPolicyService policyService, IStateService stateService, IPolicyAccountService policyAccountService)
+        public AdminController(IAdminService adminService, IPolicyService policyService, IStateService stateService, IPolicyAccountService policyAccountService, ICommissionRequestService commissionRequestService)
         {
             _adminService = adminService;
             _policyService = policyService;
             _stateService = stateService;
             _policyAccountService = policyAccountService;
+            _commissionRequestService = commissionRequestService;
         }
 
         [HttpGet]
@@ -104,6 +106,33 @@ namespace Project.Controllers
             var viewCommissionDto = _policyService.GetCommission();
             return Ok(viewCommissionDto);
         }
+
+        [HttpGet("CommissionRequest")]
+        public IActionResult GetAllRequest()
+        {
+            var requests = _commissionRequestService.GetAllPendingRequest();
+            return Ok(requests);
+        }
+        [HttpPut("CommissionRequest/Approve/{id}")]
+        public IActionResult Approve(Guid id)
+        {
+           if(_commissionRequestService.Approve(id))
+            {
+                return Ok(id);
+            }
+           return BadRequest();
+        }
+        [HttpPut("CommissionRequest/Reject/{id}")]
+        public IActionResult Reject(Guid id)
+        {
+            if (_commissionRequestService.Reject(id))
+            {
+                return Ok(id);
+            }
+            return BadRequest();
+        }
+
+
 
     }
 }

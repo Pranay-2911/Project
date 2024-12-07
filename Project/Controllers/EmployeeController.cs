@@ -55,6 +55,23 @@ namespace Project.Controllers
             return NotFound();
         }
 
+        [HttpGet("GetAllDocument")]
+        public IActionResult GetAllDocument()
+        {
+            var documents = _employeeService.GetDocuments();
+            return Ok(documents);
+        }
+
+        [HttpPut("Verify/{id}")]
+        public IActionResult Verify(Guid id)
+        {
+            if (_employeeService.Verify(id))
+            {
+                return Ok(id);
+            }
+            return NotFound();
+        }
+
         //[HttpPost]
         //public IActionResult AddAgent(AgentDto agentDto)
         //{

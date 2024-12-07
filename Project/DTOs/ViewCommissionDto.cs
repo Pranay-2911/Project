@@ -5,6 +5,7 @@ namespace Project.DTOs
 {
     public class ViewCommissionDto
     {
+        public Guid Id { get; set; }
         public string AgentName { get; set; }
         public string SchemaName { get; set; }
         public string CustomerName { get; set; }

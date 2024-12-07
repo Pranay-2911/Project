@@ -8,8 +8,10 @@ using Project.Exceptions;
 using Project.Mapper;
 using Project.Repositories;
 using Project.Services;
+using Stripe;
 using System.Text;
 using System.Text.Json.Serialization;
+
 
 namespace Project
 {
@@ -42,7 +44,7 @@ namespace Project
             builder.Services.AddTransient<IRoleService, RoleService>();
             builder.Services.AddTransient<IUserService, UserService>();
             builder.Services.AddTransient<IEmployeeService, EmployeeService>();
-            builder.Services.AddTransient<ICustomerService, CustomerService>();
+            builder.Services.AddTransient<ICustomerService, Services.CustomerService>();
             builder.Services.AddTransient<IAgentService, AgentService>();  
             builder.Services.AddTransient<IAdminService, AdminService>();
             builder.Services.AddTransient<ILoginService, LoginService>();
@@ -53,6 +55,7 @@ namespace Project
             builder.Services.AddTransient<IEnumService, EnumService>();
             builder.Services.AddTransient<IDocumentService,  DocumentService>();
             builder.Services.AddTransient<IQueryService, QueryService>();
+            builder.Services.AddTransient<ICommissionRequestService, CommissionRequestService>();
 
 
 
@@ -90,6 +93,8 @@ namespace Project
             builder.Services.AddSwaggerGen();
             builder.Services.AddExceptionHandler<AppExceptionHandler>();
 
+            var stripeSettings = builder.Configuration.GetSection("Stripe");
+            StripeConfiguration.ApiKey = stripeSettings["SecretKey"];
 
             var app = builder.Build();
 

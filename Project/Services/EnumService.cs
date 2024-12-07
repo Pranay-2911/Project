@@ -33,5 +33,15 @@ namespace Project.Services
             }
             return nominee;
         }
+
+        public List<string> GetWithDrawStatus()
+        {
+            List<string> withdrawStatus = new List<string>();
+            foreach (WithdrawStatus type in Enum.GetValues(typeof(WithdrawStatus)))
+            {
+                withdrawStatus.Add(type.ToString());
+            }
+            return withdrawStatus;
+        }
     }
 }

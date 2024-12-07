@@ -33,5 +33,11 @@ namespace Project.Controllers
             return Ok(nomineeType);
         }
 
+        [HttpGet("WithdrawStatus")]
+        public IActionResult WithdrawStatus()
+        {
+            var withdrawStatus = _enumService.GetWithDrawStatus();
+            return Ok(withdrawStatus);
+        }
     }
 }

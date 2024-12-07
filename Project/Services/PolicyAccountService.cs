@@ -99,7 +99,9 @@ namespace Project.Services
                     PolicyAmount = account.PolicyAmount,
                     PolicyDuration = account.PolicyDuration,
                     PurchasedDate = account.PurchasedDate,
-                    AgentName = "NA"
+                    AgentName = "NA",
+                    IsVerified = account.IsVerified
+                    
 
                 };
                 if (account.AgentId != null)

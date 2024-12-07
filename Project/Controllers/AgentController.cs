@@ -13,12 +13,14 @@ namespace Project.Controllers
         private readonly IAgentService _agentService;
         private readonly ICustomerService _customerService;
         private readonly IPolicyService _policyService;
+        private readonly ICommissionRequestService _commissionRequestService;
 
-        public AgentController(IAgentService agentService, ICustomerService customerService, IPolicyService policyService)
+        public AgentController(IAgentService agentService, ICustomerService customerService, IPolicyService policyService, ICommissionRequestService commissionRequestService)
         {
             _agentService = agentService;
             _customerService = customerService;
             _policyService = policyService;
+            _commissionRequestService = commissionRequestService;
 
         }
 
@@ -99,6 +101,25 @@ namespace Project.Controllers
         {
             var viewCommissionDto = _policyService.GetCommissionByAgent(id);
             return Ok(viewCommissionDto);
+        }
+        [HttpGet("CurrentBalance/{id}")]
+        public IActionResult GetBalance(Guid id)
+        {
+            var balance = _agentService.GetBalance(id);
+            return Ok(balance);
+        }
+        [HttpPost("CommissionRequest")]
+        public IActionResult CommisionRequest(CommisionRequestDto commisionRequestDto)
+        {
+           var id  = _agentService.CommissionRequest(commisionRequestDto);
+           return Ok(id);
+        }
+
+        [HttpGet("CommissionRequest/{id}")]
+        public IActionResult GetCommissionRequest(Guid id)
+        {
+            var requests = _commissionRequestService.GetRequestByAgent(id);
+            return Ok(requests);    
         }
     }
 }

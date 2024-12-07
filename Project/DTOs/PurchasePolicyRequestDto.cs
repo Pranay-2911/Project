@@ -16,5 +16,6 @@ namespace Project.DTOs
         [Required]
         public NomineeRelation NomineeRelation { get; set; }
         public Guid? AgentId { get; set; }
+
     }
 }

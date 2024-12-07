@@ -13,14 +13,16 @@ namespace Project.Services
         private readonly IRepository<Agent> _agentRepository;
         private readonly IRepository<Role> _roleRepository;
         private readonly IRepository<User> _userRepository;
+        private readonly IRepository<CommissionRequest> _commissionRequestRepository;
         private readonly IMapper _mapper;
 
-        public AgentService(IRepository<Agent> repository, IMapper mapper, IRepository<Role> roleRepository, IRepository<User> userRepository)
+        public AgentService(IRepository<Agent> repository, IMapper mapper, IRepository<Role> roleRepository, IRepository<User> userRepository, IRepository<CommissionRequest> commissionRequestRepository)
         {
             _agentRepository = repository;
             _mapper = mapper;
             _roleRepository = roleRepository;
             _userRepository = userRepository;
+            _commissionRequestRepository = commissionRequestRepository;
         }
         public Guid Add(AgentRegisterDto agentRegisterDto)
         {
@@ -118,6 +120,32 @@ namespace Project.Services
                 return true;
             }
             throw new AgentNotFoundException("Agent Does Not Exist");
+        }
+
+        public double GetBalance(Guid id)
+        {
+            var agent = _agentRepository.Get(id);
+            if (agent != null)
+            {
+                return agent.CurrentCommisionBalance;
+            }
+            throw new AgentNotFoundException("Agent Does Not Exist");
+        }
+
+        public Guid CommissionRequest(CommisionRequestDto commissionRequestDto)
+        {
+            var commissionRequest = _mapper.Map<CommissionRequest>(commissionRequestDto);
+            commissionRequest.Status = WithdrawStatus.PENDING;
+            commissionRequest.RequestDate = DateTime.UtcNow;
+
+            var agent = _agentRepository.Get(commissionRequest.AgentId);
+            agent.CurrentCommisionBalance = agent.CurrentCommisionBalance - commissionRequest.Amount;
+
+            _agentRepository.Update(agent);
+
+            _commissionRequestRepository.Add(commissionRequest);
+            return commissionRequest.Id;
+
         }
     }
 }

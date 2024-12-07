@@ -13,5 +13,7 @@ namespace Project.Services
         public bool ChangePassword(ChangePasswordDto passwordDto);
         public List<AgentDto> GetAllUnVerified();
         public bool VerifyAgent(Guid id);
+        public double GetBalance(Guid id);
+        public Guid CommissionRequest(CommisionRequestDto commissionRequestDto);
     }
 }

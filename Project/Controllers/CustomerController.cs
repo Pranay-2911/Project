@@ -79,6 +79,7 @@ namespace Project.Controllers
         [HttpPost("purchase-policy/{customerId}/Agent")]
         public IActionResult PurchasePolicyAgent(Guid customerId, PurchasePolicyRequestDto requestdto)
         {
+            Guid policyAccountId = new Guid();
             // 1. Validate inputs
             if (requestdto.PolicyId == Guid.Empty || requestdto.TotalAmount <= 0 || requestdto.DurationInMonths <= 0)
             {
@@ -86,7 +87,7 @@ namespace Project.Controllers
             }
 
             // 2. Link customer to policy and generate premiums
-            var result = _policyService.PurchasePolicy(customerId, requestdto);
+            var result = _policyService.PurchasePolicy(customerId, requestdto, ref policyAccountId);
 
             // 3. Return success or failure response
             if (result)
@@ -100,6 +101,7 @@ namespace Project.Controllers
         public IActionResult PurchasePolicy(PurchasePolicyDto purchasedto)
         {
             var requestdto = _mapper.Map<PurchasePolicyRequestDto>(purchasedto);
+            Guid policyAccountId = new Guid();
             // 1. Validate inputs
             if (requestdto.PolicyId == Guid.Empty || requestdto.TotalAmount <= 0 || requestdto.DurationInMonths <= 0)
             {
@@ -107,12 +109,12 @@ namespace Project.Controllers
             }
             
             // 2. Link customer to policy and generate premiums
-            var result = _policyService.PurchasePolicy(purchasedto.CustomerId, requestdto);
+            var result = _policyService.PurchasePolicy(purchasedto.CustomerId, requestdto, ref policyAccountId);
 
             // 3. Return success or failure response
             if (result)
             {
-                return Ok(new { message = "Policy purchased successfully!" });
+                return Ok(new { accountId = policyAccountId });
             }
             return BadRequest(new { message = "Failed to purchase policy." });
         }

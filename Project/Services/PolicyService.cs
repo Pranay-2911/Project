@@ -16,9 +16,10 @@ namespace Project.Services
         private readonly IRepository<PolicyAccount> _policyAccountRepository;
         private readonly IRepository<Commission> _commisionRepository;
         private readonly IRepository<Plan> _planRepository;
+        private readonly IRepository<Document> _documentRepository;
         private readonly IMapper _mapper;
 
-        public PolicyService(IRepository<Policy> repository, IMapper mapper, IRepository<Customer> customerRepository, IRepository<Premium> premiumRepository, IRepository<PolicyAccount> policyaccountRepository, IRepository<Commission> commisionRepository, IRepository<Plan> planRepository, IRepository<Agent> agentRepository)
+        public PolicyService(IRepository<Policy> repository, IMapper mapper, IRepository<Customer> customerRepository, IRepository<Premium> premiumRepository, IRepository<PolicyAccount> policyaccountRepository, IRepository<Commission> commisionRepository, IRepository<Plan> planRepository, IRepository<Agent> agentRepository, IRepository<Document> documentRepository)
         {
             _policyRepository = repository;
             _customerRepository = customerRepository;
@@ -27,6 +28,7 @@ namespace Project.Services
             _commisionRepository = commisionRepository;
             _planRepository = planRepository;
             _agentRepository = agentRepository;
+            _documentRepository = documentRepository;
             _mapper = mapper;
         }
         public Guid AddSchema(PolicyDto policydto)
@@ -92,7 +94,7 @@ namespace Project.Services
             return false;
         }
 
-        public bool PurchasePolicy(Guid customerId, PurchasePolicyRequestDto requestdto)
+        public bool PurchasePolicy(Guid customerId, PurchasePolicyRequestDto requestdto, ref Guid policyAcctId)
         {
             // 1. Link customer to the policy (add an entry in the policy-customer table if required)
             var policy = _policyRepository.Get(requestdto.PolicyId);
@@ -108,9 +110,7 @@ namespace Project.Services
                 PolicyDuration = requestdto.DurationInMonths
             };
             _policyAccountRepository.Add(account);
-            var policyAccountId = account.Id;
-
-
+            policyAcctId = account.Id;
 
             // 2. Generate the premium schedule
             var premiums = GeneratePremiumSchedule(customerId, requestdto);

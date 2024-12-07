@@ -11,10 +11,6 @@ namespace Project.Models
         public string Name { get; set; }
         [Required]
         public string Location { get; set; }
-
-        //public Customer Customer { get; set; }
-        //[ForeignKey("Customer")]
-        //public Guid CustomerId { get; set; }
         public Guid PolicyAccountId { get; set; }
     }
 }

@@ -67,6 +67,9 @@ namespace Project.Mapper
 
             CreateMap<Query, ViewQueryDto>();
             CreateMap<ViewQueryDto, Query>();
+
+            CreateMap<CommissionRequest, CommisionRequestDto>();
+            CreateMap<CommisionRequestDto, CommissionRequest>();
         }
     }
 }

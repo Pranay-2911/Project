@@ -7,6 +7,7 @@ namespace Project.Services
         public List<string> GetCommisson();
         public List<string> GetDocument();
         public List<string> GetNominee();
+        public List<string> GetWithDrawStatus();
 
     }
 }

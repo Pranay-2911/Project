@@ -10,10 +10,11 @@ namespace Project.Services
         public List<Plan> GetAllPlan();
         public bool Update(PolicyDto policy);
         public bool Delete(Guid id);
-        public bool PurchasePolicy(Guid customerId, PurchasePolicyRequestDto requestdto);
+        public bool PurchasePolicy(Guid customerId, PurchasePolicyRequestDto requestdto, ref Guid policyAcctId);
         public List<PolicyDto> GetPolicyByCustomer(Guid Id);
         public Guid AddPlan(PlanDto plandto);
         public List<ViewCommissionDto> GetCommission();
         public List<ViewCommissionDto> GetCommissionByAgent(Guid id);
+
     }
 }

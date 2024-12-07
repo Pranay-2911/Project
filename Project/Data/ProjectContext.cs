@@ -22,6 +22,7 @@ namespace Project.Data
         public DbSet<Commission> Commissions { get; set; }
         public DbSet<GlobalVariables> GlobalVariables { get; set; }
         public DbSet<Plan> Plans { get; set; }
+        public DbSet<CommissionRequest> CommissionRequests { get; set; }
 
 
 

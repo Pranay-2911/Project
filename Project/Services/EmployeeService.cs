@@ -4,6 +4,7 @@ using Project.DTOs;
 using Project.Exceptions;
 using Project.Models;
 using Project.Repositories;
+using System.Collections.Generic;
 
 namespace Project.Services
 {
@@ -12,14 +13,22 @@ namespace Project.Services
         private readonly IRepository<Employee> _repository;
         private readonly IRepository<Role> _repositoryRole;
         private readonly IRepository<User> _userRepository;
+        private readonly IRepository<PolicyAccount> _policyAccountRepository;
+        private readonly IRepository<Customer> _customerRepository;
+        private readonly IRepository<Policy> _policyRepository;
+        private readonly IRepository<Document> _documentRepository;
         private readonly IMapper _mapper;
 
-        public EmployeeService(IRepository<Employee> employeeRepository, IMapper mapper, IRepository<Role> repositoryRole, IRepository<User> userRepository)
+        public EmployeeService(IRepository<Employee> employeeRepository, IMapper mapper, IRepository<Role> repositoryRole, IRepository<User> userRepository, IRepository<PolicyAccount> policyAccountRepository, IRepository<Document> documentRepository, IRepository<Customer> customerRepository, IRepository<Policy> policyRepository)
         {
             _repository = employeeRepository;
             _mapper = mapper;
             _repositoryRole = repositoryRole;
+            _policyAccountRepository = policyAccountRepository;
             _userRepository = userRepository;
+            _documentRepository = documentRepository;
+            _customerRepository = customerRepository;
+            _policyRepository = policyRepository;
         }
         public Guid AddEmployee(EmployeeRegisterDto employeeRegisterDto)
         {
@@ -81,5 +90,44 @@ namespace Project.Services
             }
             throw new EmployeeNotFoundException("Employee Does Not Exist");
         }
+
+        public List<VerifyDocumentDto> GetDocuments()
+        {
+            var accounts = _policyAccountRepository.GetAll().Where(a => a.IsVerified == false).ToList();
+            List<VerifyDocumentDto> verifyDocumentDtos = new List<VerifyDocumentDto>();
+            foreach (var account in accounts)
+            {
+                List<Document> documents = _documentRepository.GetAll().Where(d => d.PolicyAccountId == account.Id).ToList();
+                var policy = _policyRepository.Get(account.PolicyID);
+                var customer = _customerRepository.Get(account.CustomerId);
+                var documentDto = new VerifyDocumentDto()
+                {
+                    PolicyAccountId = account.Id,
+                    CustomerName = $"{customer.FirstName} {customer.LastName}",
+                    PolicyName = policy.Title,
+                    Documents = documents
+                };
+               
+
+                verifyDocumentDtos.Add(documentDto);
+                
+            }
+            return verifyDocumentDtos;
+            
+        }
+
+        public bool Verify(Guid id)
+        {
+            var account = _policyAccountRepository.Get(id);
+            if (account != null)
+            {
+                account.IsVerified = true;
+                _policyAccountRepository.Update(account);
+                return true;
+            }
+
+            return false;
+        }
+        
     }
 }
