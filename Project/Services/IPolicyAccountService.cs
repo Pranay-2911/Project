@@ -9,7 +9,7 @@ namespace Project.Services
         public bool Delete(Guid customerId, Guid policyId);
         public void Update(PolicyAccountDto policyAccountDto);
 
-        public List<PolicyAccountDto> GetAll();
-        public List<PolicyAccountDto> GetAccountByCustomer(Guid id);
+        public PageList<PolicyAccountDto> GetAll(PageParameter pageParameter);
+        public PageList<PolicyAccountDto> GetAccountByCustomer(Guid id, PageParameter pageParameters);
     }
 }

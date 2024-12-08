@@ -1,4 +1,5 @@
 ﻿using Project.DTOs;
+using Project.Models;
 
 namespace Project.Services
 {
@@ -6,7 +7,7 @@ namespace Project.Services
     { 
         public PaymentDto PayPremium(Guid premiumId);
         public List<PremiumDto> GetPremiumStatuses(Guid policyId);
-        public List<PremiumDto> GetPremiumByPolicyAccount(Guid id);
+        public PageList<PremiumDto> GetPremiumByPolicyAccount(Guid id, PageParameter pageParameter);
         public bool AddImage(string image, Guid id);
     }
 }

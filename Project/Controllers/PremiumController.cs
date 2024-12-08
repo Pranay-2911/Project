@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Project.DTOs;
+using Project.Models;
 using Project.Services;
 
 namespace Project.Controllers
@@ -39,25 +40,25 @@ namespace Project.Controllers
 
         [HttpGet("Account/{id}")]
         //[Authorize(Roles = "Admin")]
-        public IActionResult GetPremiumByAccount(Guid id)
+        public IActionResult GetPremiumByAccount(Guid id, [FromQuery] PageParameter pageParameters)
         {
-            var premiums = _premiumService.GetPremiumByPolicyAccount(id);
+            var premiums = _premiumService.GetPremiumByPolicyAccount(id, pageParameters);
             return Ok(premiums);
         }
 
-        [HttpPut("AddImage/{id}")]
-        //[Authorize(Roles = "Admin")]
-        public IActionResult GetPremiumByAccount(string image, Guid id)
-        {
+        //[HttpPut("AddImage/{id}")]
+        ////[Authorize(Roles = "Admin")]
+        //public IActionResult GetPremiumByAccount(string image, Guid id)
+        //{
             
-            if(_premiumService.AddImage(image, id))
-            {
+        //    if(_premiumService.AddImage(image, id))
+        //    {
 
-                return Ok("done");
+        //        return Ok("done");
 
-            }
-            return BadRequest();
-        }
+        //    }
+        //    return BadRequest();
+        //}
 
 
 

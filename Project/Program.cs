@@ -56,6 +56,8 @@ namespace Project
             builder.Services.AddTransient<IDocumentService,  DocumentService>();
             builder.Services.AddTransient<IQueryService, QueryService>();
             builder.Services.AddTransient<ICommissionRequestService, CommissionRequestService>();
+            builder.Services.AddTransient<IPaymentService, PaymentService>();
+            builder.Services.AddTransient<IVariableService, VariableService>();
 
 
 
@@ -93,8 +95,6 @@ namespace Project
             builder.Services.AddSwaggerGen();
             builder.Services.AddExceptionHandler<AppExceptionHandler>();
 
-            var stripeSettings = builder.Configuration.GetSection("Stripe");
-            StripeConfiguration.ApiKey = stripeSettings["SecretKey"];
 
             var app = builder.Build();
 

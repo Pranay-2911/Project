@@ -25,9 +25,9 @@ namespace Project.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll([FromQuery] PageParameter pageParameter)
         {
-            var customerDtos = _customerService.GetCustomers();
+            var customerDtos = _customerService.GetCustomers(pageParameter);
             return Ok(customerDtos);
         }
 
@@ -66,7 +66,7 @@ namespace Project.Controllers
             return NotFound();
         }
 
-        [HttpPut("chnagepassword")]
+        [HttpPut("ChangePassword")]
         public IActionResult ChangePassword(ChangePasswordDto changePasswordDto)
         {
             if (_customerService.ChangePassword(changePasswordDto))
@@ -130,9 +130,9 @@ namespace Project.Controllers
         }
 
         [HttpGet("PolicyAccount")]
-        public IActionResult GetPolicyAccountByCustomer(Guid id)
+        public IActionResult GetPolicyAccountByCustomer(Guid id,[FromQuery] PageParameter pageParameter)
         {
-            var policyAccount = _policyAccountService.GetAccountByCustomer(id);
+            var policyAccount = _policyAccountService.GetAccountByCustomer(id, pageParameter);
             return Ok(policyAccount);
         }
 
@@ -145,5 +145,6 @@ namespace Project.Controllers
             }
             return BadRequest();
         }
+
     }
 }

@@ -86,17 +86,18 @@ namespace Project.Services
             throw new AgentNotFoundException("Agent Does Not Exist");
         }
 
-        public List<AgentDto> GetAll()
+        public PageList<AgentDto> GetAll(PageParameter pageParameters)
         {
             var agents = _agentRepository.GetAll().Include(a => a.User).Where(a => a.User.Status == true).Where(a => a.IsVerified == true).ToList();
             var agentDtos = _mapper.Map<List<AgentDto>>(agents);
-            return agentDtos;
+            return PageList<AgentDto>.ToPagedList(agentDtos, pageParameters.PageNumber, pageParameters.PageSize);
         }
-        public List<AgentDto> GetAllUnVerified()
+
+        public PageList<AgentDto> GetAllUnVerified(PageParameter pageParameters)
         {
             var agents = _agentRepository.GetAll().Include(a => a.User).Where(a => a.User.Status == true).Where(a => a.IsVerified == false).ToList();
             var agentDtos = _mapper.Map<List<AgentDto>>(agents);
-            return agentDtos;
+            return PageList<AgentDto>.ToPagedList(agentDtos, pageParameters.PageNumber, pageParameters.PageSize);
         }
         public bool VerifyAgent(Guid id)
         {

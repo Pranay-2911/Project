@@ -10,6 +10,7 @@ namespace Project.DTOs
         public string Title { get; set; }
         public string Message { get; set; }
         public string? Reply { get; set; }
-        public Guid CustomerId { get; set; }
+        public string CustomerName { get; set; }
+
     }
 }

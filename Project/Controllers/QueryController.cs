@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Project.DTOs;
 using Project.Services;
+using Project.Models;
 
 namespace Project.Controllers
 {
@@ -15,10 +16,10 @@ namespace Project.Controllers
             _queryService = queryService;
         }
 
-        [HttpGet]
-        public IActionResult Get()
+        [HttpGet("{id}")]
+        public IActionResult Get(Guid id, [FromQuery]PageParameter pageParameter)
         {
-            var queryDto = _queryService.GetAllQuery();
+            var queryDto = _queryService.GetQueryByCustomer(id, pageParameter);
             return Ok(queryDto);
 
         }

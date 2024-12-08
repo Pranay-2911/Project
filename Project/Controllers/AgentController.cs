@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Project.DTOs;
+using Project.Models;
 using Project.Services;
 
 namespace Project.Controllers
@@ -27,15 +28,16 @@ namespace Project.Controllers
 
 
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll([FromQuery] PageParameter pageParameters)
         {
-            var agents = _agentService.GetAll();
+            var agents = _agentService.GetAll(pageParameters);
             return Ok(agents);
         }
+
         [HttpGet("UnVerified")]
-        public IActionResult GetAllUnVerified()
+        public IActionResult GetAllUnVerified([FromQuery] PageParameter pageParameters)
         {
-            var agents = _agentService.GetAllUnVerified();
+            var agents = _agentService.GetAllUnVerified(pageParameters);
             return Ok(agents);
         }
 
@@ -76,7 +78,7 @@ namespace Project.Controllers
             return NotFound("Agent not found");
         }
 
-        [HttpPut("chnagepassword")]
+        [HttpPut("ChangePassword")]
         public IActionResult ChangePassword(ChangePasswordDto changePasswordDto)
         {
             if(_agentService.ChangePassword(changePasswordDto))
@@ -97,11 +99,12 @@ namespace Project.Controllers
 
 
         [HttpGet("Commission/{id}")]
-        public IActionResult GetCommission(Guid id)
+        public IActionResult GetCommission(Guid id, [FromQuery] PageParameter pageParameters)
         {
-            var viewCommissionDto = _policyService.GetCommissionByAgent(id);
+            var viewCommissionDto = _policyService.GetCommissionByAgent(id, pageParameters);
             return Ok(viewCommissionDto);
         }
+
         [HttpGet("CurrentBalance/{id}")]
         public IActionResult GetBalance(Guid id)
         {

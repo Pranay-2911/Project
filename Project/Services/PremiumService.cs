@@ -85,13 +85,13 @@ namespace Project.Services
                 }).ToList();
         }
 
-        public List<PremiumDto> GetPremiumByPolicyAccount(Guid id)
+        public PageList<PremiumDto> GetPremiumByPolicyAccount(Guid id, PageParameter pageParameter)
         {
             var account =_policyAccountRepository.Get(id); 
             var premiums = _premiumRepository.GetAll().Where(a => a.CustomerId == account.CustomerId).Where(a => a.PolicyId == account.PolicyID).ToList();
             
             var premiumDto = _mapper.Map<List<PremiumDto>>(premiums);
-            return premiumDto;
+            return PageList<PremiumDto>.ToPagedList(premiumDto, pageParameter.PageNumber, pageParameter.PageSize); ;
         }
 
         public bool AddImage(string image, Guid id)

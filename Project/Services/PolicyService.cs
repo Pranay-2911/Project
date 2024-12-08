@@ -69,11 +69,11 @@ namespace Project.Services
             throw new Exception("No such policy exist");
         }
 
-        public List<PolicyDto> GetAllSchema()
+        public PageList<PolicyDto> GetAllSchema(PageParameter pageParameter)
         {
             var policies = _policyRepository.GetAll().ToList();
             var policydtos = _mapper.Map<List<PolicyDto>>(policies);
-            return policydtos;
+            return PageList<PolicyDto>.ToPagedList(policydtos, pageParameter.PageNumber, pageParameter.PageSize);
         }
         public List<Plan> GetAllPlan()
         {
@@ -84,7 +84,7 @@ namespace Project.Services
 
         public bool Update(PolicyDto policydto)
         {
-            var existingPolicy = _policyRepository.Get(policydto.Id);
+            var existingPolicy = _policyRepository.GetAll().AsNoTracking().Where( p => p.Id == policydto.Id).FirstOrDefault();
             if (existingPolicy != null)
             {
                 var policy = _mapper.Map<Policy>(policydto);
@@ -176,7 +176,7 @@ namespace Project.Services
 
         }
 
-        public List<ViewCommissionDto> GetCommission() 
+        public PageList<ViewCommissionDto> GetCommission(PageParameter pageParameter) 
         {
             var commissions = _commisionRepository.GetAll().ToList();
             List<ViewCommissionDto> viewCommissionDtos = new List<ViewCommissionDto>();
@@ -200,7 +200,7 @@ namespace Project.Services
                 viewCommissionDtos.Add(viewCommission);
             }
 
-            return viewCommissionDtos;
+            return PageList<ViewCommissionDto>.ToPagedList(viewCommissionDtos, pageParameter.PageNumber, pageParameter.PageSize);
         }
 
         public List<ViewCommissionDto> GetCommissionByCustomer(Guid id)
@@ -230,7 +230,7 @@ namespace Project.Services
             return viewCommissionDtos;
         }
 
-        public List<ViewCommissionDto> GetCommissionByAgent(Guid id)
+        public PageList<ViewCommissionDto> GetCommissionByAgent(Guid id, PageParameter pageParameter)
         {
             var commissions = _commisionRepository.GetAll().Where(c=>c.AgentId == id).ToList();
             List<ViewCommissionDto> viewCommissionDtos = new List<ViewCommissionDto>();
@@ -256,7 +256,7 @@ namespace Project.Services
                 viewCommissionDtos.Add(viewCommission);
             }
 
-            return viewCommissionDtos;
+            return PageList<ViewCommissionDto>.ToPagedList(viewCommissionDtos, pageParameter.PageNumber, pageParameter.PageSize); ;
         }
 
     }

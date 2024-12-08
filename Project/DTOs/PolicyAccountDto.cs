@@ -21,6 +21,6 @@ namespace Project.DTOs
         public double PolicyAmount { get; set; }
         [Required]
         public int PolicyDuration {  get; set; }
-        public bool IsVerified { get; set; }
+        public WithdrawStatus IsVerified { get; set; }
     }
 }

@@ -17,7 +17,7 @@ namespace Project.Services
             _mapper = mapper;
         }
 
-        public List<ViewCommissionRequestDto> GetAllPendingRequest()
+        public PageList<ViewCommissionRequestDto> GetAllPendingRequest(PageParameter pageParameter)
         {
             var requests = _commissionRequestRepository.GetAll().Where(r => r.Status == Types.WithdrawStatus.PENDING).ToList();
             List<ViewCommissionRequestDto> viewCommissionRequestDtos = new List<ViewCommissionRequestDto>();
@@ -37,7 +37,7 @@ namespace Project.Services
             }
 
 
-            return viewCommissionRequestDtos;
+            return PageList<ViewCommissionRequestDto>.ToPagedList(viewCommissionRequestDtos, pageParameter.PageNumber, pageParameter.PageSize);
         }
 
         public List<CommissionRequest> GetRequestByAgent(Guid id)

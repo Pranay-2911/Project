@@ -5,7 +5,7 @@ namespace Project.Services
 {
     public interface ICommissionRequestService
     {
-        public List<ViewCommissionRequestDto> GetAllPendingRequest();
+        public PageList<ViewCommissionRequestDto> GetAllPendingRequest(PageParameter pageParameter);
         public List<CommissionRequest> GetRequestByAgent(Guid id);
         public bool Approve(Guid id);
         public bool Reject(Guid id);

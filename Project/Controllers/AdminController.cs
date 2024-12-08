@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Project.DTOs;
+using Project.Models;
+using Project.Repositories;
 using Project.Services;
 
 namespace Project.Controllers
@@ -15,14 +17,18 @@ namespace Project.Controllers
         private readonly IStateService _stateService;
         private readonly IPolicyAccountService _policyAccountService;
         private readonly ICommissionRequestService _commissionRequestService;
+        private readonly IVariableService _globalVariableService;
+        private readonly IPaymentService _paymentService;
 
-        public AdminController(IAdminService adminService, IPolicyService policyService, IStateService stateService, IPolicyAccountService policyAccountService, ICommissionRequestService commissionRequestService)
+        public AdminController(IAdminService adminService, IPolicyService policyService, IStateService stateService, IPolicyAccountService policyAccountService, ICommissionRequestService commissionRequestService, IPaymentService paymentService, IVariableService globalVariableService)
         {
             _adminService = adminService;
             _policyService = policyService;
             _stateService = stateService;
             _policyAccountService = policyAccountService;
             _commissionRequestService = commissionRequestService;
+            _paymentService = paymentService;
+            _globalVariableService = globalVariableService;
         }
 
         [HttpGet]
@@ -94,23 +100,23 @@ namespace Project.Controllers
         }
 
         [HttpGet("PolicyAccount")]
-        public IActionResult GetPolicyAccount()
+        public IActionResult GetPolicyAccount([FromQuery]PageParameter pageParameter)
         {
-            var accounts = _policyAccountService.GetAll();
+            var accounts = _policyAccountService.GetAll(pageParameter);
             return Ok(accounts);
         }
 
         [HttpGet("Commission")]
-        public IActionResult GetCommission()
+        public IActionResult GetCommission([FromQuery] PageParameter pageParameter)
         { 
-            var viewCommissionDto = _policyService.GetCommission();
+            var viewCommissionDto = _policyService.GetCommission(pageParameter);
             return Ok(viewCommissionDto);
         }
 
         [HttpGet("CommissionRequest")]
-        public IActionResult GetAllRequest()
+        public IActionResult GetAllRequest([FromQuery]PageParameter pageParameter)
         {
-            var requests = _commissionRequestService.GetAllPendingRequest();
+            var requests = _commissionRequestService.GetAllPendingRequest(pageParameter);
             return Ok(requests);
         }
         [HttpPut("CommissionRequest/Approve/{id}")]
@@ -132,7 +138,34 @@ namespace Project.Controllers
             return BadRequest();
         }
 
+        [HttpPut("Global")]
+        public IActionResult UpdateGlobal(GlobalVariables globalVariables)
+        {
+            if (_globalVariableService.UpdateGlobal(globalVariables))
+            {
+                return Ok(new { message = "Successfully Updated"});
+            }
+            return BadRequest();
+        }
+        [HttpGet("Global")]
+        public IActionResult GetGlobal()
+        {
+            var global = _globalVariableService.Get();
+            return Ok(global);
+        }
+        [HttpPost("Global")]
+        public IActionResult AddGlobal(GlobalVariables globalVariables)
+        {
+            _globalVariableService.AddGlobal(globalVariables);
+            return Ok();    
+        }
 
+        [HttpGet("Payments")]
+        public IActionResult GetAllPayments([FromQuery] PageParameter pageParameter) 
+        {
+            var payments = _paymentService.GetAll(pageParameter);
+            return Ok(payments);
+        }
 
     }
 }

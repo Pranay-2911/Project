@@ -24,6 +24,6 @@ namespace Project.Models
         [Required]
         public NomineeRelation NomineeRelation { get; set; }
         [Required]
-        public bool IsVerified { get; set; }
+        public WithdrawStatus IsVerified { get; set; }
     }
 }

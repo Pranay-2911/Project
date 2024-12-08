@@ -72,11 +72,27 @@ namespace Project.Services
             throw new EmployeeNotFoundException("Employee Does Not Exist");
         }
 
-        public List<EmployeeDto> GetEmployees()
+        public bool ChangePassword(ChangePasswordDto passwordDto)
+        {
+            var customer = _repository.GetAll().AsNoTracking().Include(a => a.User).Where(a => a.User.UserName == passwordDto.UserName).FirstOrDefault();
+            if (customer != null)
+            {
+                if (BCrypt.Net.BCrypt.Verify(passwordDto.Password, customer.User.PasswordHash))
+                {
+                    customer.User.PasswordHash = BCrypt.Net.BCrypt.HashPassword(passwordDto.NewPassword);
+                    _repository.Update(customer);
+                    return true;
+                }
+
+            }
+            return false;
+        }
+
+        public PageList<EmployeeDto> GetEmployees(PageParameter pageParameter)
         {
             var employee = _repository.GetAll().Include(a => a.User).Where(a => a.User.Status == true).ToList();
             List<EmployeeDto> employeeDtos = _mapper.Map<List<EmployeeDto>>(employee);
-            return employeeDtos;
+            return PageList<EmployeeDto>.ToPagedList(employeeDtos, pageParameter.PageNumber, pageParameter.PageSize);
         }
 
         public bool UpdateEmployee(EmployeeDto employeeDto)
@@ -91,9 +107,9 @@ namespace Project.Services
             throw new EmployeeNotFoundException("Employee Does Not Exist");
         }
 
-        public List<VerifyDocumentDto> GetDocuments()
+        public PageList<VerifyDocumentDto> GetDocuments(PageParameter pageParameters)
         {
-            var accounts = _policyAccountRepository.GetAll().Where(a => a.IsVerified == false).ToList();
+            var accounts = _policyAccountRepository.GetAll().Where(a => a.IsVerified == Types.WithdrawStatus.PENDING).ToList();
             List<VerifyDocumentDto> verifyDocumentDtos = new List<VerifyDocumentDto>();
             foreach (var account in accounts)
             {
@@ -112,8 +128,8 @@ namespace Project.Services
                 verifyDocumentDtos.Add(documentDto);
                 
             }
-            return verifyDocumentDtos;
-            
+            return PageList<VerifyDocumentDto>.ToPagedList(verifyDocumentDtos, pageParameters.PageNumber, pageParameters.PageSize);
+
         }
 
         public bool Verify(Guid id)
@@ -121,7 +137,19 @@ namespace Project.Services
             var account = _policyAccountRepository.Get(id);
             if (account != null)
             {
-                account.IsVerified = true;
+                account.IsVerified = Types.WithdrawStatus.APPROVED;
+                _policyAccountRepository.Update(account);
+                return true;
+            }
+
+            return false;
+        }
+        public bool Reject(Guid id)
+        {
+            var account = _policyAccountRepository.Get(id);
+            if (account != null)
+            {
+                account.IsVerified = Types.WithdrawStatus.REJECTED;
                 _policyAccountRepository.Update(account);
                 return true;
             }
@@ -129,5 +157,6 @@ namespace Project.Services
             return false;
         }
         
+
     }
 }

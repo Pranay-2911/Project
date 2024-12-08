@@ -44,7 +44,7 @@ namespace Project.Services
 
         }
 
-        public List<PolicyAccountDto> GetAll()
+        public PageList<PolicyAccountDto> GetAll(PageParameter pageParameter)
         {
             var accountList = _repository.GetAll().ToList();
             List<PolicyAccountDto> policyAccountDtos = new List<PolicyAccountDto>();
@@ -76,10 +76,10 @@ namespace Project.Services
                 
                
             }
-            return policyAccountDtos;
+            return PageList<PolicyAccountDto>.ToPagedList(policyAccountDtos, pageParameter.PageNumber, pageParameter.PageSize);
         }
 
-        public List<PolicyAccountDto> GetAccountByCustomer(Guid id)
+        public PageList<PolicyAccountDto> GetAccountByCustomer(Guid id, PageParameter pageParameters)
         {
             var accountList = _repository.GetAll().Where(e => e.CustomerId == id).ToList();
             List<PolicyAccountDto> policyAccountDtos = new List<PolicyAccountDto>();
@@ -113,7 +113,7 @@ namespace Project.Services
 
 
             }
-            return policyAccountDtos;
+            return PageList<PolicyAccountDto>.ToPagedList(policyAccountDtos, pageParameters.PageNumber, pageParameters.PageSize);
         }
 
         public void Update(PolicyAccountDto policyAccountDto)

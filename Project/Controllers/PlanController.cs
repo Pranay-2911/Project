@@ -24,9 +24,9 @@ namespace Project.Controllers
         }
 
         [HttpGet("Schema")]
-        public IActionResult GetAllSchema()
+        public IActionResult GetAllSchema([FromQuery]PageParameter pageParameter)
         {
-            var policyDto = _policyService.GetAllSchema();
+            var policyDto = _policyService.GetAllSchema(pageParameter);
             return Ok(policyDto);
         }
         [HttpGet]

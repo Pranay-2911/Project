@@ -7,11 +7,11 @@ namespace Project.Services
     {
         public Guid Add(AgentRegisterDto agentRegisterDto);
         public bool Update(AgentDto agentDto);
-        public List<AgentDto> GetAll();
+        public PageList<AgentDto> GetAll(PageParameter pageParameters);
         public AgentDto Get(Guid id);
         public bool Delete(Guid id);
         public bool ChangePassword(ChangePasswordDto passwordDto);
-        public List<AgentDto> GetAllUnVerified();
+        public PageList<AgentDto> GetAllUnVerified(PageParameter pageParameters);
         public bool VerifyAgent(Guid id);
         public double GetBalance(Guid id);
         public Guid CommissionRequest(CommisionRequestDto commissionRequestDto);

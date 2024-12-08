@@ -6,15 +6,14 @@ namespace Project.Services
     {
         public Guid AddSchema(PolicyDto policydto);
         public PolicyDto Get(Guid id);
-        public List<PolicyDto> GetAllSchema();
+        public PageList<PolicyDto> GetAllSchema(PageParameter pageParameter);
         public List<Plan> GetAllPlan();
         public bool Update(PolicyDto policy);
         public bool Delete(Guid id);
         public bool PurchasePolicy(Guid customerId, PurchasePolicyRequestDto requestdto, ref Guid policyAcctId);
         public List<PolicyDto> GetPolicyByCustomer(Guid Id);
         public Guid AddPlan(PlanDto plandto);
-        public List<ViewCommissionDto> GetCommission();
-        public List<ViewCommissionDto> GetCommissionByAgent(Guid id);
-
+        public PageList<ViewCommissionDto> GetCommission(PageParameter pageParameter);
+        public PageList<ViewCommissionDto> GetCommissionByAgent(Guid id, PageParameter pageParameter);
     }
 }
