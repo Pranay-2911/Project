@@ -7,7 +7,7 @@ namespace Project.Services
     { 
         public PaymentDto PayPremium(Guid premiumId);
         public List<PremiumDto> GetPremiumStatuses(Guid policyId);
-        public PageList<PremiumDto> GetPremiumByPolicyAccount(Guid id, PageParameter pageParameter);
+        public PageList<PremiumDto> GetPremiumByPolicyAccount(Guid id, PageParameter pageParameter, ref int count);
         public bool AddImage(string image, Guid id);
     }
 }

@@ -85,9 +85,10 @@ namespace Project.Services
             throw new CustomerNotFoundException("Customer Does Not Exist");
         }
 
-        public PageList<CustomerDto> GetCustomers(PageParameter pageParameter)
+        public PageList<CustomerDto> GetCustomers(PageParameter pageParameter, ref int count)
         {
             var customer = _repository.GetAll().AsNoTracking().Include(c => c.Accounts).ToList();
+            count = customer.Count;
             List<CustomerDto> customerDtos = _mapper.Map<List<CustomerDto>>(customer);
             return PageList<CustomerDto>.ToPagedList(customerDtos, pageParameter.PageNumber, pageParameter.PageSize);
         }

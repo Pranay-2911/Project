@@ -97,27 +97,30 @@ namespace Project.Controllers
         {
             var city = _stateService.GetCities();
             return Ok(city);
-        }
+        }   
 
         [HttpGet("PolicyAccount")]
         public IActionResult GetPolicyAccount([FromQuery]PageParameter pageParameter)
         {
-            var accounts = _policyAccountService.GetAll(pageParameter);
-            return Ok(accounts);
+            var count = 0;
+            var accounts = _policyAccountService.GetAll(pageParameter, ref count);
+            return Ok(new {accounts =  accounts, count = count});
         }
 
         [HttpGet("Commission")]
         public IActionResult GetCommission([FromQuery] PageParameter pageParameter)
         { 
-            var viewCommissionDto = _policyService.GetCommission(pageParameter);
-            return Ok(viewCommissionDto);
+            var count = 0;
+            var viewCommissionDto = _policyService.GetCommission(pageParameter, ref count);
+            return Ok(new { viewCommissionDto = viewCommissionDto, count = count});
         }
 
         [HttpGet("CommissionRequest")]
         public IActionResult GetAllRequest([FromQuery]PageParameter pageParameter)
         {
-            var requests = _commissionRequestService.GetAllPendingRequest(pageParameter);
-            return Ok(requests);
+            var count = 0;
+            var requests = _commissionRequestService.GetAllPendingRequest(pageParameter, ref count);
+            return Ok(new { requests = requests, count = count});
         }
         [HttpPut("CommissionRequest/Approve/{id}")]
         public IActionResult Approve(Guid id)
@@ -163,8 +166,9 @@ namespace Project.Controllers
         [HttpGet("Payments")]
         public IActionResult GetAllPayments([FromQuery] PageParameter pageParameter) 
         {
-            var payments = _paymentService.GetAll(pageParameter);
-            return Ok(payments);
+            var count = 0;
+            var payments = _paymentService.GetAll(pageParameter, ref count);
+            return Ok(new {payments = payments, count= count});
         }
 
     }

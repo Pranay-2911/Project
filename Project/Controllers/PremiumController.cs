@@ -42,8 +42,9 @@ namespace Project.Controllers
         //[Authorize(Roles = "Admin")]
         public IActionResult GetPremiumByAccount(Guid id, [FromQuery] PageParameter pageParameters)
         {
-            var premiums = _premiumService.GetPremiumByPolicyAccount(id, pageParameters);
-            return Ok(premiums);
+            var count = 0;
+            var premiums = _premiumService.GetPremiumByPolicyAccount(id, pageParameters, ref count);
+            return Ok(new { premiums = premiums, count = count});
         }
 
         //[HttpPut("AddImage/{id}")]

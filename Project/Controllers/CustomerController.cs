@@ -27,8 +27,9 @@ namespace Project.Controllers
         [HttpGet]
         public IActionResult GetAll([FromQuery] PageParameter pageParameter)
         {
-            var customerDtos = _customerService.GetCustomers(pageParameter);
-            return Ok(customerDtos);
+            var count = 0;
+            var customerDtos = _customerService.GetCustomers(pageParameter, ref count);
+            return Ok(new {customerDtos= customerDtos, count=count});
         }
 
         [HttpPost]
@@ -92,7 +93,7 @@ namespace Project.Controllers
             // 3. Return success or failure response
             if (result)
             {
-                return Ok(new {message = "Policy purchased successfully!" });
+                return Ok(new { accountId = policyAccountId });
             }
             return BadRequest(new {message = "Failed to purchase policy." });
         }
@@ -132,8 +133,9 @@ namespace Project.Controllers
         [HttpGet("PolicyAccount")]
         public IActionResult GetPolicyAccountByCustomer(Guid id,[FromQuery] PageParameter pageParameter)
         {
-            var policyAccount = _policyAccountService.GetAccountByCustomer(id, pageParameter);
-            return Ok(policyAccount);
+            var count = 0;
+            var policyAccount = _policyAccountService.GetAccountByCustomer(id, pageParameter, ref count);
+            return Ok(new {policyAccount = policyAccount, count = count});
         }
 
         [HttpDelete("{customerId}/{policyId}")]

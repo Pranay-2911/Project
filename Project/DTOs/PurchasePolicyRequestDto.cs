@@ -14,7 +14,7 @@ namespace Project.DTOs
         [Required]
         public string Nominee { get; set; }
         [Required]
-        public NomineeRelation NomineeRelation { get; set; }
+        public string NomineeRelation { get; set; }
         public Guid? AgentId { get; set; }
 
     }

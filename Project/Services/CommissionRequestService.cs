@@ -17,9 +17,10 @@ namespace Project.Services
             _mapper = mapper;
         }
 
-        public PageList<ViewCommissionRequestDto> GetAllPendingRequest(PageParameter pageParameter)
+        public PageList<ViewCommissionRequestDto> GetAllPendingRequest(PageParameter pageParameter, ref int count)
         {
             var requests = _commissionRequestRepository.GetAll().Where(r => r.Status == Types.WithdrawStatus.PENDING).ToList();
+            count = requests.Count;
             List<ViewCommissionRequestDto> viewCommissionRequestDtos = new List<ViewCommissionRequestDto>();
             foreach (var request in requests)
             {
@@ -40,10 +41,11 @@ namespace Project.Services
             return PageList<ViewCommissionRequestDto>.ToPagedList(viewCommissionRequestDtos, pageParameter.PageNumber, pageParameter.PageSize);
         }
 
-        public List<CommissionRequest> GetRequestByAgent(Guid id)
+        public PageList<CommissionRequest> GetRequestByAgent(Guid id, PageParameter pageParameter, ref int count)
         {
             var requests = _commissionRequestRepository.GetAll().Where(r => r.AgentId == id).ToList();
-            return requests;
+            count = requests.Count;
+            return PageList<CommissionRequest>.ToPagedList(requests, pageParameter.PageNumber, pageParameter.PageSize);
         }
 
         public bool Approve(Guid id)

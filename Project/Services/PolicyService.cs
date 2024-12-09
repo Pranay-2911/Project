@@ -52,7 +52,8 @@ namespace Project.Services
             
             if (policy != null)
             {
-                _policyRepository.Delete(policy);
+                policy.PolicyStatus =false;
+                _policyRepository.Update(policy);
                 return true;
             }
             return false;
@@ -69,18 +70,25 @@ namespace Project.Services
             throw new Exception("No such policy exist");
         }
 
-        public PageList<PolicyDto> GetAllSchema(PageParameter pageParameter)
+        public PageList<PolicyDto> GetAllSchema(PageParameter pageParameter, ref int count)
         {
             var policies = _policyRepository.GetAll().ToList();
             var policydtos = _mapper.Map<List<PolicyDto>>(policies);
+            count = policydtos.Count;
             return PageList<PolicyDto>.ToPagedList(policydtos, pageParameter.PageNumber, pageParameter.PageSize);
         }
         public List<Plan> GetAllPlan()
         {
-            var plan = _planRepository.GetAll().Include(p => p.Schemes).ToList();
-            //var policydtos = _mapper.Map<List<PlanDto>>(plan);
-            return plan;
+            var plans = _planRepository.GetAll().Include(p => p.Schemes).ToList();
+
+            foreach (var plan in plans)
+            { 
+                plan.Schemes = plan.Schemes.Where(scheme => scheme.PolicyStatus == true).ToList();
+            }
+
+            return plans;
         }
+
 
         public bool Update(PolicyDto policydto)
         {
@@ -99,11 +107,15 @@ namespace Project.Services
             // 1. Link customer to the policy (add an entry in the policy-customer table if required)
             var policy = _policyRepository.Get(requestdto.PolicyId);
             var customer = _customerRepository.Get(customerId);
+            if (!Enum.TryParse<NomineeRelation>(requestdto.NomineeRelation, true, out var nomineeRelation))
+            {
+                throw new ArgumentException($"Invalid Nominee Relation: {requestdto.NomineeRelation}");
+            }
             var account = new PolicyAccount() { 
                 CustomerId = customer.CustomerId, 
                 PolicyID = policy.Id, 
                 Nominee = requestdto.Nominee, 
-                NomineeRelation = (NomineeRelation)Convert.ToInt32(requestdto.NomineeRelation), 
+                NomineeRelation = nomineeRelation, 
                 AgentId = requestdto.AgentId, 
                 PurchasedDate = DateTime.UtcNow,
                 PolicyAmount = requestdto.TotalAmount,
@@ -134,6 +146,10 @@ namespace Project.Services
                 };
 
                 _commisionRepository.Add(agentCommission);
+                var agent = _agentRepository.Get((Guid)requestdto.AgentId);
+                agent.CurrentCommisionBalance += policy.RegistrationCommisionAmount;
+                agent.TotalCommissionEarned += policy.RegistrationCommisionAmount;
+                _agentRepository.Update(agent);
             }
         
             return true;
@@ -176,9 +192,10 @@ namespace Project.Services
 
         }
 
-        public PageList<ViewCommissionDto> GetCommission(PageParameter pageParameter) 
+        public PageList<ViewCommissionDto> GetCommission(PageParameter pageParameter, ref int count) 
         {
             var commissions = _commisionRepository.GetAll().ToList();
+            count = commissions.Count;
             List<ViewCommissionDto> viewCommissionDtos = new List<ViewCommissionDto>();
             foreach(var commission in commissions)
             {
@@ -230,9 +247,10 @@ namespace Project.Services
             return viewCommissionDtos;
         }
 
-        public PageList<ViewCommissionDto> GetCommissionByAgent(Guid id, PageParameter pageParameter)
+        public PageList<ViewCommissionDto> GetCommissionByAgent(Guid id, PageParameter pageParameter,ref int count)
         {
             var commissions = _commisionRepository.GetAll().Where(c=>c.AgentId == id).ToList();
+            
             List<ViewCommissionDto> viewCommissionDtos = new List<ViewCommissionDto>();
 
             foreach (var commission in commissions)
@@ -255,7 +273,7 @@ namespace Project.Services
                 };
                 viewCommissionDtos.Add(viewCommission);
             }
-
+            count = viewCommissionDtos.Count;
             return PageList<ViewCommissionDto>.ToPagedList(viewCommissionDtos, pageParameter.PageNumber, pageParameter.PageSize); ;
         }
 

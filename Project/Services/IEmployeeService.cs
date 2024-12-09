@@ -5,7 +5,7 @@ namespace Project.Services
 {
     public interface IEmployeeService
     {
-        public PageList<EmployeeDto> GetEmployees(PageParameter pageParameter);
+        public PageList<EmployeeDto> GetEmployees(PageParameter pageParameter, ref int count);
         public Employee GetById(Guid id);
         public Guid AddEmployee(EmployeeRegisterDto employeeRegisterDto);
         public bool DeleteEmployee(Guid id);

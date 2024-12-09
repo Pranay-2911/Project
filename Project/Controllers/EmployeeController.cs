@@ -21,8 +21,9 @@ namespace Project.Controllers
         [HttpGet]
         public IActionResult GetAll([FromQuery] PageParameter pageParameter)
         {
-            var employeeDtos = _employeeService.GetEmployees(pageParameter);
-            return Ok(employeeDtos);
+            var count = 0;
+            var employeeDtos = _employeeService.GetEmployees(pageParameter, ref count);
+            return Ok(new {employeeDtos = employeeDtos, count = count});
         }
 
         [HttpPost]
@@ -61,8 +62,9 @@ namespace Project.Controllers
         [HttpGet("GetAllDocument")]
         public IActionResult GetAllDocument([FromQuery] PageParameter pageParameters)
         {
+            var count = 0;
             var documents = _employeeService.GetDocuments(pageParameters);
-            return Ok(documents);
+            return Ok(new {documents= documents, count = count});
         }
 
         [HttpPut("Verify/{id}")]
@@ -96,8 +98,9 @@ namespace Project.Controllers
         [HttpGet("GetAllQuery")]
         public IActionResult GetAllQuery([FromQuery]PageParameter pageParameter)
         {
-            var queries = _queryService.GetAllQuery(pageParameter);
-            return Ok(queries);
+            var count = 0;
+            var queries = _queryService.GetAllQuery(pageParameter, ref count);
+            return Ok(new { queries = queries, count = count});
         }
         [HttpPut("ChangePassword")]
         public IActionResult ChangePassword(ChangePasswordDto changePasswordDto)

@@ -88,10 +88,11 @@ namespace Project.Services
             return false;
         }
 
-        public PageList<EmployeeDto> GetEmployees(PageParameter pageParameter)
+        public PageList<EmployeeDto> GetEmployees(PageParameter pageParameter, ref int count)
         {
             var employee = _repository.GetAll().Include(a => a.User).Where(a => a.User.Status == true).ToList();
             List<EmployeeDto> employeeDtos = _mapper.Map<List<EmployeeDto>>(employee);
+            count = employeeDtos.Count;
             return PageList<EmployeeDto>.ToPagedList(employeeDtos, pageParameter.PageNumber, pageParameter.PageSize);
         }
 

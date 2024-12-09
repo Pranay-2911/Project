@@ -85,12 +85,13 @@ namespace Project.Services
                 }).ToList();
         }
 
-        public PageList<PremiumDto> GetPremiumByPolicyAccount(Guid id, PageParameter pageParameter)
+        public PageList<PremiumDto> GetPremiumByPolicyAccount(Guid id, PageParameter pageParameter, ref int count)
         {
             var account =_policyAccountRepository.Get(id); 
             var premiums = _premiumRepository.GetAll().Where(a => a.CustomerId == account.CustomerId).Where(a => a.PolicyId == account.PolicyID).ToList();
             
             var premiumDto = _mapper.Map<List<PremiumDto>>(premiums);
+            count = premiumDto.Count;
             return PageList<PremiumDto>.ToPagedList(premiumDto, pageParameter.PageNumber, pageParameter.PageSize); ;
         }
 

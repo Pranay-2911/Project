@@ -19,8 +19,9 @@ namespace Project.Controllers
         [HttpGet("{id}")]
         public IActionResult Get(Guid id, [FromQuery]PageParameter pageParameter)
         {
-            var queryDto = _queryService.GetQueryByCustomer(id, pageParameter);
-            return Ok(queryDto);
+            var count = 0;
+            var queryDto = _queryService.GetQueryByCustomer(id, pageParameter, ref count);
+            return Ok(new { queryDto = queryDto, count = count});
 
         }
 

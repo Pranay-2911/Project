@@ -30,7 +30,7 @@ namespace Project.Mapper
             CreateMap<AdminDto, Admin>();
 
 
-            CreateMap<Agent, AgentDto>();
+            CreateMap<Agent, AgentDto>().ForMember(dest => dest.IsActive, val => val.MapFrom(src => src.User.Status));
             CreateMap<AgentDto, Agent>();
             CreateMap<Agent, AgentRegisterDto>();
             CreateMap<AgentRegisterDto, Agent>();

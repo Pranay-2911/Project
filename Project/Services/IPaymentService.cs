@@ -5,6 +5,6 @@ namespace Project.Services
 {
     public interface IPaymentService
     {
-        public PageList<ShowPaymentDto> GetAll(PageParameter pageParameter);
+        public PageList<ShowPaymentDto> GetAll(PageParameter pageParameter, ref int count);
     }
 }

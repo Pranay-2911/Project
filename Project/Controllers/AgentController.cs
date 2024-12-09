@@ -25,20 +25,20 @@ namespace Project.Controllers
 
         }
 
-
-
         [HttpGet]
         public IActionResult GetAll([FromQuery] PageParameter pageParameters)
         {
-            var agents = _agentService.GetAll(pageParameters);
-            return Ok(agents);
+            var count = 0;
+            var agents = _agentService.GetAll(pageParameters, ref count);
+            return Ok(new { agents = agents, count = count});
         }
 
         [HttpGet("UnVerified")]
         public IActionResult GetAllUnVerified([FromQuery] PageParameter pageParameters)
         {
-            var agents = _agentService.GetAllUnVerified(pageParameters);
-            return Ok(agents);
+            var count = 0;
+            var agents = _agentService.GetAllUnVerified(pageParameters, ref count);
+            return Ok(new {agents = agents, count = count});
         }
 
         [HttpGet("{id}")]
@@ -62,6 +62,15 @@ namespace Project.Controllers
                 return Ok(id);
             return NotFound("Agent Not Found");
         }
+
+        [HttpPut("Active/{id}")]
+        public IActionResult Active(Guid id)
+        {
+            if (_agentService.Active(id))
+                return Ok(id);
+            return NotFound("Agent Not Found");
+        }
+
         [HttpPut("Verify")]
         public IActionResult Verfify([FromQuery] Guid id)
         {
@@ -101,8 +110,9 @@ namespace Project.Controllers
         [HttpGet("Commission/{id}")]
         public IActionResult GetCommission(Guid id, [FromQuery] PageParameter pageParameters)
         {
-            var viewCommissionDto = _policyService.GetCommissionByAgent(id, pageParameters);
-            return Ok(viewCommissionDto);
+            var count = 0;
+            var viewCommissionDto = _policyService.GetCommissionByAgent(id, pageParameters, ref count);
+            return Ok(new {viewCommissionDto = viewCommissionDto, count= count});
         }
 
         [HttpGet("CurrentBalance/{id}")]
@@ -119,10 +129,11 @@ namespace Project.Controllers
         }
 
         [HttpGet("CommissionRequest/{id}")]
-        public IActionResult GetCommissionRequest(Guid id)
+        public IActionResult GetCommissionRequest(Guid id, [FromQuery]PageParameter pageParameter)
         {
-            var requests = _commissionRequestService.GetRequestByAgent(id);
-            return Ok(requests);    
+            var count = 0;
+            var requests = _commissionRequestService.GetRequestByAgent(id, pageParameter, ref count);
+            return Ok(new {requests = requests, count = count});    
         }
     }
 }
