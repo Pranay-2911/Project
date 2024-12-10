@@ -24,10 +24,10 @@ namespace Project.Controllers
         }
 
         [HttpGet("Schema")]
-        public IActionResult GetAllSchema([FromQuery]PageParameter pageParameter)
+        public IActionResult GetAllSchema([FromQuery]PageParameter pageParameter, [FromQuery] string? searchQuery)
         {
             var count = 0;
-            var policyDto = _policyService.GetAllSchema(pageParameter, ref count);
+            var policyDto = _policyService.GetAllSchema(pageParameter, ref count, searchQuery);
             return Ok(new {policyDto = policyDto, count = count});
         }
         [HttpGet]

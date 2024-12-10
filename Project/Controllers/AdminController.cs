@@ -100,26 +100,26 @@ namespace Project.Controllers
         }   
 
         [HttpGet("PolicyAccount")]
-        public IActionResult GetPolicyAccount([FromQuery]PageParameter pageParameter)
+        public IActionResult GetPolicyAccount([FromQuery]PageParameter pageParameter, [FromQuery] string? searchQuery, [FromQuery]string? searchQuery1)
         {
             var count = 0;
-            var accounts = _policyAccountService.GetAll(pageParameter, ref count);
+            var accounts = _policyAccountService.GetAll(pageParameter, ref count, searchQuery, searchQuery1);
             return Ok(new {accounts =  accounts, count = count});
         }
 
         [HttpGet("Commission")]
-        public IActionResult GetCommission([FromQuery] PageParameter pageParameter)
+        public IActionResult GetCommission([FromQuery] PageParameter pageParameter, [FromQuery] string? searchQuery, [FromQuery]string? selectedCommissionType)
         { 
             var count = 0;
-            var viewCommissionDto = _policyService.GetCommission(pageParameter, ref count);
+            var viewCommissionDto = _policyService.GetCommission(pageParameter, ref count, searchQuery, selectedCommissionType);
             return Ok(new { viewCommissionDto = viewCommissionDto, count = count});
         }
 
         [HttpGet("CommissionRequest")]
-        public IActionResult GetAllRequest([FromQuery]PageParameter pageParameter)
+        public IActionResult GetAllRequest([FromQuery]PageParameter pageParameter, [FromQuery] string? searchQuery)
         {
             var count = 0;
-            var requests = _commissionRequestService.GetAllPendingRequest(pageParameter, ref count);
+            var requests = _commissionRequestService.GetAllPendingRequest(pageParameter, ref count, searchQuery);
             return Ok(new { requests = requests, count = count});
         }
         [HttpPut("CommissionRequest/Approve/{id}")]
@@ -164,10 +164,10 @@ namespace Project.Controllers
         }
 
         [HttpGet("Payments")]
-        public IActionResult GetAllPayments([FromQuery] PageParameter pageParameter) 
+        public IActionResult GetAllPayments([FromQuery] PageParameter pageParameter, [FromQuery] string? searchQuery) 
         {
             var count = 0;
-            var payments = _paymentService.GetAll(pageParameter, ref count);
+            var payments = _paymentService.GetAll(pageParameter, ref count, searchQuery);
             return Ok(new {payments = payments, count= count});
         }
 

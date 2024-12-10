@@ -18,6 +18,7 @@ namespace Project.Services
         public Guid Add(DocumentDto documentDto)
         {
             var document = _mapper.Map<Document>(documentDto);
+            document.isActive = true;
             _repository.Add(document);
             return document.Id;
         }

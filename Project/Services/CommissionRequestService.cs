@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MailKit.Search;
 using Project.DTOs;
 using Project.Models;
 using Project.Repositories;
@@ -17,10 +18,10 @@ namespace Project.Services
             _mapper = mapper;
         }
 
-        public PageList<ViewCommissionRequestDto> GetAllPendingRequest(PageParameter pageParameter, ref int count)
+        public PageList<ViewCommissionRequestDto> GetAllPendingRequest(PageParameter pageParameter, ref int count, string? searchQuery)
         {
             var requests = _commissionRequestRepository.GetAll().Where(r => r.Status == Types.WithdrawStatus.PENDING).ToList();
-            count = requests.Count;
+           
             List<ViewCommissionRequestDto> viewCommissionRequestDtos = new List<ViewCommissionRequestDto>();
             foreach (var request in requests)
             {
@@ -36,8 +37,14 @@ namespace Project.Services
 
                 viewCommissionRequestDtos.Add(requestDto);
             }
-
-
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+                viewCommissionRequestDtos = viewCommissionRequestDtos
+                    .Where(d => d.AgentName.ToLower().Contains(searchQuery))
+                    .ToList();
+            }
+            count = viewCommissionRequestDtos.Count;
             return PageList<ViewCommissionRequestDto>.ToPagedList(viewCommissionRequestDtos, pageParameter.PageNumber, pageParameter.PageSize);
         }
 

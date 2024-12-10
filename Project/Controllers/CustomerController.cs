@@ -25,10 +25,10 @@ namespace Project.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll([FromQuery] PageParameter pageParameter)
+        public IActionResult GetAll([FromQuery] PageParameter pageParameter, [FromQuery] string? searchQuery)
         {
             var count = 0;
-            var customerDtos = _customerService.GetCustomers(pageParameter, ref count);
+            var customerDtos = _customerService.GetCustomers(pageParameter, ref count, searchQuery);
             return Ok(new {customerDtos= customerDtos, count=count});
         }
 
@@ -131,10 +131,10 @@ namespace Project.Controllers
         }
 
         [HttpGet("PolicyAccount")]
-        public IActionResult GetPolicyAccountByCustomer(Guid id,[FromQuery] PageParameter pageParameter)
+        public IActionResult GetPolicyAccountByCustomer(Guid id,[FromQuery] PageParameter pageParameter, [FromQuery] string? searchQuery)
         {
             var count = 0;
-            var policyAccount = _policyAccountService.GetAccountByCustomer(id, pageParameter, ref count);
+            var policyAccount = _policyAccountService.GetAccountByCustomer(id, pageParameter, ref count, searchQuery);
             return Ok(new {policyAccount = policyAccount, count = count});
         }
 
@@ -144,6 +144,16 @@ namespace Project.Controllers
             if (_policyAccountService.Delete(customerId, policyId))
             {
                 return Ok("Done");
+            }
+            return BadRequest();
+        }
+
+        [HttpPut("Reupload/{id}")]
+        public IActionResult Reupload(Guid id)
+        {
+            if(_policyAccountService.ReUpload(id))
+            {
+                return Ok(id);
             }
             return BadRequest();
         }

@@ -12,5 +12,6 @@ namespace Project.Models
         [Required]
         public string Location { get; set; }
         public Guid PolicyAccountId { get; set; }
+        public bool isActive { get; set; }
     }
 }

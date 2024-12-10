@@ -58,6 +58,7 @@ namespace Project
             builder.Services.AddTransient<ICommissionRequestService, CommissionRequestService>();
             builder.Services.AddTransient<IPaymentService, PaymentService>();
             builder.Services.AddTransient<IVariableService, VariableService>();
+            builder.Services.AddTransient<IForgetPasswordService, ForgetPasswordService>();
 
 
 

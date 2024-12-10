@@ -4,6 +4,7 @@ using AutoMapper;
 using Project.DTOs;
 using Project.Types;
 using Microsoft.EntityFrameworkCore;
+using MailKit.Search;
 
 namespace Project.Services
 {
@@ -70,10 +71,17 @@ namespace Project.Services
             throw new Exception("No such policy exist");
         }
 
-        public PageList<PolicyDto> GetAllSchema(PageParameter pageParameter, ref int count)
+        public PageList<PolicyDto> GetAllSchema(PageParameter pageParameter, ref int count,string? searchQuery)
         {
-            var policies = _policyRepository.GetAll().ToList();
+            var policies = _policyRepository.GetAll().ToList(); 
             var policydtos = _mapper.Map<List<PolicyDto>>(policies);
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+                policydtos = policydtos
+                    .Where(d => d.Title.ToLower().Contains(searchQuery))
+                    .ToList();
+            }
             count = policydtos.Count;
             return PageList<PolicyDto>.ToPagedList(policydtos, pageParameter.PageNumber, pageParameter.PageSize);
         }
@@ -192,10 +200,9 @@ namespace Project.Services
 
         }
 
-        public PageList<ViewCommissionDto> GetCommission(PageParameter pageParameter, ref int count) 
+        public PageList<ViewCommissionDto> GetCommission(PageParameter pageParameter, ref int count, string? searchQuery, string? commissionType) 
         {
             var commissions = _commisionRepository.GetAll().ToList();
-            count = commissions.Count;
             List<ViewCommissionDto> viewCommissionDtos = new List<ViewCommissionDto>();
             foreach(var commission in commissions)
             {
@@ -216,6 +223,21 @@ namespace Project.Services
                 };
                 viewCommissionDtos.Add(viewCommission);
             }
+            viewCommissionDtos = viewCommissionDtos.OrderByDescending(d => d.CommssionDate).ToList();
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+                viewCommissionDtos = viewCommissionDtos
+                    .Where(d => d.AgentName.ToLower().Contains(searchQuery))
+                    .ToList();
+            }
+            
+            if (!string.IsNullOrEmpty(commissionType))
+            {
+                var type = int.Parse(commissionType);
+                viewCommissionDtos = viewCommissionDtos.Where(c => c.CommissionType == (CommissionType)type).ToList();
+            }
+            count = viewCommissionDtos.Count;
 
             return PageList<ViewCommissionDto>.ToPagedList(viewCommissionDtos, pageParameter.PageNumber, pageParameter.PageSize);
         }
@@ -247,7 +269,7 @@ namespace Project.Services
             return viewCommissionDtos;
         }
 
-        public PageList<ViewCommissionDto> GetCommissionByAgent(Guid id, PageParameter pageParameter,ref int count)
+        public PageList<ViewCommissionDto> GetCommissionByAgent(Guid id, PageParameter pageParameter,ref int count, string? searchQuery)
         {
             var commissions = _commisionRepository.GetAll().Where(c=>c.AgentId == id).ToList();
             
@@ -272,6 +294,13 @@ namespace Project.Services
 
                 };
                 viewCommissionDtos.Add(viewCommission);
+            }
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+                viewCommissionDtos = viewCommissionDtos
+                    .Where(d => d.CustomerName.ToLower().Contains(searchQuery))
+                    .ToList();
             }
             count = viewCommissionDtos.Count;
             return PageList<ViewCommissionDto>.ToPagedList(viewCommissionDtos, pageParameter.PageNumber, pageParameter.PageSize); ;

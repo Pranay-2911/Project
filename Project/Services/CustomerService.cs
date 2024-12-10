@@ -85,11 +85,19 @@ namespace Project.Services
             throw new CustomerNotFoundException("Customer Does Not Exist");
         }
 
-        public PageList<CustomerDto> GetCustomers(PageParameter pageParameter, ref int count)
+        public PageList<CustomerDto> GetCustomers(PageParameter pageParameter, ref int count, string? searchQuery)
         {
             var customer = _repository.GetAll().AsNoTracking().Include(c => c.Accounts).ToList();
             count = customer.Count;
             List<CustomerDto> customerDtos = _mapper.Map<List<CustomerDto>>(customer);
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+                customerDtos = customerDtos
+                    .Where(d => d.FirstName.ToLower().Contains(searchQuery))
+                    .ToList();
+            }
+            count = customerDtos.Count;
             return PageList<CustomerDto>.ToPagedList(customerDtos, pageParameter.PageNumber, pageParameter.PageSize);
         }
 

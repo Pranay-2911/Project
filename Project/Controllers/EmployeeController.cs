@@ -19,10 +19,10 @@ namespace Project.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll([FromQuery] PageParameter pageParameter)
+        public IActionResult GetAll([FromQuery] PageParameter pageParameter, [FromQuery] string? searchQuery)
         {
             var count = 0;
-            var employeeDtos = _employeeService.GetEmployees(pageParameter, ref count);
+            var employeeDtos = _employeeService.GetEmployees(pageParameter, ref count, searchQuery);
             return Ok(new {employeeDtos = employeeDtos, count = count});
         }
 
@@ -60,10 +60,10 @@ namespace Project.Controllers
         }
 
         [HttpGet("GetAllDocument")]
-        public IActionResult GetAllDocument([FromQuery] PageParameter pageParameters)
+        public IActionResult GetAllDocument([FromQuery] PageParameter pageParameters, [FromQuery] string? searchQuery)
         {
             var count = 0;
-            var documents = _employeeService.GetDocuments(pageParameters);
+            var documents = _employeeService.GetDocuments(pageParameters, ref count, searchQuery);
             return Ok(new {documents= documents, count = count});
         }
 
@@ -96,10 +96,10 @@ namespace Project.Controllers
             return NotFound();
         }
         [HttpGet("GetAllQuery")]
-        public IActionResult GetAllQuery([FromQuery]PageParameter pageParameter)
+        public IActionResult GetAllQuery([FromQuery]PageParameter pageParameter, [FromQuery] string? searchQuery)
         {
             var count = 0;
-            var queries = _queryService.GetAllQuery(pageParameter, ref count);
+            var queries = _queryService.GetAllQuery(pageParameter, ref count, searchQuery);
             return Ok(new { queries = queries, count = count});
         }
         [HttpPut("ChangePassword")]

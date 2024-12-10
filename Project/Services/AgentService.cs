@@ -98,19 +98,36 @@ namespace Project.Services
             throw new AgentNotFoundException("Agent Does Not Exist");
         }
 
-        public PageList<AgentDto> GetAll(PageParameter pageParameters, ref int count)
+        public PageList<AgentDto> GetAll(PageParameter pageParameters, ref int count, string? searchQuery)
         {
             var agents = _agentRepository.GetAll().Include(a => a.User).Where(a => a.IsVerified == true).ToList();
-            count = agents.Count;
+           
             var agentDtos = _mapper.Map<List<AgentDto>>(agents);
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+                agentDtos = agentDtos
+                    .Where(d => d.FirstName.ToLower().Contains(searchQuery))
+                    .ToList();
+            }
+            count = agentDtos.Count;
             return PageList<AgentDto>.ToPagedList(agentDtos, pageParameters.PageNumber, pageParameters.PageSize);
         }
 
-        public PageList<AgentDto> GetAllUnVerified(PageParameter pageParameters, ref int count)
+        public PageList<AgentDto> GetAllUnVerified(PageParameter pageParameters, ref int count, string? searchQuery)
         {
             var agents = _agentRepository.GetAll().Include(a => a.User).Where(a => a.User.Status == true).Where(a => a.IsVerified == false).ToList();
-            count = agents.Count;
+            
             var agentDtos = _mapper.Map<List<AgentDto>>(agents);
+
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+                agentDtos = agentDtos
+                    .Where(d => d.FirstName.ToLower().Contains(searchQuery))
+                    .ToList();
+            }
+            count = agentDtos.Count;
             return PageList<AgentDto>.ToPagedList(agentDtos, pageParameters.PageNumber, pageParameters.PageSize);
         }
 

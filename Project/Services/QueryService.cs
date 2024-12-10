@@ -24,7 +24,7 @@ namespace Project.Services
             _queryRepository.Add(query);
             return query.Id;
         }
-        public PageList<ViewQueryDto> GetAllQuery(PageParameter pageParameter, ref int count)
+        public PageList<ViewQueryDto> GetAllQuery(PageParameter pageParameter, ref int count, string? searchQuery)
         {
             var queries = _queryRepository.GetAll().Where(q => q.Reply == null).ToList();
             List<ViewQueryDto> viewCommissionDtos = new List<ViewQueryDto>();
@@ -41,11 +41,18 @@ namespace Project.Services
                 };
                 viewCommissionDtos.Add(queryDto);
             }
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+                viewCommissionDtos = viewCommissionDtos
+                    .Where(d => d.Title.ToLower().Contains(searchQuery))
+                    .ToList();
+            }
             count = viewCommissionDtos.Count;
             return PageList<ViewQueryDto>.ToPagedList(viewCommissionDtos, pageParameter.PageNumber, pageParameter.PageSize);
         }
 
-        public PageList<ViewQueryDto> GetQueryByCustomer(Guid customerId, PageParameter pageParameter, ref int count)
+        public PageList<ViewQueryDto> GetQueryByCustomer(Guid customerId, PageParameter pageParameter, ref int count, string? searchQuery)
         {
             var queries = _queryRepository.GetAll().Where(q => q.CustomerId == customerId).ToList();
             List<ViewQueryDto> viewCommissionDtos = new List<ViewQueryDto>();
@@ -62,6 +69,13 @@ namespace Project.Services
 
                 };
                 viewCommissionDtos.Add(queryDto);
+            }
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+                viewCommissionDtos = viewCommissionDtos
+                    .Where(d => d.Title.ToLower().Contains(searchQuery))
+                    .ToList();
             }
             count = viewCommissionDtos.Count;
             return PageList<ViewQueryDto>.ToPagedList(viewCommissionDtos, pageParameter.PageNumber, pageParameter.PageSize);

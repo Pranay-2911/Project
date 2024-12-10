@@ -18,10 +18,9 @@ namespace Project.Services
             _premiumRepository = premiumRepository;
         }
 
-        public PageList<ShowPaymentDto> GetAll(PageParameter pageParameter, ref int count)
+        public PageList<ShowPaymentDto> GetAll(PageParameter pageParameter, ref int count, string? searchQuery)
         {   
             var payments = _paymentRepository.GetAll().ToList();
-            count = payments.Count;
             List<ShowPaymentDto> paymentDtos = new List<ShowPaymentDto>();
             foreach (var payment in payments)
             {
@@ -38,6 +37,14 @@ namespace Project.Services
                 };
 
                 paymentDtos.Add(dto);
+                if (!string.IsNullOrEmpty(searchQuery))
+                {
+                    searchQuery = searchQuery.ToLower();
+                    paymentDtos = paymentDtos
+                        .Where(d => d.PolicyName.ToLower().Contains(searchQuery))
+                        .ToList();
+                }
+                count = paymentDtos.Count;
             }
             return PageList<ShowPaymentDto>.ToPagedList(paymentDtos, pageParameter.PageNumber, pageParameter.PageSize);
         }

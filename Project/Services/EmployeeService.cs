@@ -88,10 +88,17 @@ namespace Project.Services
             return false;
         }
 
-        public PageList<EmployeeDto> GetEmployees(PageParameter pageParameter, ref int count)
+        public PageList<EmployeeDto> GetEmployees(PageParameter pageParameter, ref int count, string? searchQuery)
         {
             var employee = _repository.GetAll().Include(a => a.User).Where(a => a.User.Status == true).ToList();
             List<EmployeeDto> employeeDtos = _mapper.Map<List<EmployeeDto>>(employee);
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+                employeeDtos = employeeDtos
+                    .Where(d => d.FirstName.ToLower().Contains(searchQuery))
+                    .ToList();
+            }
             count = employeeDtos.Count;
             return PageList<EmployeeDto>.ToPagedList(employeeDtos, pageParameter.PageNumber, pageParameter.PageSize);
         }
@@ -108,13 +115,13 @@ namespace Project.Services
             throw new EmployeeNotFoundException("Employee Does Not Exist");
         }
 
-        public PageList<VerifyDocumentDto> GetDocuments(PageParameter pageParameters)
+        public PageList<VerifyDocumentDto> GetDocuments(PageParameter pageParameters, ref int count, string? searchQuery)
         {
             var accounts = _policyAccountRepository.GetAll().Where(a => a.IsVerified == Types.WithdrawStatus.PENDING).ToList();
             List<VerifyDocumentDto> verifyDocumentDtos = new List<VerifyDocumentDto>();
             foreach (var account in accounts)
             {
-                List<Document> documents = _documentRepository.GetAll().Where(d => d.PolicyAccountId == account.Id).ToList();
+                List<Document> documents = _documentRepository.GetAll().Where( d => d.isActive == true).Where(d => d.PolicyAccountId == account.Id).ToList();
                 var policy = _policyRepository.Get(account.PolicyID);
                 var customer = _customerRepository.Get(account.CustomerId);
                 var documentDto = new VerifyDocumentDto()
@@ -127,8 +134,17 @@ namespace Project.Services
                
 
                 verifyDocumentDtos.Add(documentDto);
-                
+
             }
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+                verifyDocumentDtos = verifyDocumentDtos
+                    .Where(d => d.CustomerName.ToLower().Contains(searchQuery))
+                    .ToList();
+            }
+            count = verifyDocumentDtos.Count;
+
             return PageList<VerifyDocumentDto>.ToPagedList(verifyDocumentDtos, pageParameters.PageNumber, pageParameters.PageSize);
 
         }
@@ -152,6 +168,12 @@ namespace Project.Services
             {
                 account.IsVerified = Types.WithdrawStatus.REJECTED;
                 _policyAccountRepository.Update(account);
+                var documents = _documentRepository.GetAll().Where(d => d.PolicyAccountId == id).ToList();
+                foreach (var document in documents)
+                {
+                    document.isActive = false;
+                    _documentRepository.Update(document);
+                }
                 return true;
             }
 

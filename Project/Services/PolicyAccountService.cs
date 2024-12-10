@@ -44,10 +44,10 @@ namespace Project.Services
 
         }
 
-        public PageList<PolicyAccountDto> GetAll(PageParameter pageParameter, ref int count)
+        public PageList<PolicyAccountDto> GetAll(PageParameter pageParameter, ref int count, string? searchQuery, string? searchQuery1)
         {
             var accountList = _repository.GetAll().ToList();
-            count = accountList.Count;
+            
             List<PolicyAccountDto> policyAccountDtos = new List<PolicyAccountDto>();
             foreach (var account in accountList)
             {
@@ -77,10 +77,26 @@ namespace Project.Services
                 
                
             }
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+                policyAccountDtos = policyAccountDtos
+                    .Where(d => d.CustomerName.ToLower().Contains(searchQuery))
+                    .ToList();
+            }
+            if (!string.IsNullOrEmpty(searchQuery1))
+            {
+                searchQuery1 = searchQuery1.ToLower();
+                policyAccountDtos = policyAccountDtos
+                    .Where(d => d.PolicyName.ToLower().Contains(searchQuery1))
+                    .ToList();
+            }
+
+            count = policyAccountDtos.Count;
             return PageList<PolicyAccountDto>.ToPagedList(policyAccountDtos, pageParameter.PageNumber, pageParameter.PageSize);
         }
 
-        public PageList<PolicyAccountDto> GetAccountByCustomer(Guid id, PageParameter pageParameters, ref int count)
+        public PageList<PolicyAccountDto> GetAccountByCustomer(Guid id, PageParameter pageParameters, ref int count, string? searchQuery)
         {
             var accountList = _repository.GetAll().Where(e => e.CustomerId == id).ToList();
             List<PolicyAccountDto> policyAccountDtos = new List<PolicyAccountDto>();
@@ -101,7 +117,9 @@ namespace Project.Services
                     PolicyDuration = account.PolicyDuration,
                     PurchasedDate = account.PurchasedDate,
                     AgentName = "NA",
-                    IsVerified = account.IsVerified
+                    IsVerified = account.IsVerified,
+                    PolicyId= policy.Id
+                    
                     
 
                 };
@@ -114,6 +132,13 @@ namespace Project.Services
 
 
             }
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+                policyAccountDtos = policyAccountDtos
+                    .Where(d => d.PolicyName.ToLower().Contains(searchQuery))
+                    .ToList();
+            }
             count = policyAccountDtos.Count;
             return PageList<PolicyAccountDto>.ToPagedList(policyAccountDtos, pageParameters.PageNumber, pageParameters.PageSize);
         }
@@ -121,6 +146,18 @@ namespace Project.Services
         public void Update(PolicyAccountDto policyAccountDto)
         {
             throw new NotImplementedException();
+        }
+
+        public bool ReUpload(Guid id)
+        {
+            var account = _repository.Get(id);
+            if (account != null)
+            {
+                account.IsVerified = Types.WithdrawStatus.PENDING;
+                _repository.Update(account);
+                return true;
+            }
+            return false;
         }
     }
 }

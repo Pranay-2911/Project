@@ -26,18 +26,18 @@ namespace Project.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll([FromQuery] PageParameter pageParameters)
+        public IActionResult GetAll([FromQuery] PageParameter pageParameters, [FromQuery]string? searchQuery)
         {
             var count = 0;
-            var agents = _agentService.GetAll(pageParameters, ref count);
+            var agents = _agentService.GetAll(pageParameters, ref count, searchQuery);
             return Ok(new { agents = agents, count = count});
         }
 
         [HttpGet("UnVerified")]
-        public IActionResult GetAllUnVerified([FromQuery] PageParameter pageParameters)
+        public IActionResult GetAllUnVerified([FromQuery] PageParameter pageParameters, [FromQuery] string? searchQuery)
         {
             var count = 0;
-            var agents = _agentService.GetAllUnVerified(pageParameters, ref count);
+            var agents = _agentService.GetAllUnVerified(pageParameters, ref count, searchQuery);
             return Ok(new {agents = agents, count = count});
         }
 
@@ -108,10 +108,10 @@ namespace Project.Controllers
 
 
         [HttpGet("Commission/{id}")]
-        public IActionResult GetCommission(Guid id, [FromQuery] PageParameter pageParameters)
+        public IActionResult GetCommission(Guid id, [FromQuery] PageParameter pageParameters, [FromQuery] string? searchQuery)
         {
             var count = 0;
-            var viewCommissionDto = _policyService.GetCommissionByAgent(id, pageParameters, ref count);
+            var viewCommissionDto = _policyService.GetCommissionByAgent(id, pageParameters, ref count, searchQuery);
             return Ok(new {viewCommissionDto = viewCommissionDto, count= count});
         }
 
