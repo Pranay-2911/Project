@@ -4,6 +4,7 @@ using Project.DTOs;
 using Project.Exceptions;
 using Project.Models;
 using Project.Repositories;
+using Serilog;
 
 namespace Project.Services
 {
@@ -41,6 +42,7 @@ namespace Project.Services
             
             var admin = _mapper.Map<Admin>(adminRgisterDto);
             _repository.Add(admin);
+            Log.Information("New record added: " + admin.Id);
             return admin.Id;
         }
 
@@ -50,6 +52,7 @@ namespace Project.Services
             if (admin != null)
             {
                 _repository.Delete(admin);
+                Log.Information("record deleted: " + admin.Id);
                 return true;
             }
             throw new AdminNotFoundException("Admin Does Not Exist");
@@ -80,6 +83,7 @@ namespace Project.Services
             {
                 var admin = _mapper.Map<Admin>(adminDto);
                 _repository.Update(admin);
+                Log.Information("New record update: " + admin.Id);
                 return true;
             }
             throw new AdminNotFoundException("Admin Does Not Exist");

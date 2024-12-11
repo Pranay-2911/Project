@@ -4,6 +4,7 @@ using Project.DTOs;
 using Project.Mapper;
 using Project.Models;
 using Project.Repositories;
+using Serilog;
 
 namespace Project.Services
 {
@@ -20,6 +21,8 @@ namespace Project.Services
         {
             var role = _mapper.Map<Role>(roleDto);
             _repository.Add(role);
+            Log.Information("role record added: " + role.Id);
+
             return role.Id;
         }
 
@@ -29,6 +32,8 @@ namespace Project.Services
             if (role != null)
             {
                 _repository.Delete(role);
+                Log.Information("role record deleted: " + role.Id);
+
                 return true;
             }
             return false;
@@ -54,6 +59,8 @@ namespace Project.Services
             {
                 var role = _mapper.Map<Role>(roleDto);
                 _repository.Update(role);
+                Log.Information("role record updated: " + role.Id);
+
                 return true;
             }
             return false;

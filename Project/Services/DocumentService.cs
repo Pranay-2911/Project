@@ -2,6 +2,7 @@
 using Project.DTOs;
 using Project.Models;
 using Project.Repositories;
+using Serilog;
 
 namespace Project.Services
 {
@@ -20,6 +21,7 @@ namespace Project.Services
             var document = _mapper.Map<Document>(documentDto);
             document.isActive = true;
             _repository.Add(document);
+            Log.Information("New document record added: " + document.Id);
             return document.Id;
         }
 
@@ -29,6 +31,7 @@ namespace Project.Services
             if (document != null)
             {
                 _repository.Delete(document);
+                Log.Information("Document record deleted: " + document.Id);
                 return true;
             }
             return false;

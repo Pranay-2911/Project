@@ -3,6 +3,7 @@ using Project.DTOs;
 using Project.Models;
 using Project.Repositories;
 using Project.Types;
+using Serilog;
 
 namespace Project.Services
 {
@@ -67,7 +68,12 @@ namespace Project.Services
                 agent.TotalCommissionEarned += agentCommission.CommissionAmount;
 
                 _commissionRepository.Add(agentCommission);
+                Log.Information("commission record updated: " + agentCommission.Id);
             }
+            Log.Information("payment record updated: " + payment.Id);
+           
+
+
             return new PaymentDto { Amount = premium.Amount, Status = true };
         }
 
@@ -100,6 +106,8 @@ namespace Project.Services
             var policy = _policyRepository.Get(id);
             policy.ImageLink = image;
             _policyRepository.Update(policy);
+            Log.Information("policy record updated: " + policy.Id);
+
             return true;
         }
     }

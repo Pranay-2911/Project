@@ -5,6 +5,7 @@ using Project.Exceptions;
 using Project.Models;
 using Project.Repositories;
 using Project.Types;
+using Serilog;
 
 namespace Project.Services
 {
@@ -20,7 +21,7 @@ namespace Project.Services
             _mapper = mapper;
             _repository = cutomerRepository;
             _roleRepository = roleRepository;
-            _userRepository = userRepository;  
+            _userRepository = userRepository;
             _policyAccountRepository = policyAccountRepository;
         }
 
@@ -41,12 +42,13 @@ namespace Project.Services
             customer.UserId = user.Id;
             customer.IsKYC = false;
 
-            
+
             _repository.Add(customer);
+            Log.Information("New customer record added: " + customer.CustomerId);
             return customer.CustomerId;
         }
 
-        
+
 
         public bool ChangePassword(ChangePasswordDto passwordDto)
         {
@@ -57,9 +59,10 @@ namespace Project.Services
                 {
                     customer.User.PasswordHash = BCrypt.Net.BCrypt.HashPassword(passwordDto.NewPassword);
                     _repository.Update(customer);
+                    Log.Information("customer password updated: " + customer.CustomerId);
                     return true;
                 }
-                    
+
             }
             return false;
         }
@@ -70,6 +73,7 @@ namespace Project.Services
             if (customer != null)
             {
                 _repository.Delete(customer);
+                Log.Information("customer record deleted: " + customer.CustomerId);
                 return true;
             }
             throw new CustomerNotFoundException("Customer Does Not Exist");
@@ -77,8 +81,8 @@ namespace Project.Services
 
         public Customer GetById(Guid id)
         {
-            var customer =  _repository.Get(id);
-            if(customer != null)
+            var customer = _repository.Get(id);
+            if (customer != null)
             {
                 return customer;
             }
@@ -108,9 +112,21 @@ namespace Project.Services
             {
                 var customer = _mapper.Map<Customer>(customerDto);
                 _repository.Update(customer);
+                Log.Information("customer record updated: " + customer.CustomerId);
                 return true;
             }
             throw new CustomerNotFoundException("Customer Does Not Exist");
+        }
+
+        public CustomerNameMobDto GetCustomerNameMobDto(Guid id)
+        {
+            var customer = _repository.Get(id);
+            var dto = new CustomerNameMobDto()
+            {
+                Name = $"{customer.FirstName} {customer.LastName}",
+                MobileNumber = customer.MobileNumber
+            };
+            return dto;
         }
     }
 }

@@ -67,5 +67,12 @@ namespace Project.Controllers
                 return Ok(policyDto);
             return NotFound("Policy Not Found");
         }
+
+        [HttpPost("GetSchemaByName")]
+        public IActionResult GetSchemaByPlanName(SchemaRequestDto schemaRequestDto)
+        {
+            var schemes = _policyService.GetPoliciesByPlan(schemaRequestDto);
+            return Ok(schemes);
+        }
     }
 }

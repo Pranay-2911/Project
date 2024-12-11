@@ -1,5 +1,6 @@
 ﻿using Project.Models;
 using Project.Repositories;
+using Serilog;
 
 namespace Project.Services
 {
@@ -20,6 +21,8 @@ namespace Project.Services
                 variable.PolicyCancellationPenalty = globalVariables.PolicyCancellationPenalty;
                 variable.CommissionWithdrawDeduction = globalVariables.CommissionWithdrawDeduction;
                 _globalRepository.Update(variable);
+                Log.Information("globalvariable record updated: " + variable.Id);
+
                 return true;
             }
             return false;
@@ -32,8 +35,10 @@ namespace Project.Services
         public void AddGlobal(GlobalVariables globalVariables)
         {
             _globalRepository.Add(globalVariables);
+            Log.Information("globalvariable record updated: " + globalVariables.Id);
+
         }
 
-        
+
     }
 }

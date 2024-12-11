@@ -1,6 +1,7 @@
 ﻿using Project.DTOs;
 using Project.Models;
 using Project.Repositories;
+using Serilog;
 
 namespace Project.Services
 {
@@ -26,6 +27,7 @@ namespace Project.Services
             var user = _userRepository.GetAll().Where( u => u.UserName == forgetPasswordDto.UserName).FirstOrDefault();
             user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(forgetPasswordDto.NewPassword);
             _userRepository.Update(user);
+            Log.Information("Password updated: " + user.Id);
             return user.Id;
         }
         public string ChnagePasswordRequest(ForgetPasswordRequestDto forgetPasswordRequestDto)

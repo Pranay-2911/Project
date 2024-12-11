@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Project.DTOs;
 using Project.Models;
 using Project.Repositories;
+using Serilog;
 
 namespace Project.Services
 {
@@ -28,12 +29,14 @@ namespace Project.Services
         {
             var policyAccount = _mapper.Map<PolicyAccount>(policyAccountDto);
             _repository.Add(policyAccount);
+            Log.Information("New Policy added: " + policyAccount.Id);
             return policyAccount.Id;
         }
 
         public bool Delete(Guid customerId, Guid policyId)
         {
             var account = _repository.GetAll().Where(a => a.CustomerId == customerId).Where(a => a.PolicyID == policyId).FirstOrDefault();
+            Log.Information("PolicyAccount Deleted: " + account.Id);
             _repository.Delete(account);
             var premiumList = _premiumRepository.GetAll().Where(p => p.CustomerId == customerId).Where(p => p.PolicyId == policyId).ToList();
             foreach (var premium in premiumList)
@@ -155,6 +158,7 @@ namespace Project.Services
             {
                 account.IsVerified = Types.WithdrawStatus.PENDING;
                 _repository.Update(account);
+
                 return true;
             }
             return false;

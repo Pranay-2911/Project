@@ -2,6 +2,7 @@
 using Project.DTOs;
 using Project.Models;
 using Project.Repositories;
+using Serilog;
 
 namespace Project.Services
 {
@@ -21,6 +22,8 @@ namespace Project.Services
             var state = new State() { Name = stateDto.StateName};
             state.Cities.Add(city);
             _stateRepository.Add(state);
+            Log.Information("state record added: " + state.Id);
+
             return state;
         }
         public List<State> GetAllState()
@@ -35,6 +38,9 @@ namespace Project.Services
             _cityRepository.Add(city);
             state.Cities.Add(city);
             _stateRepository.Update(state);
+            Log.Information("city record added: " + city.Id);
+            Log.Information("state record updated: " + state.Id);
+
             return city;
         }
 

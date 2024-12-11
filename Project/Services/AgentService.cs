@@ -5,6 +5,7 @@ using Project.Exceptions;
 using Project.Models;
 using Project.Repositories;
 using Project.Types;
+using Serilog;
 
 namespace Project.Services
 {
@@ -24,6 +25,7 @@ namespace Project.Services
             _userRepository = userRepository;
             _commissionRequestRepository = commissionRequestRepository;
         }
+
         public Guid Add(AgentRegisterDto agentRegisterDto)
         {
             var roleName = _roleRepository.GetAll().Where(r => r.RoleName == Roles.AGENT).FirstOrDefault();
@@ -42,6 +44,7 @@ namespace Project.Services
 
            
             _agentRepository.Add(agent);
+            Log.Information("New record added: " + agent.Id);
             return agent.Id;
         }
 
@@ -54,6 +57,7 @@ namespace Project.Services
                 {
                     agent.User.PasswordHash = BCrypt.Net.BCrypt.HashPassword(passwordDto.NewPassword);
                     _agentRepository.Update(agent);
+                    Log.Information("password updated " + agent.Id);
                     return true;
                 }
                    
@@ -69,10 +73,12 @@ namespace Project.Services
                 var user = _userRepository.Get(agent.UserId);
                 user.Status = false;
                 _userRepository.Update(user);
+                Log.Information("record deleted: " + agent.Id);
                 return true;
             }
             throw new AgentNotFoundException("Agent Does Not Exist");
         }
+
         public bool Active(Guid id)
         {
             var agent = _agentRepository.GetAll().Include(a => a.User).Where(a => a.Id == id).FirstOrDefault();
@@ -81,6 +87,7 @@ namespace Project.Services
                 var user = _userRepository.Get(agent.UserId);
                 user.Status = true;
                 _userRepository.Update(user);
+                Log.Information("agent record activated: " + agent.Id);
                 return true;
             }
             throw new AgentNotFoundException("Agent Does Not Exist");
@@ -138,6 +145,7 @@ namespace Project.Services
             {
                 agent.IsVerified = true;
                 _agentRepository.Update(agent);
+                Log.Information("agent verified successfully: " + agent.Id);
                 return true;
             }
             return false;
@@ -150,6 +158,7 @@ namespace Project.Services
             {
                 var agent = _mapper.Map<Agent>(agentDto);
                 _agentRepository.Update(agent);
+                Log.Information("agent record updated: " + agent.Id);
                 return true;
             }
             throw new AgentNotFoundException("Agent Does Not Exist");
@@ -177,6 +186,8 @@ namespace Project.Services
             _agentRepository.Update(agent);
 
             _commissionRequestRepository.Add(commissionRequest);
+            Log.Information("Agent record updated: " + agent.Id);
+            Log.Information("commmision added: " + agent.Id);
             return commissionRequest.Id;
 
         }

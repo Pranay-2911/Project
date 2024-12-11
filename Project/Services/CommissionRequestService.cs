@@ -3,6 +3,7 @@ using MailKit.Search;
 using Project.DTOs;
 using Project.Models;
 using Project.Repositories;
+using Serilog;
 
 namespace Project.Services
 {
@@ -50,7 +51,7 @@ namespace Project.Services
 
         public PageList<CommissionRequest> GetRequestByAgent(Guid id, PageParameter pageParameter, ref int count)
         {
-            var requests = _commissionRequestRepository.GetAll().Where(r => r.AgentId == id).ToList();
+            var requests = _commissionRequestRepository.GetAll().OrderByDescending( c => c.RequestDate).Where(r => r.AgentId == id).ToList();
             count = requests.Count;
             return PageList<CommissionRequest>.ToPagedList(requests, pageParameter.PageNumber, pageParameter.PageSize);
         }
@@ -62,6 +63,7 @@ namespace Project.Services
             {
                 request.Status = Types.WithdrawStatus.APPROVED;
                 _commissionRequestRepository.Update(request);
+                Log.Information("Commission request approved: " + request.Id);
                 return true;
             }
             return false;
@@ -76,6 +78,8 @@ namespace Project.Services
                 var agent = _agentRepository.Get(request.AgentId);
                 agent.CurrentCommisionBalance = agent.CurrentCommisionBalance  + request.Amount;
                 _agentRepository.Update(agent);
+                Log.Information("commission request rejected: " + request.Id);
+                Log.Information("agent record updated: " + agent.Id);
                 return true;
             }
             return false;

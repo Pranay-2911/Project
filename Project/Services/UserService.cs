@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Project.DTOs;
 using Project.Models;
 using Project.Repositories;
+using Serilog;
 
 namespace Project.Services
 {
@@ -20,6 +21,7 @@ namespace Project.Services
         {
             var user = _mapper.Map<User>(userDto);
             _repository.Add(user);
+            Log.Information("user record added: " + user.Id);
             return user.Id;
         }
 
@@ -29,6 +31,8 @@ namespace Project.Services
             if (user != null)
             {
                 _repository.Delete(user);
+                Log.Information("user record deleted: " + user.Id);
+
                 return true;
             }
             return false;
@@ -54,6 +58,8 @@ namespace Project.Services
             {
                 var user = _mapper.Map<User>(userDto);
                 _repository.Update(user);
+                Log.Information("user record updated: " + user.Id);
+
                 return true;
             }
             return false;

@@ -157,6 +157,13 @@ namespace Project.Controllers
             }
             return BadRequest();
         }
+        [HttpGet("GetInfo/{id}")]
+        public IActionResult GetInfo(Guid id)
+        {
+
+            var dto =_customerService.GetCustomerNameMobDto(id);
+            return Ok(dto);
+        }
 
     }
 }

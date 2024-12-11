@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Project.DTOs;
 using Project.Models;
 using Project.Repositories;
+using Serilog;
 
 namespace Project.Services
 {
@@ -22,6 +23,8 @@ namespace Project.Services
         {
             var query = _mapper.Map<Query>(dto);    
             _queryRepository.Add(query);
+            Log.Information("query record added: " + query.Id);
+
             return query.Id;
         }
         public PageList<ViewQueryDto> GetAllQuery(PageParameter pageParameter, ref int count, string? searchQuery)
@@ -88,6 +91,7 @@ namespace Project.Services
             {
                 query.Reply = queryResponseDto.Reply;
                 _queryRepository.Update(query);
+                Log.Information("query record updated: " + query.Id);
                 return true;
             }
             return false;

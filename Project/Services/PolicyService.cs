@@ -5,6 +5,7 @@ using Project.DTOs;
 using Project.Types;
 using Microsoft.EntityFrameworkCore;
 using MailKit.Search;
+using Serilog;
 
 namespace Project.Services
 {
@@ -37,6 +38,7 @@ namespace Project.Services
 
             var policy = _mapper.Map<Policy>(policydto);
             _policyRepository.Add(policy);
+            Log.Information("New scheme added: " + policy.Id);
             return policy.Id;
         }
 
@@ -44,6 +46,7 @@ namespace Project.Services
         { 
             var plan = _mapper.Map<Plan>(plandto);
             _planRepository.Add(plan);
+            Log.Information("New plan added: " + plan.Id);
             return plan.Id;
         }
 
@@ -55,6 +58,7 @@ namespace Project.Services
             {
                 policy.PolicyStatus =false;
                 _policyRepository.Update(policy);
+                Log.Information("policy deleted: " + policy.Id);
                 return true;
             }
             return false;
@@ -105,6 +109,7 @@ namespace Project.Services
             {
                 var policy = _mapper.Map<Policy>(policydto);
                 _policyRepository.Update(policy);
+                Log.Information("policy record updated: " + policy.Id);
                 return true;
             }
             return false;
@@ -154,12 +159,17 @@ namespace Project.Services
                 };
 
                 _commisionRepository.Add(agentCommission);
+                Log.Information("agentCommission record updated: " + agentCommission.Id);
+
                 var agent = _agentRepository.Get((Guid)requestdto.AgentId);
                 agent.CurrentCommisionBalance += policy.RegistrationCommisionAmount;
                 agent.TotalCommissionEarned += policy.RegistrationCommisionAmount;
                 _agentRepository.Update(agent);
+                Log.Information("agent record updated: " + agent.Id);
+
             }
-        
+            Log.Information("policyAccount record updated: " + account.Id);
+
             return true;
         }
 
@@ -200,7 +210,7 @@ namespace Project.Services
 
         }
 
-        public PageList<ViewCommissionDto> GetCommission(PageParameter pageParameter, ref int count, string? searchQuery, string? commissionType) 
+        public PageList<ViewCommissionDto> GetCommission(PageParameter pageParameter, ref int count, string? searchQuery, string? commissionType, DateTime? startDate, DateTime? endDate) 
         {
             var commissions = _commisionRepository.GetAll().ToList();
             List<ViewCommissionDto> viewCommissionDtos = new List<ViewCommissionDto>();
@@ -236,6 +246,16 @@ namespace Project.Services
             {
                 var type = int.Parse(commissionType);
                 viewCommissionDtos = viewCommissionDtos.Where(c => c.CommissionType == (CommissionType)type).ToList();
+            }
+
+            if (startDate.HasValue)
+            {
+                viewCommissionDtos = viewCommissionDtos.Where(c=>c.CommssionDate >= startDate.Value).ToList();
+            }
+
+            if (endDate.HasValue)
+            {
+                viewCommissionDtos = viewCommissionDtos.Where(c=>c.CommssionDate <= endDate.Value).ToList();
             }
             count = viewCommissionDtos.Count;
 
@@ -304,6 +324,12 @@ namespace Project.Services
             }
             count = viewCommissionDtos.Count;
             return PageList<ViewCommissionDto>.ToPagedList(viewCommissionDtos, pageParameter.PageNumber, pageParameter.PageSize); ;
+        }
+
+        public List<Policy> GetPoliciesByPlan(SchemaRequestDto schemaRequestDto)
+        {
+            var plan = _planRepository.GetAll().Include(p => p.Schemes).Where(p => p.Name == schemaRequestDto.Name).FirstOrDefault();
+            return plan.Schemes;
         }
 
     }

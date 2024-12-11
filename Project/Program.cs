@@ -11,6 +11,7 @@ using Project.Services;
 using Stripe;
 using System.Text;
 using System.Text.Json.Serialization;
+using Serilog;
 
 
 namespace Project
@@ -95,7 +96,12 @@ namespace Project
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddExceptionHandler<AppExceptionHandler>();
-
+            Log.Logger = new LoggerConfiguration()
+              .MinimumLevel.Information()
+              .WriteTo.File("Logs/app-log-.txt", rollingInterval: RollingInterval.Day,
+              rollOnFileSizeLimit: true,            // Creates a new log file when size limit is reached
+              shared: true) // Logs to a file
+              .CreateLogger();
 
             var app = builder.Build();
 

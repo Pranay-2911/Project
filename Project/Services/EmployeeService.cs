@@ -5,6 +5,7 @@ using Project.Exceptions;
 using Project.Models;
 using Project.Repositories;
 using System.Collections.Generic;
+using Serilog;
 
 namespace Project.Services
 {
@@ -46,6 +47,7 @@ namespace Project.Services
             employee.UserId = user.Id;
 
             _repository.Add(employee);
+            Log.Information("Employee record added: " + employee.Id);
             return employee.Id;
         }
 
@@ -57,6 +59,7 @@ namespace Project.Services
                 var user = _userRepository.Get(employee.UserId);
                 user.Status = false;
                 _userRepository.Update(user);
+                Log.Information("Employee deleted successfully" + employee.Id);
                 return true;
             }
             throw new EmployeeNotFoundException("Employee Does Not Exist");
@@ -81,6 +84,7 @@ namespace Project.Services
                 {
                     customer.User.PasswordHash = BCrypt.Net.BCrypt.HashPassword(passwordDto.NewPassword);
                     _repository.Update(customer);
+                    Log.Information("Employee password changes: " + customer.Id);
                     return true;
                 }
 
@@ -110,6 +114,7 @@ namespace Project.Services
             {
                 var employee = _mapper.Map<Employee>(employeeDto);
                 _repository.Update(employee);
+                Log.Information("Employee record updated: " + employee.Id);
                 return true;
             }
             throw new EmployeeNotFoundException("Employee Does Not Exist");
@@ -156,6 +161,7 @@ namespace Project.Services
             {
                 account.IsVerified = Types.WithdrawStatus.APPROVED;
                 _policyAccountRepository.Update(account);
+                Log.Information("Policy Account Updated:"+account.Id);
                 return true;
             }
 
@@ -174,6 +180,7 @@ namespace Project.Services
                     document.isActive = false;
                     _documentRepository.Update(document);
                 }
+                Log.Information("Policy Rejected " + account.Id);
                 return true;
             }
 

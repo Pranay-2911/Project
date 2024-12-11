@@ -108,10 +108,10 @@ namespace Project.Controllers
         }
 
         [HttpGet("Commission")]
-        public IActionResult GetCommission([FromQuery] PageParameter pageParameter, [FromQuery] string? searchQuery, [FromQuery]string? selectedCommissionType)
+        public IActionResult GetCommission([FromQuery] PageParameter pageParameter, [FromQuery] string? searchQuery, [FromQuery]string? selectedCommissionType, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
         { 
             var count = 0;
-            var viewCommissionDto = _policyService.GetCommission(pageParameter, ref count, searchQuery, selectedCommissionType);
+            var viewCommissionDto = _policyService.GetCommission(pageParameter, ref count, searchQuery, selectedCommissionType, startDate, endDate);
             return Ok(new { viewCommissionDto = viewCommissionDto, count = count});
         }
 
