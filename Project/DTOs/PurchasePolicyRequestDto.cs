@@ -12,6 +12,8 @@ namespace Project.DTOs
         [Required]
         public int DurationInMonths { get; set; }
         [Required]
+        public int Divider { get; set; }
+        [Required]
         public string Nominee { get; set; }
         [Required]
         public string NomineeRelation { get; set; }

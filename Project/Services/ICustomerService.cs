@@ -9,7 +9,7 @@ namespace Project.Services
         public Customer GetById(Guid id);
         public Guid AddCustomer(CustomerRegisterDto customerRegisterDto);
         public bool DeleteCustomer(Guid id);
-        public bool UpdateCustomer(CustomerDto customerDto);
+        public bool UpdateCustomer(UpdateCustomerDto customerDto);
         public bool ChangePassword(ChangePasswordDto passwordDto);
         public CustomerNameMobDto GetCustomerNameMobDto(Guid id);
     }

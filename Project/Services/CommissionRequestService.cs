@@ -4,6 +4,7 @@ using Project.DTOs;
 using Project.Models;
 using Project.Repositories;
 using Serilog;
+using Project.Types;
 
 namespace Project.Services
 {
@@ -46,12 +47,18 @@ namespace Project.Services
                     .ToList();
             }
             count = viewCommissionRequestDtos.Count;
+            viewCommissionRequestDtos = viewCommissionRequestDtos.OrderByDescending(d => d.RequestDate).ToList();
             return PageList<ViewCommissionRequestDto>.ToPagedList(viewCommissionRequestDtos, pageParameter.PageNumber, pageParameter.PageSize);
         }
 
-        public PageList<CommissionRequest> GetRequestByAgent(Guid id, PageParameter pageParameter, ref int count)
+        public PageList<CommissionRequest> GetRequestByAgent(Guid id, PageParameter pageParameter, ref int count, string? selectedCommissionType)
         {
             var requests = _commissionRequestRepository.GetAll().OrderByDescending( c => c.RequestDate).Where(r => r.AgentId == id).ToList();
+            if(!string.IsNullOrEmpty(selectedCommissionType))
+            {
+                var type = int.Parse(selectedCommissionType);
+                requests = requests.Where(r=>r.Status == (WithdrawStatus)type).ToList();
+            }
             count = requests.Count;
             return PageList<CommissionRequest>.ToPagedList(requests, pageParameter.PageNumber, pageParameter.PageSize);
         }

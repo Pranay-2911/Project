@@ -28,24 +28,31 @@ namespace Project.Services
 
         public Guid Add(AgentRegisterDto agentRegisterDto)
         {
-            var roleName = _roleRepository.GetAll().Where(r => r.RoleName == Roles.AGENT).FirstOrDefault();
-            User user = _mapper.Map<User>(agentRegisterDto);
-            user.RoleId = roleName.Id;
-            user.Status = true;
-            _userRepository.Add(user);
+            var existingUser = _userRepository.GetAll().Where(u=>u.UserName == agentRegisterDto.Username).FirstOrDefault();
+            var existingEmail = _agentRepository.GetAll().Where(a=>a.Email == agentRegisterDto.Email).FirstOrDefault();
+            var existingNumber = _agentRepository.GetAll().Where(a=>a.MobileNumber == agentRegisterDto.MobileNumber).FirstOrDefault();
+            if (existingUser == null && existingEmail == null && existingNumber == null)
+            {
+                var roleName = _roleRepository.GetAll().Where(r => r.RoleName == Roles.AGENT).FirstOrDefault();
+                User user = _mapper.Map<User>(agentRegisterDto);
+                user.RoleId = roleName.Id;
+                user.Status = true;
+                _userRepository.Add(user);
 
-            var role = _roleRepository.Get(roleName.Id);
-            role.Users.Add(user);
-            _roleRepository.Update(role);
+                var role = _roleRepository.Get(roleName.Id);
+                role.Users.Add(user);
+                _roleRepository.Update(role);
 
-            var agent = _mapper.Map<Agent>(agentRegisterDto);
-            agent.UserId = user.Id;
-            agent.IsVerified = false;
+                var agent = _mapper.Map<Agent>(agentRegisterDto);
+                agent.UserId = user.Id;
+                agent.IsVerified = false;
 
-           
-            _agentRepository.Add(agent);
-            Log.Information("New record added: " + agent.Id);
-            return agent.Id;
+
+                _agentRepository.Add(agent);
+                Log.Information("New record added: " + agent.Id);
+                return agent.Id;
+            }
+            throw new Exception("UserName already exist");
         }
 
         public bool ChangePassword(ChangePasswordDto passwordDto)
@@ -151,14 +158,20 @@ namespace Project.Services
             return false;
         }
 
-        public bool Update(AgentDto agentDto)
+        public bool Update(UpdateAgentDto agentDto)
         {
-            var existingAgent = _agentRepository.GetAll().AsNoTracking().Where(u => u.Id == agentDto.Id);
+            var existingAgent = _agentRepository.GetAll().AsNoTracking().Where(u => u.Id == agentDto.Id).FirstOrDefault();
             if (existingAgent != null)
             {
-                var agent = _mapper.Map<Agent>(agentDto);
-                _agentRepository.Update(agent);
-                Log.Information("agent record updated: " + agent.Id);
+               existingAgent.FirstName = agentDto.FirstName;
+                existingAgent.LastName = agentDto.LastName;
+                existingAgent.Email = agentDto.Email;
+                existingAgent.Qualification = agentDto.Qualification;
+                existingAgent.MobileNumber = agentDto.MobileNumber;
+                
+                _agentRepository.Update(existingAgent);
+                
+                Log.Information("agent record updated: " + existingAgent.Id);
                 return true;
             }
             throw new AgentNotFoundException("Agent Does Not Exist");

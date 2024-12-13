@@ -33,22 +33,29 @@ namespace Project.Services
         }
         public Guid AddEmployee(EmployeeRegisterDto employeeRegisterDto)
         {
-            var roleName = _repositoryRole.GetAll().Where(r => r.RoleName == Types.Roles.EMPLOYEE).FirstOrDefault();
-            User user = _mapper.Map<User>(employeeRegisterDto);
-            user.RoleId = roleName.Id;
-            user.Status = true;
-            _userRepository.Add(user);
+            var existingUser = _userRepository.GetAll().Where(u => u.UserName == employeeRegisterDto.Username).FirstOrDefault();
+            var existingEmail = _repository.GetAll().Where(e=>e.Email == employeeRegisterDto.Email).FirstOrDefault();
+            var existingNumber = _repository.GetAll().Where(e=>e.MobileNumber == employeeRegisterDto.MobileNumber).FirstOrDefault();
+            if (existingUser == null && existingEmail == null && existingNumber == null)
+            {
+                var roleName = _repositoryRole.GetAll().Where(r => r.RoleName == Types.Roles.EMPLOYEE).FirstOrDefault();
+                User user = _mapper.Map<User>(employeeRegisterDto);
+                user.RoleId = roleName.Id;
+                user.Status = true;
+                _userRepository.Add(user);
 
-            var role = _repositoryRole.Get(roleName.Id);
-            role.Users.Add(user);
-            _repositoryRole.Update(role);
+                var role = _repositoryRole.Get(roleName.Id);
+                role.Users.Add(user);
+                _repositoryRole.Update(role);
 
-            var employee = _mapper.Map<Employee>(employeeRegisterDto);
-            employee.UserId = user.Id;
+                var employee = _mapper.Map<Employee>(employeeRegisterDto);
+                employee.UserId = user.Id;
 
-            _repository.Add(employee);
-            Log.Information("Employee record added: " + employee.Id);
-            return employee.Id;
+                _repository.Add(employee);
+                Log.Information("Employee record added: " + employee.Id);
+                return employee.Id;
+            }
+            throw new Exception("Username, Email or Mobile already exist!");
         }
 
         public bool DeleteEmployee(Guid id)
@@ -107,14 +114,18 @@ namespace Project.Services
             return PageList<EmployeeDto>.ToPagedList(employeeDtos, pageParameter.PageNumber, pageParameter.PageSize);
         }
 
-        public bool UpdateEmployee(EmployeeDto employeeDto)
+        public bool UpdateEmployee(UpdateEmployeeDto employeeDto)
         {
-            var existingEmployee = _repository.GetAll().AsNoTracking().Where(u => u.Id == employeeDto.Id);
+            var existingEmployee = _repository.GetAll().AsNoTracking().Where(u => u.Id == employeeDto.Id).FirstOrDefault();
             if (existingEmployee != null)
             {
-                var employee = _mapper.Map<Employee>(employeeDto);
-                _repository.Update(employee);
-                Log.Information("Employee record updated: " + employee.Id);
+               existingEmployee.FirstName = employeeDto.FirstName;
+                existingEmployee.LastName = employeeDto.LastName;
+                existingEmployee.MobileNumber = employeeDto.MobileNumber;
+                existingEmployee.Email = employeeDto.Email;
+                
+                _repository.Update(existingEmployee);
+                Log.Information("Employee record updated: " + existingEmployee.Id);
                 return true;
             }
             throw new EmployeeNotFoundException("Employee Does Not Exist");

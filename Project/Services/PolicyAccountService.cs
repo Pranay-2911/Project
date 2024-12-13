@@ -4,19 +4,20 @@ using Project.DTOs;
 using Project.Models;
 using Project.Repositories;
 using Serilog;
+using Stripe;
 
 namespace Project.Services
 {
     public class PolicyAccountService : IPolicyAccountService
     {
         private readonly IRepository<PolicyAccount> _repository;
-        private readonly IRepository<Customer> _customerRepository;
+        private readonly IRepository<Models.Customer> _customerRepository;
         private readonly IRepository<Policy> _policyRepository;
         private readonly IRepository<Agent> _agentRepository;
         private readonly IRepository<Premium> _premiumRepository;
         private readonly IMapper _mapper;
 
-        public PolicyAccountService(IRepository<PolicyAccount> repository, IMapper mapper, IRepository<Premium> premiumRepository, IRepository<Customer> customerRepository, IRepository<Policy> policyRepository, IRepository<Agent> agentRepository)
+        public PolicyAccountService(IRepository<PolicyAccount> repository, IMapper mapper, IRepository<Premium> premiumRepository, IRepository<Models.Customer> customerRepository, IRepository<Policy> policyRepository, IRepository<Agent> agentRepository)
         {
             _repository = repository;
             _mapper = mapper;  
@@ -96,6 +97,7 @@ namespace Project.Services
             }
 
             count = policyAccountDtos.Count;
+            policyAccountDtos = policyAccountDtos.OrderByDescending(p => p.PurchasedDate).ToList();
             return PageList<PolicyAccountDto>.ToPagedList(policyAccountDtos, pageParameter.PageNumber, pageParameter.PageSize);
         }
 
@@ -121,7 +123,9 @@ namespace Project.Services
                     PurchasedDate = account.PurchasedDate,
                     AgentName = "NA",
                     IsVerified = account.IsVerified,
-                    PolicyId= policy.Id
+                    PolicyId= policy.Id,
+                    IsMatured = account.IsMatured
+                    
                     
                     
 
@@ -159,6 +163,68 @@ namespace Project.Services
                 account.IsVerified = Types.WithdrawStatus.PENDING;
                 _repository.Update(account);
 
+                return true;
+            }
+            return false;
+        }
+        public  PageList<PolicyAccountDto> GetAllClaims(PageParameter pageParameter, ref int count, string? searchQuery)
+        {
+            var accountList = _repository.GetAll().Where(a => a.IsMatured == Types.MatureStatus.UNDER_PROCESS).ToList();
+            List<PolicyAccountDto> policyAccountDtos = new List<PolicyAccountDto>();
+            foreach (var account in accountList)
+            {
+
+                var custommer = _customerRepository.Get(account.CustomerId);
+                var policy = _policyRepository.Get(account.PolicyID);
+
+                var accountDto = new PolicyAccountDto()
+                {
+                    Id = account.Id,
+                    CustomerName = $"{custommer.FirstName} {custommer.LastName}",
+                    PolicyName = policy.Title,
+                    NomineeRelation = account.NomineeRelation,
+                    Nominee = account.Nominee,
+                    PolicyAmount = account.PolicyAmount,
+                    PolicyDuration = account.PolicyDuration,
+                    PurchasedDate = account.PurchasedDate,
+                    AgentName = "NA",
+                    IsVerified = account.IsVerified,
+                    PolicyId = policy.Id,
+                    IsMatured = account.IsMatured
+
+
+
+
+                };
+                if (account.AgentId != null)
+                {
+                    var agent = _agentRepository.Get((Guid)account.AgentId);
+                    accountDto.AgentName = $"{agent.FirstName} {agent.LastName}";
+                }
+
+                policyAccountDtos.Add(accountDto);
+
+
+            }
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                searchQuery = searchQuery.ToLower();
+                policyAccountDtos = policyAccountDtos
+                    .Where(d => d.CustomerName.ToLower().Contains(searchQuery))
+                    .ToList();
+            }
+
+            count = policyAccountDtos.Count;
+            return PageList<PolicyAccountDto>.ToPagedList(policyAccountDtos, pageParameter.PageNumber, pageParameter.PageSize);
+        }
+
+        public bool ApproveClaims(Guid id)
+        {
+            var account = _repository.Get(id);
+            if (account != null)
+            {
+                account.IsMatured = Types.MatureStatus.CLAIMED;
+                _repository.Update(account);
                 return true;
             }
             return false;

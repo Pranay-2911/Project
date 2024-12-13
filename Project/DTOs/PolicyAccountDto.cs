@@ -23,5 +23,6 @@ namespace Project.DTOs
         public int PolicyDuration {  get; set; }
         public WithdrawStatus IsVerified { get; set; }
         public Guid PolicyId {  get; set; }
+        public MatureStatus IsMatured {  get; set; }
     }
 }

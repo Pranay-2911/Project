@@ -12,7 +12,7 @@ namespace Project.Services
         public bool Delete(Guid id);
         public bool PurchasePolicy(Guid customerId, PurchasePolicyRequestDto requestdto, ref Guid policyAcctId);
         public List<PolicyDto> GetPolicyByCustomer(Guid Id);
-        public Guid AddPlan(PlanDto plandto);
+        public Plan AddPlan(PlanDto plandto);
         public PageList<ViewCommissionDto> GetCommission(PageParameter pageParameter, ref int count, string? searchQuery, string? commissionType, DateTime? startDate, DateTime? endDate);
         public PageList<ViewCommissionDto> GetCommissionByAgent(Guid id, PageParameter pageParameter, ref int count, string? searchQuery);
         public List<Policy> GetPoliciesByPlan(SchemaRequestDto schemaRequestDto);

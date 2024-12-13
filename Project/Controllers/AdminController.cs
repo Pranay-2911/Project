@@ -164,11 +164,30 @@ namespace Project.Controllers
         }
 
         [HttpGet("Payments")]
-        public IActionResult GetAllPayments([FromQuery] PageParameter pageParameter, [FromQuery] string? searchQuery) 
+        public IActionResult GetAllPayments([FromQuery] PageParameter pageParameter, [FromQuery] string? searchQuery, [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate) 
         {
             var count = 0;
-            var payments = _paymentService.GetAll(pageParameter, ref count, searchQuery);
+            var payments = _paymentService.GetAll(pageParameter, ref count, searchQuery, startDate, endDate);
             return Ok(new {payments = payments, count= count});
+        }
+
+        [HttpGet("Claims")]
+        public IActionResult GetAllClaims([FromQuery] PageParameter pageParameter, [FromQuery] string? searchQuery)
+        {
+            var count = 0;
+            var claims = _policyAccountService.GetAllClaims(pageParameter, ref count, searchQuery);
+            return Ok(new { claims = claims, count = count });
+        }
+
+        [HttpPost("Approve/Claim/{id}")]
+        public IActionResult ApproveClaim(Guid id)
+        {
+           if(_policyAccountService.ApproveClaims(id))
+           {
+                return Ok(id);
+           }
+           return BadRequest(); 
+            
         }
 
     }

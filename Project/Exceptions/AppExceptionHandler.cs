@@ -39,6 +39,12 @@ namespace Project.Exceptions
                 response.ExceptionMessage = validationException.Message;
                 response.Title = "Validation Error";
             }
+            else if(exception is PlanExistException planExistException)
+            {
+                response.StatusCode = StatusCodes.Status404NotFound;
+                response.ExceptionMessage = planExistException.Message;
+                response.Title = "Already Exist";
+            }
             else
             {
                 response.StatusCode = StatusCodes.Status500InternalServerError;

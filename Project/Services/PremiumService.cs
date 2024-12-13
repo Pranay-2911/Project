@@ -70,11 +70,25 @@ namespace Project.Services
                 _commissionRepository.Add(agentCommission);
                 Log.Information("commission record updated: " + agentCommission.Id);
             }
+
+            CheckMaturity(premium);
+
             Log.Information("payment record updated: " + payment.Id);
            
 
 
             return new PaymentDto { Amount = premium.Amount, Status = true };
+        }
+        private void CheckMaturity(Premium premium)
+        {
+            var premiums = _premiumRepository.GetAll().Where(p => p.AccountId == premium.AccountId).Where(p => p.Status == "Unpaid").ToList();
+
+            if (premiums.Count == 0)
+            {
+                var account = _policyAccountRepository.Get(premium.AccountId);
+                account.IsMatured = MatureStatus.UNDER_PROCESS;
+                _policyAccountRepository.Update(account);
+            }
         }
 
         public List<PremiumDto> GetPremiumStatuses(Guid policyId)

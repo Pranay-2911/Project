@@ -46,8 +46,8 @@ namespace Project.Controllers
         [HttpPost]
         public IActionResult AddPlan(PlanDto planDto)
         {
-            var newId = _policyService.AddPlan(planDto);
-            return Ok(newId);
+            var plan = _policyService.AddPlan(planDto);
+            return Ok(plan);
         }
 
         [HttpDelete]

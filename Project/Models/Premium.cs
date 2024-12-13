@@ -24,5 +24,7 @@ namespace Project.Models
         public Guid CustomerId { get; set; }
 
         public Guid? AgentId { get; set; }  
+
+        public Guid AccountId {  get; set; }
     }
 }

@@ -12,7 +12,6 @@ namespace Project.Models
         public Guid CustomerId { get; set; }
         [Required]
         public Guid PolicyID { get; set; }
-
         public Guid? AgentId { get; set; }
         [Required]
         public DateTime PurchasedDate { get; set; }
@@ -25,5 +24,6 @@ namespace Project.Models
         public NomineeRelation NomineeRelation { get; set; }
         [Required]
         public WithdrawStatus IsVerified { get; set; }
+        public MatureStatus IsMatured { get; set; }
     }
 }

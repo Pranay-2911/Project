@@ -80,7 +80,7 @@ namespace Project.Controllers
         }
 
         [HttpPut]
-        public IActionResult Update(AgentDto agentDto)
+        public IActionResult Update(UpdateAgentDto agentDto)
         {
             if (_agentService.Update(agentDto))
                 return Ok(agentDto);
@@ -129,10 +129,10 @@ namespace Project.Controllers
         }
 
         [HttpGet("CommissionRequest/{id}")]
-        public IActionResult GetCommissionRequest(Guid id, [FromQuery]PageParameter pageParameter)
+        public IActionResult GetCommissionRequest(Guid id, [FromQuery]PageParameter pageParameter, [FromQuery] string? selectedCommissionType)
         {
             var count = 0;
-            var requests = _commissionRequestService.GetRequestByAgent(id, pageParameter, ref count);
+            var requests = _commissionRequestService.GetRequestByAgent(id, pageParameter, ref count, selectedCommissionType);
             return Ok(new {requests = requests, count = count});    
         }
     }

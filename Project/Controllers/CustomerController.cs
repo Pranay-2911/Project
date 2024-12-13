@@ -48,7 +48,7 @@ namespace Project.Controllers
         }
 
         [HttpPut]
-        public IActionResult Update(CustomerDto customerDto)
+        public IActionResult Update(UpdateCustomerDto customerDto)
         {
             if (_customerService.UpdateCustomer(customerDto))
             {

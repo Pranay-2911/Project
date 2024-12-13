@@ -40,7 +40,7 @@ namespace Project.Controllers
             return Ok(employee);
         }
         [HttpPut]
-        public IActionResult Update(EmployeeDto employeeDto)
+        public IActionResult Update(UpdateEmployeeDto employeeDto)
         {
             if (_employeeService.UpdateEmployee(employeeDto))
             {

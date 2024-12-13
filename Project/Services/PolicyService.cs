@@ -5,6 +5,7 @@ using Project.DTOs;
 using Project.Types;
 using Microsoft.EntityFrameworkCore;
 using MailKit.Search;
+using Project.Exceptions;
 using Serilog;
 
 namespace Project.Services
@@ -35,19 +36,28 @@ namespace Project.Services
         }
         public Guid AddSchema(PolicyDto policydto)
         {
-
-            var policy = _mapper.Map<Policy>(policydto);
-            _policyRepository.Add(policy);
-            Log.Information("New scheme added: " + policy.Id);
-            return policy.Id;
+            var existingScheme = _policyRepository.GetAll().Where(p=>p.Title == policydto.Title).FirstOrDefault();
+            if (existingScheme == null)
+            {
+                var policy = _mapper.Map<Policy>(policydto);
+                _policyRepository.Add(policy);
+                Log.Information("New scheme added: " + policy.Id);
+                return policy.Id;
+            }
+            throw new Exception("Schema already exist!");
         }
 
-        public Guid AddPlan(PlanDto plandto) 
+        public Plan AddPlan(PlanDto plandto) 
         { 
-            var plan = _mapper.Map<Plan>(plandto);
-            _planRepository.Add(plan);
-            Log.Information("New plan added: " + plan.Id);
-            return plan.Id;
+            var existingPlan = _planRepository.GetAll().Where(p=>p.Name == plandto.Name).FirstOrDefault();
+            if (existingPlan == null)
+            {
+                var plan = _mapper.Map<Plan>(plandto);
+                _planRepository.Add(plan);
+                Log.Information("New plan added: " + plan.Id);
+                return plan;
+            }
+            throw new PlanExistException("Plan with same name already exist!");
         }
 
         public bool Delete(Guid id)
@@ -86,6 +96,8 @@ namespace Project.Services
                     .Where(d => d.Title.ToLower().Contains(searchQuery))
                     .ToList();
             }
+           
+
             count = policydtos.Count;
             return PageList<PolicyDto>.ToPagedList(policydtos, pageParameter.PageNumber, pageParameter.PageSize);
         }
@@ -132,13 +144,14 @@ namespace Project.Services
                 AgentId = requestdto.AgentId, 
                 PurchasedDate = DateTime.UtcNow,
                 PolicyAmount = requestdto.TotalAmount,
-                PolicyDuration = requestdto.DurationInMonths
+                PolicyDuration = requestdto.DurationInMonths,
+                IsMatured = MatureStatus.PENDING
             };
             _policyAccountRepository.Add(account);
             policyAcctId = account.Id;
 
             // 2. Generate the premium schedule
-            var premiums = GeneratePremiumSchedule(customerId, requestdto);
+            var premiums = GeneratePremiumSchedule(customerId, requestdto, policyAcctId);
 
             // 3. Insert premiums into the database
             foreach (var premium in premiums)
@@ -173,21 +186,27 @@ namespace Project.Services
             return true;
         }
 
-        private List<Premium> GeneratePremiumSchedule(Guid customerId, PurchasePolicyRequestDto requestdto)
+        private List<Premium> GeneratePremiumSchedule(Guid customerId, PurchasePolicyRequestDto requestdto, Guid AccountId)
         {
             var premiums = new List<Premium>();
-            var monthlyAmount = requestdto.TotalAmount / requestdto.DurationInMonths; // Split total amount equally
+            // Split total amount equally
 
-            for (int i = 0; i < requestdto.DurationInMonths; i++)
+            var totalPremiumCount = requestdto.DurationInMonths * requestdto.Divider;
+            var monthlyAmount = requestdto.TotalAmount / totalPremiumCount;
+
+            for (int i = 0; i < totalPremiumCount; i++)
             {
                 premiums.Add(new Premium
                 {
                     CustomerId = customerId,
                     PolicyId = requestdto.PolicyId,
                     Amount = monthlyAmount,
-                    DueDate = DateTime.Now.AddMonths(i + 1), // Due date is next month onwards
+                    DueDate = DateTime.Now.AddMonths(i + requestdto.Divider), // Due date is next month onwards
                     Status = "Unpaid",
-                    AgentId = requestdto.AgentId
+                    AgentId = requestdto.AgentId,
+                    AccountId = AccountId
+
+                   
                 });
             }
 
@@ -285,6 +304,7 @@ namespace Project.Services
                 };
                 viewCommissionDtos.Add(viewCommission);
             }
+         
 
             return viewCommissionDtos;
         }
@@ -315,6 +335,7 @@ namespace Project.Services
                 };
                 viewCommissionDtos.Add(viewCommission);
             }
+            viewCommissionDtos = viewCommissionDtos.OrderByDescending(c => c.CommssionDate).ToList();
             if (!string.IsNullOrEmpty(searchQuery))
             {
                 searchQuery = searchQuery.ToLower();

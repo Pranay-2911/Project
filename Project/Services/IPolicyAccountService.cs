@@ -12,5 +12,7 @@ namespace Project.Services
         public PageList<PolicyAccountDto> GetAll(PageParameter pageParameter, ref int count, string? searchQuery, string? searchQuery1);
         public PageList<PolicyAccountDto> GetAccountByCustomer(Guid id, PageParameter pageParameters, ref int count, string? searchQuery);
         public bool ReUpload(Guid id);
+        public PageList<PolicyAccountDto> GetAllClaims(PageParameter pageParameter, ref int count, string? serachQuery);
+        public bool ApproveClaims(Guid id);
     }
 }

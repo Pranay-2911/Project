@@ -6,7 +6,7 @@ namespace Project.Services
     public interface IAgentService
     {
         public Guid Add(AgentRegisterDto agentRegisterDto);
-        public bool Update(AgentDto agentDto);
+        public bool Update(UpdateAgentDto agentDto);
         public PageList<AgentDto> GetAll(PageParameter pageParameters, ref int count, string? searchQuery);
         public AgentDto Get(Guid id);
         public bool Delete(Guid id);

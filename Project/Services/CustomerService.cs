@@ -105,14 +105,20 @@ namespace Project.Services
             return PageList<CustomerDto>.ToPagedList(customerDtos, pageParameter.PageNumber, pageParameter.PageSize);
         }
 
-        public bool UpdateCustomer(CustomerDto customerDto)
+        public bool UpdateCustomer(UpdateCustomerDto customerDto)
         {
-            var existingCustomer = _repository.GetAll().AsNoTracking().Where(u => u.CustomerId == customerDto.CustomerId);
+            var existingCustomer = _repository.GetAll().AsNoTracking().Where(u => u.CustomerId == customerDto.CustomerId).FirstOrDefault();
             if (existingCustomer != null)
             {
-                var customer = _mapper.Map<Customer>(customerDto);
-                _repository.Update(customer);
-                Log.Information("customer record updated: " + customer.CustomerId);
+                existingCustomer.FirstName = customerDto.FirstName;
+                existingCustomer.LastName = customerDto.LastName;
+                existingCustomer.DateOfBirth = customerDto.DateOfBirth;
+                existingCustomer.Email = customerDto.Email;
+                existingCustomer.City = customerDto.City;
+                existingCustomer.State = customerDto.State;
+                existingCustomer.MobileNumber = customerDto.MobileNumber;
+                _repository.Update(existingCustomer);
+                Log.Information("customer record updated: " + existingCustomer.CustomerId);
                 return true;
             }
             throw new CustomerNotFoundException("Customer Does Not Exist");

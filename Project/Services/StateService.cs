@@ -15,17 +15,26 @@ namespace Project.Services
             _cityRepository = cityRepository;
             _stateRepository = stateRepository;
         }
+
         public State AddState(StateDto stateDto)
         {
-            var city = new City() { Name = stateDto.CityName, Satus = true };
-            _cityRepository.Add(city);
-            var state = new State() { Name = stateDto.StateName};
-            state.Cities.Add(city);
-            _stateRepository.Add(state);
-            Log.Information("state record added: " + state.Id);
+            var existingState = _stateRepository.GetAll().Where(s=>s.Name == stateDto.StateName).FirstOrDefault();
+            var existingCity = _cityRepository.GetAll().Where(c=>c.Name == stateDto.CityName).FirstOrDefault();
+            if (existingState == null && existingCity == null) 
+            {
+                var city = new City() { Name = stateDto.CityName, Satus = true };
+                _cityRepository.Add(city);
+                var state = new State() { Name = stateDto.StateName };
+                state.Cities.Add(city);
+                _stateRepository.Add(state);
+                Log.Information("state record added: " + state.Id);
 
-            return state;
+                return state;
+            }
+            throw new Exception("State is already exist");
+                
         }
+
         public List<State> GetAllState()
         {
             return _stateRepository.GetAll().Include(s=>s.Cities).ToList();
@@ -34,14 +43,20 @@ namespace Project.Services
         public City AddCity(StateDto stateDto)
         {
             var state = _stateRepository.GetAll().Include(s => s.Cities).Where(s => s.Name == stateDto.StateName).FirstOrDefault();
-            var city = new City() { Name = stateDto.CityName, Satus = true };
-            _cityRepository.Add(city);
-            state.Cities.Add(city);
-            _stateRepository.Update(state);
-            Log.Information("city record added: " + city.Id);
-            Log.Information("state record updated: " + state.Id);
+            var existingCity = _cityRepository.GetAll().Where(c=>c.Name==stateDto.CityName).FirstOrDefault();
 
-            return city;
+            if (existingCity == null)
+            {
+                var city = new City() { Name = stateDto.CityName, Satus = true };
+                _cityRepository.Add(city);
+                state.Cities.Add(city);
+                _stateRepository.Update(state);
+                Log.Information("city record added: " + city.Id);
+                Log.Information("state record updated: " + state.Id);
+
+                return city;
+            }
+            throw new Exception("City is already exist");
         }
 
         public List<City> GetCities()

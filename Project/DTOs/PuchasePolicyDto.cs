@@ -15,6 +15,8 @@ namespace Project.DTOs
         public string Nominee { get; set; }
         [Required]
         public string NomineeRelation { get; set; }
+        [Required]
+        public int Divider { get; set; }
         public Guid CustomerId { get; set; }
     }
 }
