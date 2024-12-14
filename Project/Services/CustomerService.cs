@@ -108,7 +108,9 @@ namespace Project.Services
         public bool UpdateCustomer(UpdateCustomerDto customerDto)
         {
             var existingCustomer = _repository.GetAll().AsNoTracking().Where(u => u.CustomerId == customerDto.CustomerId).FirstOrDefault();
-            if (existingCustomer != null)
+            var existingEmail = _repository.GetAll().Where(e=>e.Email == customerDto.Email).FirstOrDefault();
+            var existingNumber = _repository.GetAll().Where(n=>n.MobileNumber == customerDto.MobileNumber).FirstOrDefault();
+            if (existingCustomer != null && existingEmail == null && existingNumber == null)
             {
                 existingCustomer.FirstName = customerDto.FirstName;
                 existingCustomer.LastName = customerDto.LastName;

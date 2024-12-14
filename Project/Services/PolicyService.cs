@@ -117,14 +117,15 @@ namespace Project.Services
         public bool Update(PolicyDto policydto)
         {
             var existingPolicy = _policyRepository.GetAll().AsNoTracking().Where( p => p.Id == policydto.Id).FirstOrDefault();
-            if (existingPolicy != null)
+            var existingName = _policyRepository.GetAll().Where(n=>n.Title == policydto.Title).FirstOrDefault();
+            if (existingPolicy != null && existingName == null)
             {
                 var policy = _mapper.Map<Policy>(policydto);
                 _policyRepository.Update(policy);
                 Log.Information("policy record updated: " + policy.Id);
                 return true;
             }
-            return false;
+            throw new Exception("Policy With same name already exist!");
         }
 
         public bool PurchasePolicy(Guid customerId, PurchasePolicyRequestDto requestdto, ref Guid policyAcctId)
