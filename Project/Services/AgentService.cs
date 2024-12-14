@@ -161,7 +161,8 @@ namespace Project.Services
         public bool Update(UpdateAgentDto agentDto)
         {
             var existingAgent = _agentRepository.GetAll().AsNoTracking().Where(u => u.Id == agentDto.Id).FirstOrDefault();
-            if (existingAgent != null)
+            var existingNumber = _agentRepository.GetAll().Where(n=>n.MobileNumber == agentDto.MobileNumber).FirstOrDefault();
+            if (existingAgent != null && existingNumber == null)
             {
                existingAgent.FirstName = agentDto.FirstName;
                 existingAgent.LastName = agentDto.LastName;

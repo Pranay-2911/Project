@@ -117,7 +117,9 @@ namespace Project.Services
         public bool UpdateEmployee(UpdateEmployeeDto employeeDto)
         {
             var existingEmployee = _repository.GetAll().AsNoTracking().Where(u => u.Id == employeeDto.Id).FirstOrDefault();
-            if (existingEmployee != null)
+            var existingEmail = _repository.GetAll().Where(e=>e.Email ==  employeeDto.Email).FirstOrDefault();
+            var existingNumber = _repository.GetAll().Where(e=>e.MobileNumber == employeeDto.MobileNumber).FirstOrDefault();
+            if (existingEmployee != null && existingNumber == null && existingEmail == null)
             {
                existingEmployee.FirstName = employeeDto.FirstName;
                 existingEmployee.LastName = employeeDto.LastName;
