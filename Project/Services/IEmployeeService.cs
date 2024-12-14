@@ -11,7 +11,7 @@ namespace Project.Services
         public bool DeleteEmployee(Guid id);
         public bool UpdateEmployee(UpdateEmployeeDto employeeDto);
         public PageList<VerifyDocumentDto> GetDocuments(PageParameter pageParameters, ref int count, string? searchQuery);
-        public bool ChangePassword(ChangePasswordDto passwordDto);
+        public bool ChangePassword(ChangePasswordDto passwordDto);   
         public bool Verify(Guid id);
         public bool Reject(Guid id);
     }
