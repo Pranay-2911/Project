@@ -57,7 +57,7 @@ namespace Project.Services
 
         public bool ChangePassword(ChangePasswordDto passwordDto)
         {
-            var agent = _agentRepository.GetAll().AsNoTracking().Include(a => a.User).Where(a => a.User.UserName == passwordDto.UserName).FirstOrDefault();
+            var agent = _agentRepository.GetAll().AsNoTracking().Include(a => a.User).Where(a => a.Id == passwordDto.Id).Where(a => a.User.UserName == passwordDto.UserName).FirstOrDefault();
             if (agent != null)
             {
                 if (BCrypt.Net.BCrypt.Verify(passwordDto.Password, agent.User.PasswordHash))
@@ -69,7 +69,7 @@ namespace Project.Services
                 }
                    
             }
-            return false;
+            throw new Exception("You Username is not as per details");
         }
 
         public bool Delete(Guid id)
@@ -161,8 +161,13 @@ namespace Project.Services
         public bool Update(UpdateAgentDto agentDto)
         {
             var existingAgent = _agentRepository.GetAll().AsNoTracking().Where(u => u.Id == agentDto.Id).FirstOrDefault();
+            existingAgent.MobileNumber = 0;
+            existingAgent.Email = "";
+            _agentRepository.Update(existingAgent);
+
+            var existingEmail = _agentRepository.GetAll().Where(n => n.Email == agentDto.Email).FirstOrDefault();
             var existingNumber = _agentRepository.GetAll().Where(n=>n.MobileNumber == agentDto.MobileNumber).FirstOrDefault();
-            if (existingAgent != null && existingNumber == null)
+            if (existingAgent != null && existingEmail == null && existingNumber == null)
             {
                existingAgent.FirstName = agentDto.FirstName;
                 existingAgent.LastName = agentDto.LastName;

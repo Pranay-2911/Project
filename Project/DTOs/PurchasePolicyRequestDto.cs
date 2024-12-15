@@ -10,7 +10,7 @@ namespace Project.DTOs
         [Required]
         public double TotalAmount { get; set; }
         [Required]
-        public int DurationInMonths { get; set; }
+        public int DurationInYears { get; set; }
         [Required]
         public int Divider { get; set; }
         [Required]

@@ -71,35 +71,35 @@ namespace Project.Controllers
             return NotFound("Admin not found");
         }
 
-        [HttpPost("State")]
+        [HttpPost("State"), Authorize(Roles = "ADMIN")]
         public IActionResult AddState(StateDto stateDto)
         {
             var state = _stateService.AddState(stateDto);
             return Ok(state);
         }
 
-        [HttpPost("City")]
+        [HttpPost("City"), Authorize(Roles = "ADMIN")]
         public IActionResult AddCity(StateDto stateDto)
         {
             var city = _stateService.AddCity(stateDto);
             return Ok(city);
         }
 
-        [HttpGet("States")]
+        [HttpGet("States" ), Authorize(Roles = "ADMIN,CUSTOMER")]
         public IActionResult GetAllStates()
         {
             var states = _stateService.GetAllState();
             return Ok(states);
         }
 
-        [HttpGet("City")]
+        [HttpGet("City"), Authorize(Roles = "ADMIN")]
         public IActionResult GetCity()
         {
             var city = _stateService.GetCities();
             return Ok(city);
         }   
 
-        [HttpGet("PolicyAccount")]
+        [HttpGet("PolicyAccount"), Authorize(Roles = "ADMIN")]
         public IActionResult GetPolicyAccount([FromQuery]PageParameter pageParameter, [FromQuery] string? searchQuery, [FromQuery]string? searchQuery1)
         {
             var count = 0;
@@ -107,7 +107,7 @@ namespace Project.Controllers
             return Ok(new {accounts =  accounts, count = count});
         }
 
-        [HttpGet("Commission")]
+        [HttpGet("Commission"), Authorize(Roles = "ADMIN")]
         public IActionResult GetCommission([FromQuery] PageParameter pageParameter, [FromQuery] string? searchQuery, [FromQuery]string? selectedCommissionType, [FromQuery] DateTime? startDate, [FromQuery] DateTime? endDate)
         { 
             var count = 0;
@@ -115,14 +115,14 @@ namespace Project.Controllers
             return Ok(new { viewCommissionDto = viewCommissionDto, count = count});
         }
 
-        [HttpGet("CommissionRequest")]
+        [HttpGet("CommissionRequest"), Authorize(Roles = "ADMIN")]
         public IActionResult GetAllRequest([FromQuery]PageParameter pageParameter, [FromQuery] string? searchQuery)
         {
             var count = 0;
             var requests = _commissionRequestService.GetAllPendingRequest(pageParameter, ref count, searchQuery);
             return Ok(new { requests = requests, count = count});
         }
-        [HttpPut("CommissionRequest/Approve/{id}")]
+        [HttpPut("CommissionRequest/Approve/{id}"), Authorize(Roles = "ADMIN")]
         public IActionResult Approve(Guid id)
         {
            if(_commissionRequestService.Approve(id))
@@ -131,7 +131,7 @@ namespace Project.Controllers
             }
            return BadRequest();
         }
-        [HttpPut("CommissionRequest/Reject/{id}")]
+        [HttpPut("CommissionRequest/Reject/{id}"), Authorize(Roles = "ADMIN")]
         public IActionResult Reject(Guid id)
         {
             if (_commissionRequestService.Reject(id))
@@ -141,7 +141,7 @@ namespace Project.Controllers
             return BadRequest();
         }
 
-        [HttpPut("Global")]
+        [HttpPut("Global"), Authorize(Roles = "ADMIN")]
         public IActionResult UpdateGlobal(GlobalVariables globalVariables)
         {
             if (_globalVariableService.UpdateGlobal(globalVariables))
@@ -150,20 +150,20 @@ namespace Project.Controllers
             }
             return BadRequest();
         }
-        [HttpGet("Global")]
+        [HttpGet("Global"), Authorize(Roles = "ADMIN")]
         public IActionResult GetGlobal()
         {
             var global = _globalVariableService.Get();
             return Ok(global);
         }
-        [HttpPost("Global")]
+        [HttpPost("Global"), Authorize(Roles = "ADMIN")]
         public IActionResult AddGlobal(GlobalVariables globalVariables)
         {
             _globalVariableService.AddGlobal(globalVariables);
             return Ok();    
         }
 
-        [HttpGet("Payments")]
+        [HttpGet("Payments"), Authorize(Roles = "ADMIN")]
         public IActionResult GetAllPayments([FromQuery] PageParameter pageParameter, [FromQuery] string? searchQuery, [FromQuery]DateTime? startDate, [FromQuery]DateTime? endDate) 
         {
             var count = 0;
@@ -171,7 +171,7 @@ namespace Project.Controllers
             return Ok(new {payments = payments, count= count});
         }
 
-        [HttpGet("Claims")]
+        [HttpGet("Claims"), Authorize(Roles = "ADMIN")]
         public IActionResult GetAllClaims([FromQuery] PageParameter pageParameter, [FromQuery] string? searchQuery)
         {
             var count = 0;
@@ -179,7 +179,7 @@ namespace Project.Controllers
             return Ok(new { claims = claims, count = count });
         }
 
-        [HttpPost("Approve/Claim/{id}")]
+        [HttpPost("Approve/Claim/{id}"), Authorize(Roles = "ADMIN")]
         public IActionResult ApproveClaim(Guid id)
         {
            if(_policyAccountService.ApproveClaims(id))

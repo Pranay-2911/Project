@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Project.DTOs;
@@ -24,7 +25,7 @@ namespace Project.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet, Authorize(Roles = "CUSTOMER, AGENT")]
         public IActionResult GetAll([FromQuery] PageParameter pageParameter, [FromQuery] string? searchQuery)
         {
             var count = 0;
@@ -32,7 +33,7 @@ namespace Project.Controllers
             return Ok(new {customerDtos= customerDtos, count=count});
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "CUSTOMER")]
         public IActionResult Add(CustomerRegisterDto customerRegisterDto)
         {
             var id = _customerService.AddCustomer(customerRegisterDto);
@@ -40,14 +41,14 @@ namespace Project.Controllers
         }
 
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), Authorize(Roles = "CUSTOMER")]
         public IActionResult Get(Guid id)
         {
             var customer = _customerService.GetById(id);
             return Ok(customer);
         }
 
-        [HttpPut]
+        [HttpPut, Authorize(Roles = "CUSTOMER")]
         public IActionResult Update(UpdateCustomerDto customerDto)
         {
             if (_customerService.UpdateCustomer(customerDto))
@@ -67,7 +68,7 @@ namespace Project.Controllers
             return NotFound();
         }
 
-        [HttpPut("ChangePassword")]
+        [HttpPut("ChangePassword"), Authorize(Roles = "CUSTOMER")]
         public IActionResult ChangePassword(ChangePasswordDto changePasswordDto)
         {
             if (_customerService.ChangePassword(changePasswordDto))
@@ -77,12 +78,12 @@ namespace Project.Controllers
             return NotFound("Agent not found");
         }
 
-        [HttpPost("purchase-policy/{customerId}/Agent")]
+        [HttpPost("purchase-policy/{customerId}/Agent"), Authorize(Roles = "CUSTOMER")]
         public IActionResult PurchasePolicyAgent(Guid customerId, PurchasePolicyRequestDto requestdto)
         {
             Guid policyAccountId = new Guid();
             // 1. Validate inputs
-            if (requestdto.PolicyId == Guid.Empty || requestdto.TotalAmount <= 0 || requestdto.DurationInMonths <= 0)
+            if (requestdto.PolicyId == Guid.Empty || requestdto.TotalAmount <= 0 || requestdto.DurationInYears <= 0)
             {
                 return BadRequest(new {message = "Invalid purchase request." });
             }
@@ -98,13 +99,13 @@ namespace Project.Controllers
             return BadRequest(new {message = "Failed to purchase policy." });
         }
 
-        [HttpPost("purchase-policy")]
+        [HttpPost("purchase-policy"), Authorize(Roles = "CUSTOMER")]
         public IActionResult PurchasePolicy(PurchasePolicyDto purchasedto)
         {
             var requestdto = _mapper.Map<PurchasePolicyRequestDto>(purchasedto);
             Guid policyAccountId = new Guid();
             // 1. Validate inputs
-            if (requestdto.PolicyId == Guid.Empty || requestdto.TotalAmount <= 0 || requestdto.DurationInMonths <= 0)
+            if (requestdto.PolicyId == Guid.Empty || requestdto.TotalAmount <= 0 || requestdto.DurationInYears <= 0)
             {
                 return BadRequest(new { message = "Invalid purchase request." });
             }
@@ -130,7 +131,7 @@ namespace Project.Controllers
             return Ok(policyDto);
         }
 
-        [HttpGet("PolicyAccount")]
+        [HttpGet("PolicyAccount"), Authorize(Roles = "CUSTOMER")]
         public IActionResult GetPolicyAccountByCustomer(Guid id,[FromQuery] PageParameter pageParameter, [FromQuery] string? searchQuery)
         {
             var count = 0;
@@ -148,7 +149,7 @@ namespace Project.Controllers
             return BadRequest();
         }
 
-        [HttpPut("Reupload/{id}")]
+        [HttpPut("Reupload/{id}"), Authorize(Roles = "CUSTOMER")]
         public IActionResult Reupload(Guid id)
         {
             if(_policyAccountService.ReUpload(id))
@@ -157,7 +158,7 @@ namespace Project.Controllers
             }
             return BadRequest();
         }
-        [HttpGet("GetInfo/{id}")]
+        [HttpGet("GetInfo/{id}"), Authorize(Roles = "CUSTOMER")]
         public IActionResult GetInfo(Guid id)
         {
 

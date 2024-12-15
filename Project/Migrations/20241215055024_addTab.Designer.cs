@@ -12,8 +12,8 @@ using Project.Data;
 namespace Project.Migrations
 {
     [DbContext(typeof(ProjectContext))]
-    [Migration("20241210054154_document")]
-    partial class document
+    [Migration("20241215055024_addTab")]
+    partial class addTab
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -445,6 +445,9 @@ namespace Project.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("IsMatured")
+                        .HasColumnType("int");
+
                     b.Property<int>("IsVerified")
                         .HasColumnType("int");
 
@@ -480,6 +483,9 @@ namespace Project.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AccountId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("AgentId")

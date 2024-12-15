@@ -84,7 +84,7 @@ namespace Project.Services
 
         public bool ChangePassword(ChangePasswordDto passwordDto)
         {
-            var customer = _repository.GetAll().AsNoTracking().Include(a => a.User).Where(a => a.User.UserName == passwordDto.UserName).FirstOrDefault();
+            var customer = _repository.GetAll().AsNoTracking().Include(a => a.User).Where(e => e.Id == passwordDto.Id).Where(a => a.User.UserName == passwordDto.UserName).FirstOrDefault();
             if (customer != null)
             {
                 if (BCrypt.Net.BCrypt.Verify(passwordDto.Password, customer.User.PasswordHash))
@@ -96,7 +96,7 @@ namespace Project.Services
                 }
 
             }
-            return false;
+            throw new Exception("You Username is not as per details");
         }
 
         public PageList<EmployeeDto> GetEmployees(PageParameter pageParameter, ref int count, string? searchQuery)
@@ -117,9 +117,13 @@ namespace Project.Services
         public bool UpdateEmployee(UpdateEmployeeDto employeeDto)
         {
             var existingEmployee = _repository.GetAll().AsNoTracking().Where(u => u.Id == employeeDto.Id).FirstOrDefault();
+            existingEmployee.Email = "";
+            existingEmployee.MobileNumber = 0;
+            //_repositor
+
             var existingEmail = _repository.GetAll().Where(e=>e.Email ==  employeeDto.Email).FirstOrDefault();
-            var existingNumber = _repository.GetAll().Where(e=>e.MobileNumber == employeeDto.MobileNumber).FirstOrDefault();
-            if (existingEmployee != null && existingNumber == null && existingEmail == null)
+            var existingNumber = _repository.GetAll().Where(e => e.MobileNumber == employeeDto.MobileNumber).FirstOrDefault();
+            if (existingEmployee != null && existingEmail == null && existingNumber == null)
             {
                existingEmployee.FirstName = employeeDto.FirstName;
                 existingEmployee.LastName = employeeDto.LastName;
@@ -147,7 +151,8 @@ namespace Project.Services
                     PolicyAccountId = account.Id,
                     CustomerName = $"{customer.FirstName} {customer.LastName}",
                     PolicyName = policy.Title,
-                    Documents = documents
+                    Documents = documents,
+                    CustomerEmail = customer.Email
                 };
                
 

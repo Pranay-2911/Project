@@ -12,13 +12,29 @@ namespace Project.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "CommissionRequests",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Amount = table.Column<double>(type: "float", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    RequestDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AgentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CommissionRequests", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Documents",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PolicyAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    PolicyAccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    isActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -26,12 +42,26 @@ namespace Project.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EmailRequests",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    To = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Subject = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Body = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmailRequests", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "GlobalVariables",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CommisionWithdrawDeduction = table.Column<float>(type: "real", nullable: false),
-                    PolicyCancelationPenalty = table.Column<float>(type: "real", nullable: false)
+                    CommissionWithdrawDeduction = table.Column<float>(type: "real", nullable: false),
+                    PolicyCancellationPenalty = table.Column<float>(type: "real", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -93,6 +123,7 @@ namespace Project.Migrations
                     InstallmentCommisionRatio = table.Column<int>(type: "int", nullable: false),
                     DocumentType = table.Column<int>(type: "int", nullable: false),
                     ImageLink = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Documents = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PlanId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -167,6 +198,32 @@ namespace Project.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Agents",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Qualification = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MobileNumber = table.Column<long>(type: "bigint", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    IsVerified = table.Column<bool>(type: "bit", nullable: false),
+                    CurrentCommisionBalance = table.Column<double>(type: "float", nullable: false),
+                    TotalCommissionEarned = table.Column<double>(type: "float", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Agents", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Agents_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Employees",
                 columns: table => new
                 {
@@ -183,38 +240,6 @@ namespace Project.Migrations
                     table.PrimaryKey("PK_Employees", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Employees_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Agents",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    Qualification = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MobileNumber = table.Column<long>(type: "bigint", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    IsVerified = table.Column<bool>(type: "bit", nullable: false),
-                    CurrentCommisionBalance = table.Column<double>(type: "float", nullable: false),
-                    TotalCommissionEarned = table.Column<double>(type: "float", nullable: false),
-                    EmployeeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Agents", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Agents_Employees_EmployeeId",
-                        column: x => x.EmployeeId,
-                        principalTable: "Employees",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Agents_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -257,8 +282,7 @@ namespace Project.Migrations
                     IsKYC = table.Column<bool>(type: "bit", nullable: false),
                     DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AgentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    EmployeeId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    AgentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -267,11 +291,6 @@ namespace Project.Migrations
                         name: "FK_Customers_Agents_AgentId",
                         column: x => x.AgentId,
                         principalTable: "Agents",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Customers_Employees_EmployeeId",
-                        column: x => x.EmployeeId,
-                        principalTable: "Employees",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Customers_Users_UserId",
@@ -294,7 +313,8 @@ namespace Project.Migrations
                     PolicyDuration = table.Column<int>(type: "int", nullable: false),
                     Nominee = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NomineeRelation = table.Column<int>(type: "int", nullable: false),
-                    IsVerified = table.Column<bool>(type: "bit", nullable: false)
+                    IsVerified = table.Column<int>(type: "int", nullable: false),
+                    IsMatured = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -324,7 +344,8 @@ namespace Project.Migrations
                     PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     PolicyId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CustomerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AgentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                    AgentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -391,11 +412,6 @@ namespace Project.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Agents_EmployeeId",
-                table: "Agents",
-                column: "EmployeeId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Agents_UserId",
                 table: "Agents",
                 column: "UserId");
@@ -414,11 +430,6 @@ namespace Project.Migrations
                 name: "IX_Customers_AgentId",
                 table: "Customers",
                 column: "AgentId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Customers_EmployeeId",
-                table: "Customers",
-                column: "EmployeeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Customers_UserId",
@@ -481,10 +492,19 @@ namespace Project.Migrations
                 name: "Cities");
 
             migrationBuilder.DropTable(
+                name: "CommissionRequests");
+
+            migrationBuilder.DropTable(
                 name: "Commissions");
 
             migrationBuilder.DropTable(
                 name: "Documents");
+
+            migrationBuilder.DropTable(
+                name: "EmailRequests");
+
+            migrationBuilder.DropTable(
+                name: "Employees");
 
             migrationBuilder.DropTable(
                 name: "GlobalVariables");
@@ -515,9 +535,6 @@ namespace Project.Migrations
 
             migrationBuilder.DropTable(
                 name: "Plans");
-
-            migrationBuilder.DropTable(
-                name: "Employees");
 
             migrationBuilder.DropTable(
                 name: "Users");

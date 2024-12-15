@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Project.DTOs;
 using Project.Models;
@@ -23,27 +24,27 @@ namespace Project.Controllers
             return Ok(policy);
         }
 
-        [HttpGet("Schema")]
+        [HttpGet("Schema"), Authorize(Roles = "ADMIN")]
         public IActionResult GetAllSchema([FromQuery]PageParameter pageParameter, [FromQuery] string? searchQuery)
         {
             var count = 0;
             var policyDto = _policyService.GetAllSchema(pageParameter, ref count, searchQuery);
             return Ok(new {policyDto = policyDto, count = count});
         }
-        [HttpGet]
+        [HttpGet, Authorize(Roles = "ADMIN, CUSTOMER, AGENT")]
         public IActionResult GetAllPlan()
         {
             var policyDto = _policyService.GetAllPlan();
             return Ok(policyDto);
         }
 
-        [HttpPost("Schema")]
+        [HttpPost("Schema"), Authorize(Roles = "ADMIN")]
         public IActionResult AddSchema(PolicyDto policy)
         {
             var newId = _policyService.AddSchema(policy);
             return Ok(newId);
         }
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "ADMIN")]
         public IActionResult AddPlan(PlanDto planDto)
         {
             var plan = _policyService.AddPlan(planDto);

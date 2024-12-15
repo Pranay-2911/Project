@@ -117,15 +117,14 @@ namespace Project.Services
         public bool Update(PolicyDto policydto)
         {
             var existingPolicy = _policyRepository.GetAll().AsNoTracking().Where( p => p.Id == policydto.Id).FirstOrDefault();
-            var existingName = _policyRepository.GetAll().Where(n=>n.Title == policydto.Title).FirstOrDefault();
-            if (existingPolicy != null && existingName == null)
+            if (existingPolicy != null)
             {
                 var policy = _mapper.Map<Policy>(policydto);
                 _policyRepository.Update(policy);
                 Log.Information("policy record updated: " + policy.Id);
                 return true;
             }
-            throw new Exception("Policy With same name already exist!");
+            return false;
         }
 
         public bool PurchasePolicy(Guid customerId, PurchasePolicyRequestDto requestdto, ref Guid policyAcctId)
@@ -145,7 +144,7 @@ namespace Project.Services
                 AgentId = requestdto.AgentId, 
                 PurchasedDate = DateTime.UtcNow,
                 PolicyAmount = requestdto.TotalAmount,
-                PolicyDuration = requestdto.DurationInMonths,
+                PolicyDuration = requestdto.DurationInYears,
                 IsMatured = MatureStatus.PENDING
             };
             _policyAccountRepository.Add(account);
@@ -192,23 +191,27 @@ namespace Project.Services
             var premiums = new List<Premium>();
             // Split total amount equally
 
-            var totalPremiumCount = requestdto.DurationInMonths * requestdto.Divider;
+            var totalPremiumCount = requestdto.DurationInYears * requestdto.Divider;
             var monthlyAmount = requestdto.TotalAmount / totalPremiumCount;
 
+            int temp = 0;
+            int premiumGap = 12 / requestdto.Divider;
             for (int i = 0; i < totalPremiumCount; i++)
             {
+                
                 premiums.Add(new Premium
                 {
                     CustomerId = customerId,
                     PolicyId = requestdto.PolicyId,
                     Amount = monthlyAmount,
-                    DueDate = DateTime.Now.AddMonths(i + requestdto.Divider), // Due date is next month onwards
+                    DueDate = DateTime.Now.AddMonths(temp + premiumGap), // Due date is next month onwards
                     Status = "Unpaid",
                     AgentId = requestdto.AgentId,
                     AccountId = AccountId
 
                    
                 });
+                temp += premiumGap;
             }
 
             return premiums;

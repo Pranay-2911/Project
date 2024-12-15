@@ -25,7 +25,7 @@ namespace Project.Controllers
 
         }
 
-        [HttpGet]
+        [HttpGet, Authorize(Roles = "ADMIN, AGENT, EMPLOYEE")]
         public IActionResult GetAll([FromQuery] PageParameter pageParameters, [FromQuery]string? searchQuery)
         {
             var count = 0;
@@ -33,7 +33,7 @@ namespace Project.Controllers
             return Ok(new { agents = agents, count = count});
         }
 
-        [HttpGet("UnVerified")]
+        [HttpGet("UnVerified"), Authorize(Roles = "ADMIN")]
         public IActionResult GetAllUnVerified([FromQuery] PageParameter pageParameters, [FromQuery] string? searchQuery)
         {
             var count = 0;
@@ -41,21 +41,21 @@ namespace Project.Controllers
             return Ok(new {agents = agents, count = count});
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), Authorize(Roles = "AGENT, EMPLOYEE")]
         public IActionResult Get(Guid id)
         {
             var agent = _agentService.Get(id);
             return Ok(agent);
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "ADMIN, EMPLOYEE")]
         public IActionResult Add(AgentRegisterDto agentRegisterDto)
         {
             var agentId = _agentService.Add(agentRegisterDto);
             return Ok(agentId);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Roles = "ADMIN")]
         public IActionResult Delete(Guid id)
         {
             if (_agentService.Delete(id))
@@ -63,7 +63,7 @@ namespace Project.Controllers
             return NotFound("Agent Not Found");
         }
 
-        [HttpPut("Active/{id}")]
+        [HttpPut("Active/{id}"), Authorize(Roles = "AGENT")]
         public IActionResult Active(Guid id)
         {
             if (_agentService.Active(id))
@@ -71,7 +71,7 @@ namespace Project.Controllers
             return NotFound("Agent Not Found");
         }
 
-        [HttpPut("Verify")]
+        [HttpPut("Verify"), Authorize(Roles = "ADMIN")]
         public IActionResult Verfify([FromQuery] Guid id)
         {
             if (_agentService.VerifyAgent(id))
@@ -79,7 +79,7 @@ namespace Project.Controllers
             return NotFound("Agent not found");
         }
 
-        [HttpPut]
+        [HttpPut, Authorize(Roles = "AGENT")]
         public IActionResult Update(UpdateAgentDto agentDto)
         {
             if (_agentService.Update(agentDto))
@@ -87,7 +87,7 @@ namespace Project.Controllers
             return NotFound("Agent not found");
         }
 
-        [HttpPut("ChangePassword")]
+        [HttpPut("ChangePassword"), Authorize(Roles = "AGENT")]
         public IActionResult ChangePassword(ChangePasswordDto changePasswordDto)
         {
             if(_agentService.ChangePassword(changePasswordDto))
@@ -107,7 +107,7 @@ namespace Project.Controllers
         }
 
 
-        [HttpGet("Commission/{id}")]
+        [HttpGet("Commission/{id}"), Authorize(Roles = "AGENT, EMPLOYEE")]
         public IActionResult GetCommission(Guid id, [FromQuery] PageParameter pageParameters, [FromQuery] string? searchQuery)
         {
             var count = 0;
@@ -115,20 +115,20 @@ namespace Project.Controllers
             return Ok(new {viewCommissionDto = viewCommissionDto, count= count});
         }
 
-        [HttpGet("CurrentBalance/{id}")]
+        [HttpGet("CurrentBalance/{id}"), Authorize(Roles = "AGENT")]
         public IActionResult GetBalance(Guid id)
         {
             var balance = _agentService.GetBalance(id);
             return Ok(balance);
         }
-        [HttpPost("CommissionRequest")]
+        [HttpPost("CommissionRequest"), Authorize(Roles = "AGENT")]
         public IActionResult CommisionRequest(CommisionRequestDto commisionRequestDto)
         {
            var id  = _agentService.CommissionRequest(commisionRequestDto);
            return Ok(id);
         }
 
-        [HttpGet("CommissionRequest/{id}")]
+        [HttpGet("CommissionRequest/{id}"), Authorize(Roles = "AGENT")]
         public IActionResult GetCommissionRequest(Guid id, [FromQuery]PageParameter pageParameter, [FromQuery] string? selectedCommissionType)
         {
             var count = 0;

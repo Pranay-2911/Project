@@ -1,4 +1,5 @@
 ﻿using Project.Models;
+using System.Globalization;
 using System.Reflection.Metadata;
 
 namespace Project.DTOs
@@ -9,6 +10,7 @@ namespace Project.DTOs
         public string PolicyName { get; set; }
         public string CustomerName { get; set; }
         public List<Models.Document> Documents { get; set; }
+        public string CustomerEmail { get; set; }
 
     }
 }

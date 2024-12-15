@@ -24,6 +24,7 @@ namespace Project.Controllers
             {
                 try
                 {
+             
                     client.Connect("smtp.gmail.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
                     client.Authenticate("suraj.sakhare5869@gmail.com", "oynm hlim sevo lhlr"); // Use App Password
                     client.Send(emailMessage);

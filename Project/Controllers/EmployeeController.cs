@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Project.DTOs;
 using Project.Services;
 using Project.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Project.Controllers
 {
@@ -18,7 +19,7 @@ namespace Project.Controllers
             _queryService = queryService;
         }
 
-        [HttpGet]
+        [HttpGet, Authorize(Roles = "ADMIN")]
         public IActionResult GetAll([FromQuery] PageParameter pageParameter, [FromQuery] string? searchQuery)
         {
             var count = 0;
@@ -26,20 +27,20 @@ namespace Project.Controllers
             return Ok(new {employeeDtos = employeeDtos, count = count});
         }
 
-        [HttpPost]
+        [HttpPost, Authorize(Roles = "ADMIN")]
         public IActionResult Add(EmployeeRegisterDto employeeRegisterDto)
         {
             var id = _employeeService.AddEmployee(employeeRegisterDto);
             return Ok(id);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}"), Authorize(Roles = "EMPLOYEE")]
         public IActionResult Get(Guid id)
         {
             var employee = _employeeService.GetById(id);
             return Ok(employee);
         }
-        [HttpPut]
+        [HttpPut, Authorize(Roles = "EMPLOYEE")]
         public IActionResult Update(UpdateEmployeeDto employeeDto)
         {
             if (_employeeService.UpdateEmployee(employeeDto))
@@ -59,7 +60,7 @@ namespace Project.Controllers
             return NotFound();
         }
 
-        [HttpGet("GetAllDocument")]
+        [HttpGet("GetAllDocument"), Authorize(Roles = "EMPLOYEE")]
         public IActionResult GetAllDocument([FromQuery] PageParameter pageParameters, [FromQuery] string? searchQuery)
         {
             var count = 0;
@@ -67,7 +68,7 @@ namespace Project.Controllers
             return Ok(new {documents= documents, count = count});
         }
 
-        [HttpPut("Verify/{id}")]
+        [HttpPut("Verify/{id}"), Authorize(Roles = "EMPLOYEE")]
         public IActionResult Verify(Guid id)
         {
             if (_employeeService.Verify(id))
@@ -76,7 +77,7 @@ namespace Project.Controllers
             }
             return NotFound();
         }
-        [HttpPut("Reject/{id}")]
+        [HttpPut("Reject/{id}"), Authorize(Roles = "EMPLOYEE")]
         public IActionResult Reject(Guid id)
         {
             if (_employeeService.Reject(id))
@@ -86,7 +87,7 @@ namespace Project.Controllers
             return NotFound();
         }
 
-        [HttpPut("QueryResponse/{id}")]
+        [HttpPut("QueryResponse/{id}"), Authorize(Roles = "EMPLOYEE")]
         public IActionResult Response(Guid id, QueryResponseDto queryResponseDto)
         {
             if (_queryService.Response(id, queryResponseDto))
@@ -95,14 +96,14 @@ namespace Project.Controllers
             }
             return NotFound();
         }
-        [HttpGet("GetAllQuery")]
+        [HttpGet("GetAllQuery"), Authorize(Roles = "EMPLOYEE")]
         public IActionResult GetAllQuery([FromQuery]PageParameter pageParameter, [FromQuery] string? searchQuery)
         {
             var count = 0;
             var queries = _queryService.GetAllQuery(pageParameter, ref count, searchQuery);
             return Ok(new { queries = queries, count = count});
         }
-        [HttpPut("ChangePassword")]
+        [HttpPut("ChangePassword"), Authorize(Roles = "EMPLOYEE")]
         public IActionResult ChangePassword(ChangePasswordDto changePasswordDto)
         {
             if (_employeeService.ChangePassword(changePasswordDto))

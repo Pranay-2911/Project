@@ -52,7 +52,8 @@ namespace Project.Services
 
         public bool ChangePassword(ChangePasswordDto passwordDto)
         {
-            var customer = _repository.GetAll().AsNoTracking().Include(a => a.User).Where(a => a.User.UserName == passwordDto.UserName).FirstOrDefault();
+            var customer = _repository.GetAll().AsNoTracking().Include(a => a.User).Where(c => c.CustomerId == passwordDto.Id).Where(a => a.User.UserName == passwordDto.UserName).FirstOrDefault();
+            
             if (customer != null)
             {
                 if (BCrypt.Net.BCrypt.Verify(passwordDto.Password, customer.User.PasswordHash))
@@ -64,7 +65,7 @@ namespace Project.Services
                 }
 
             }
-            return false;
+            throw new Exception("You Username is not as per details");
         }
 
         public bool DeleteCustomer(Guid id)
@@ -108,8 +109,12 @@ namespace Project.Services
         public bool UpdateCustomer(UpdateCustomerDto customerDto)
         {
             var existingCustomer = _repository.GetAll().AsNoTracking().Where(u => u.CustomerId == customerDto.CustomerId).FirstOrDefault();
+            existingCustomer.Email = "";
+            existingCustomer.MobileNumber = 0;
+            _repository.Update(existingCustomer);
+                
             var existingEmail = _repository.GetAll().Where(e=>e.Email == customerDto.Email).FirstOrDefault();
-            var existingNumber = _repository.GetAll().Where(n=>n.MobileNumber == customerDto.MobileNumber).FirstOrDefault();
+            var existingNumber = _repository.GetAll().Where(n => n.MobileNumber == customerDto.MobileNumber).FirstOrDefault();
             if (existingCustomer != null && existingEmail == null && existingNumber == null)
             {
                 existingCustomer.FirstName = customerDto.FirstName;
