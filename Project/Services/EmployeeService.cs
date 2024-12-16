@@ -71,6 +71,19 @@ namespace Project.Services
             }
             throw new EmployeeNotFoundException("Employee Does Not Exist");
         }
+        public bool Active(Guid id)
+        {
+            var employee = _repository.GetAll().Include(a => a.User).Where(a => a.Id == id).FirstOrDefault();
+            if (employee != null)
+            {
+                var user = _userRepository.Get(employee.UserId);
+                user.Status = true;
+                _userRepository.Update(user);
+                Log.Information("employee record activated: " + employee.Id);
+                return true;
+            }
+            throw new EmployeeNotFoundException("Employee Does Not Exist");
+        }
 
         public Employee GetById(Guid id)
         {
@@ -101,7 +114,7 @@ namespace Project.Services
 
         public PageList<EmployeeDto> GetEmployees(PageParameter pageParameter, ref int count, string? searchQuery)
         {
-            var employee = _repository.GetAll().Include(a => a.User).Where(a => a.User.Status == true).ToList();
+            var employee = _repository.GetAll().Include(a => a.User).ToList();
             List<EmployeeDto> employeeDtos = _mapper.Map<List<EmployeeDto>>(employee);
             if (!string.IsNullOrEmpty(searchQuery))
             {

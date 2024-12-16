@@ -14,5 +14,6 @@ namespace Project.Services
         public bool ChangePassword(ChangePasswordDto passwordDto);   
         public bool Verify(Guid id);
         public bool Reject(Guid id);
+        public bool Active(Guid id);
     }
 }

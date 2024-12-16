@@ -34,7 +34,7 @@ namespace Project.Controllers
             return Ok(id);
         }
 
-        [HttpGet("{id}"), Authorize(Roles = "EMPLOYEE")]
+        [HttpGet("{id}")]
         public IActionResult Get(Guid id)
         {
             var employee = _employeeService.GetById(id);
@@ -50,10 +50,20 @@ namespace Project.Controllers
             return NotFound();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}"), Authorize(Roles = "ADMIN")]
         public IActionResult Delete(Guid id)
         {
             if (_employeeService.DeleteEmployee(id))
+            {
+                return Ok(id);
+            }
+            return NotFound();
+        }
+
+        [HttpPut("Active/{id}"), Authorize(Roles = "ADMIN")]
+        public IActionResult Active(Guid id)
+        {
+            if (_employeeService.Active(id))
             {
                 return Ok(id);
             }

@@ -29,23 +29,31 @@ namespace Project.Services
         {
 
             var roleName = _roleRepository.GetAll().Where(r => r.RoleName == Roles.CUSTOMER).FirstOrDefault();
-            User user = _mapper.Map<User>(customerRegisterDto);
-            user.RoleId = roleName.Id;
-            user.Status = true;
-            _userRepository.Add(user);
+            var existingUserName = _userRepository.GetAll().Where(u=>u.UserName == customerRegisterDto.UserName).FirstOrDefault();
+            var existingEmail = _repository.GetAll().Where(e=>e.Email == customerRegisterDto.Email).FirstOrDefault();
+            var exisitingNumber = _repository.GetAll().Where(n=>n.MobileNumber == customerRegisterDto.MobileNumber).FirstOrDefault();
 
-            var role = _roleRepository.Get(roleName.Id);
-            role.Users.Add(user);
-            _roleRepository.Update(role);
-            var customer = _mapper.Map<Customer>(customerRegisterDto);
+            if (existingUserName == null && existingEmail == null && exisitingNumber == null)
+            {
+                User user = _mapper.Map<User>(customerRegisterDto);
+                user.RoleId = roleName.Id;
+                user.Status = true;
+                _userRepository.Add(user);
 
-            customer.UserId = user.Id;
-            customer.IsKYC = false;
+                var role = _roleRepository.Get(roleName.Id);
+                role.Users.Add(user);
+                _roleRepository.Update(role);
+                var customer = _mapper.Map<Customer>(customerRegisterDto);
+
+                customer.UserId = user.Id;
+                customer.IsKYC = false;
 
 
-            _repository.Add(customer);
-            Log.Information("New customer record added: " + customer.CustomerId);
-            return customer.CustomerId;
+                _repository.Add(customer);
+                Log.Information("New customer record added: " + customer.CustomerId);
+                return customer.CustomerId;
+            }
+            throw new Exception("UserName , Email or Mobile numberis already exist");
         }
 
 

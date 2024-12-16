@@ -24,14 +24,14 @@ namespace Project.Controllers
             return Ok(policy);
         }
 
-        [HttpGet("Schema"), Authorize(Roles = "ADMIN")]
+        [HttpGet("Schema")]
         public IActionResult GetAllSchema([FromQuery]PageParameter pageParameter, [FromQuery] string? searchQuery)
         {
             var count = 0;
             var policyDto = _policyService.GetAllSchema(pageParameter, ref count, searchQuery);
             return Ok(new {policyDto = policyDto, count = count});
         }
-        [HttpGet, Authorize(Roles = "ADMIN, CUSTOMER, AGENT")]
+        [HttpGet]
         public IActionResult GetAllPlan()
         {
             var policyDto = _policyService.GetAllPlan();

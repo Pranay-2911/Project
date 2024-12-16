@@ -114,7 +114,7 @@ namespace Project.Services
 
         public PageList<AgentDto> GetAll(PageParameter pageParameters, ref int count, string? searchQuery)
         {
-            var agents = _agentRepository.GetAll().Include(a => a.User).Where(a => a.IsVerified == true).ToList();
+            var agents = _agentRepository.GetAll().Include(a => a.User).ToList();
            
             var agentDtos = _mapper.Map<List<AgentDto>>(agents);
             if (!string.IsNullOrEmpty(searchQuery))

@@ -33,5 +33,6 @@ namespace Project.DTOs
         public Guid UserId { get; set; }
         public int TotalCustomers { get; set; }
         public int TotalAgents { get; set; }
+        public int IsActive {  get; set; }
     }
 }

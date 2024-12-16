@@ -25,7 +25,7 @@ namespace Project.Controllers
 
         }
 
-        [HttpGet, Authorize(Roles = "ADMIN, AGENT, EMPLOYEE")]
+        [HttpGet, Authorize(Roles = "ADMIN, EMPLOYEE")]
         public IActionResult GetAll([FromQuery] PageParameter pageParameters, [FromQuery]string? searchQuery)
         {
             var count = 0;
@@ -63,7 +63,7 @@ namespace Project.Controllers
             return NotFound("Agent Not Found");
         }
 
-        [HttpPut("Active/{id}"), Authorize(Roles = "AGENT")]
+        [HttpPut("Active/{id}"), Authorize(Roles = "ADMIN")]
         public IActionResult Active(Guid id)
         {
             if (_agentService.Active(id))
@@ -107,7 +107,7 @@ namespace Project.Controllers
         }
 
 
-        [HttpGet("Commission/{id}"), Authorize(Roles = "AGENT, EMPLOYEE")]
+        [HttpGet("Commission/{id}"), Authorize(Roles = "ADMIN, AGENT, EMPLOYEE")]
         public IActionResult GetCommission(Guid id, [FromQuery] PageParameter pageParameters, [FromQuery] string? searchQuery)
         {
             var count = 0;

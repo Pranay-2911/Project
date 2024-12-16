@@ -25,7 +25,7 @@ namespace Project.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet, Authorize(Roles = "CUSTOMER, AGENT")]
+        [HttpGet, Authorize(Roles = "AGENT,CUSTOMER,ADMIN")]
         public IActionResult GetAll([FromQuery] PageParameter pageParameter, [FromQuery] string? searchQuery)
         {
             var count = 0;
@@ -33,7 +33,7 @@ namespace Project.Controllers
             return Ok(new {customerDtos= customerDtos, count=count});
         }
 
-        [HttpPost, Authorize(Roles = "CUSTOMER")]
+        [HttpPost]
         public IActionResult Add(CustomerRegisterDto customerRegisterDto)
         {
             var id = _customerService.AddCustomer(customerRegisterDto);
@@ -41,7 +41,7 @@ namespace Project.Controllers
         }
 
 
-        [HttpGet("{id}"), Authorize(Roles = "CUSTOMER")]
+        [HttpGet("{id}"), Authorize(Roles = "AGENT, CUSTOMER, ADMIN")]
         public IActionResult Get(Guid id)
         {
             var customer = _customerService.GetById(id);

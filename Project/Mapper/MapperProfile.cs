@@ -12,8 +12,8 @@ namespace Project.Mapper
             CreateMap<RoleDto, Role>(); 
             CreateMap<User, UserDto>();  
             CreateMap<UserDto, User>();
-            CreateMap<Employee, EmployeeDto>();
 
+            CreateMap<Employee, EmployeeDto>().ForMember(dest => dest.IsActive, val => val.MapFrom(src => src.User.Status));
             CreateMap<EmployeeDto, Employee>();
             CreateMap<Employee, EmployeeRegisterDto>();
             CreateMap<EmployeeRegisterDto, Employee>();
