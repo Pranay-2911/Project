@@ -278,7 +278,7 @@ namespace Project.Services
 
             if (endDate.HasValue)
             {
-                viewCommissionDtos = viewCommissionDtos.Where(c=>c.CommssionDate <= endDate.Value).ToList();
+                viewCommissionDtos = viewCommissionDtos.Where(c=>c.CommssionDate <= endDate.Value.AddDays(1)).ToList();
             }
             count = viewCommissionDtos.Count;
 

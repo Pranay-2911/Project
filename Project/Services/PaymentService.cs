@@ -51,7 +51,8 @@ namespace Project.Services
 
                 if (endDate.HasValue)
                 {
-                    paymentDtos = paymentDtos.Where(c => c.PaymentDate <= endDate.Value).ToList();
+                    paymentDtos = paymentDtos.Where(c => c.PaymentDate <= endDate.Value.AddDays(1)).ToList();
+
                 }
                 count = paymentDtos.Count;
             }

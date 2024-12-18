@@ -11,6 +11,9 @@ namespace Project.Models
         public string Name { get; set; }
         [Required]
         public string Location { get; set; }
+
+        public PolicyAccount PolicyAccount { get; set; }
+        [ForeignKey("PolicyAccount")]
         public Guid PolicyAccountId { get; set; }
         public bool isActive { get; set; }
     }
